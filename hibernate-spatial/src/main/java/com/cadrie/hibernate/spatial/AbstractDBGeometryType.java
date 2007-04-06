@@ -1,0 +1,200 @@
+/**
+ * $Id$
+ *
+ * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
+ * framework for Rich Internet GIS Applications.
+ *
+ * Copyright  @ 2007 DFC Software Engineering, Belgium
+ * and K.U. Leuven LRD, Spatial Applications Division, Belgium
+ *
+ * MAJAS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * MAJAS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with gGIS; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ */
+
+package com.cadrie.hibernate.spatial;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import org.hibernate.HibernateException;
+import org.hibernate.usertype.ParameterizedType;
+import org.hibernate.usertype.UserType;
+
+import com.vividsolutions.jts.geom.Geometry;
+
+/**
+ * @author Karel Maesen
+ * 
+ * This type is a abstract base type for implemenating database specific user
+ * types for geometry types.
+ * 
+ */
+public abstract class AbstractDBGeometryType implements UserType,
+	ParameterizedType {
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
+         *      java.lang.Object)
+         */
+    public Object assemble(Serializable cached, Object owner)
+	    throws HibernateException {
+	return cached;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
+         */
+    public Object deepCopy(Object value) throws HibernateException {
+	return value;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
+         */
+    public Serializable disassemble(Object value) throws HibernateException {
+	return (Serializable) value;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
+         *      java.lang.Object)
+         */
+    public boolean equals(Object x, Object y) throws HibernateException {
+	if (x == y)
+	    return true;
+	if (x == null || y == null)
+	    return false;
+	return ((Geometry) x).equalsExact((Geometry) y);
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
+         */
+    public int hashCode(Object x) throws HibernateException {
+	return x.hashCode();
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#isMutable()
+         */
+    public boolean isMutable() {
+	return false;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
+         *      java.lang.String[], java.lang.Object)
+         */
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+	    throws HibernateException, SQLException {
+	Object geomObj = rs.getObject(names[0]);
+	return convert2JTS(geomObj);
+    }
+
+    /**
+         * Converts the native database geometry object to a JTS Geometry
+         * object.
+         * 
+         * Concrete subclasses should override this method.
+         * 
+         * @param geomObj
+         *                native database geometry object
+         * @return JTS Geometry
+         */
+    public abstract Geometry convert2JTS(Object geomObj);
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
+         *      java.lang.Object, int)
+         */
+    public void nullSafeSet(PreparedStatement st, Object value, int index)
+	    throws HibernateException, SQLException {
+	if (value == null) {
+	    st.setNull(index, sqlTypes()[0]);
+	} else {
+	    Geometry jtsGeom = (Geometry) value;
+	    Object dbGeom = conv2DBGeometry(jtsGeom, st.getConnection());
+	    st.setObject(index, dbGeom);
+	}
+    }
+
+    /**
+         * Converts a JTS geometry object to a native database geometry object.
+         * 
+         * Concrete subclasses should override this method.
+         * 
+         * @param geomObj
+         *                JTS Geometry
+         * @return native database geometry object
+         */
+    public abstract Object conv2DBGeometry(Geometry jtsGeom, Connection connection) ;
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
+         *      java.lang.Object, java.lang.Object)
+         */
+    public Object replace(Object original, Object target, Object owner)
+	    throws HibernateException {
+	return original;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#returnedClass()
+         */
+    public Class returnedClass() {
+	return Geometry.class;
+    }
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.UserType#sqlTypes()
+         * 
+         * This should be overriden by concrete subclasses
+         */
+    public abstract int[] sqlTypes();
+
+    /*
+         * (non-Javadoc)
+         * 
+         * @see org.hibernate.usertype.ParameterizedType#setParameterValues(java.util.Properties)
+         */
+    public void setParameterValues(Properties parameters) {
+    }
+
+}

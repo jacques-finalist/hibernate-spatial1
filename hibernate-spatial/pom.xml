@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cadrie.hibernate</groupId>
+	<artifactId>hibernate-spatial</artifactId>
+	<version>0.9</version>
+	<name>Majas hibernate spatial Extension</name>
+	<description>Majas hibernate spatial</description>
+	<url>http://www.cadrie.com/projects/hibernate/spatial</url>
+	<packaging>pom</packaging>
+	<modules>
+		<module>../hibernate-spatial-postgis</module>
+		<module>../hibernate-spatial-oracle</module>
+	</modules>
+	<scm>
+		<connection>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</connection>
+		<developerConnection>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</developerConnection>
+		<url>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</url>
+	</scm>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL), v2</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<organization>
+		<name>Caffeine-Driven Enterprises</name>
+		<url>http://www.cadrie.com</url>
+	</organization>
+	<dependencies>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>3.2.2.ga</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+		</dependency>
+	</dependencies>
+	<distributionManagement>
+		<site>
+			<id>Hibernate Spatial site</id>
+			<name>Hibernate Spatial</name>
+			<url>scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/majas/hibernate/spatial</url>
+		</site>
+	</distributionManagement>
+	<developers>
+		<developer>
+			<id>jandm</id>
+			<name>Jan De Moerlose</name>
+			<email>jan.demoerlose@cadrie.com</email>
+			<roles>
+				<role>Architect</role>
+				<role>Lead Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>maesenka</id>
+			<name>Karel Maesen</name>
+			<email>karel.maesen@cadrie.com</email>
+			<roles>
+				<role>Architect</role>
+				<role>Lead Developer</role>
+			</roles>
+		</developer>
+				<developer>
+			<id>pieterdg</id>
+			<name>Pieter De Graef</name>
+			<email>pieter.degraef@cadrie.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+</project>

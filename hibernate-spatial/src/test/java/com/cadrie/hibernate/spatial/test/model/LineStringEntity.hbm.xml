@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 9, 2006 9:35:48 PM by Hibernate Tools 3.2.0.beta6a -->
+<hibernate-mapping>
+    <class name="com.cadrie.hibernate.spatial.test.model.LineStringEntity" table="linestringtest">
+        <id name="id" type="long">
+            <column name="id" precision="65535" scale="65531" />
+            <generator class="increment"/>
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="50"/>
+        </property>
+        <property name="geometry" type="com.cadrie.hibernate.spatial.GeometryUserType">
+         <column name="geom"/>
+        </property>
+    </class>
+</hibernate-mapping>
