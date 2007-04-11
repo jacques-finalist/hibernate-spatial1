@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="MAJAS Hibernate Spatial Extension">
+  
+  <bannerLeft>
+    <name>MAJAS Hibernate Spatial</name>
+    <href>http://www.cadrie.com/projects/majas-hibernate/hibernate-spatial</href>
+  </bannerLeft>
+  
+  <bannerRight>
+    <name>Cadrie</name>
+    <src>http://www.cadrie.com/</src>    
+  </bannerRight>
+  
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-default-skin</artifactId>
+  </skin>
+
+  <publishDate format="yyyy MMM dd" />
+  
+  <body>
+    <links>
+      <item name="CaDriE" href="http://www.cadrie.com/"/>
+      <item name="MAJAS" href="http://www.cadrie.com/projects/majas"/>
+      <item name="MAJAS Hibernate" href="http://www.cadrie.com/projects/majas-hibernate/hibernate-spatial"/>
+    </links>
+
+    <head>
+
+    </head>
+
+    <!-- <menu name="Hibernate Spatial">
+    	<item name="What is Hibernate Spatial?" href="what-is-hibernate-spatial.html"/>
+    </menu>
+	-->
+	
+    <menu ref="modules" inherit="bottom"/>
+    <menu ref="reports" inherit="bottom"/>	
+
+  
+  </body>
+</project>

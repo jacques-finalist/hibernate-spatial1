@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<header>
+</header>
+	<body>
+		<section name="Introduction">
+		<p>
+		To enable the spatial extensions, you must put the hibernate-spatial.jar, the <a href="http://www.vividsolutions.com/jts/">java topology suite</a> (JTS) plus a hibernate spatial dialect provider in your class path. 
+		Hibernate-spatial provides the core extension classes, and the fundamental GeometryUserType class. The Dialect providers contribute the database specific information about that database handling of geographic data.
+ 		</p>
+ 		<p>Currently two dialect providers exists: hibernate-spatial-oracle and hibernate-spatial-postgis. 
+		</p>
+      	</section>
+  </body>
+</document>

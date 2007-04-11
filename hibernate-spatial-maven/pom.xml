@@ -1,27 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--  $Id$ -->
 <project>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cadrie.hibernate</groupId>
 	<artifactId>majas-hibernate</artifactId>
 	<version>0.9</version>
-	<name>Majas hibernate spatial Extension</name>
-	<description>Majas hibernate spatial</description>
-	<url>http://www.cadrie.com/projects/hibernate/spatial</url>
+	<name>Hibernate Spatial Extension</name>
+	<description>
+		This is the Maven parent project for all Hibernate Spatial
+		Extension Modules. The main module is Hibernate Spatial, which
+		provides the core extension classes. The other modules are the
+		dialect providers for the Oracle 10g and Postgresql geographic
+		data support. For more information on how to use Spatial
+		Hibernate, go to the Hibernate Spatial site.
+	</description>
+	<url>http://www.cadrie.com/projects/majas-hibernate/</url>
 	<packaging>pom</packaging>
 	<modules>
 		<module>../hibernate-spatial</module>
 		<module>../hibernate-spatial-postgis</module>
 		<module>../hibernate-spatial-oracle</module>
 	</modules>
+	<build>
+		<plugins>
+			<!--  We skip the unit tests when building and packaging because it
+				it requires specific test set-up.  
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!--  CaDriE developed plugin for managing header files -->
+			<plugin>
+				<groupId>com.cadrie</groupId>
+				<artifactId>maven-header-plugin</artifactId>
+				<configuration>
+					<headerFile>header.txt</headerFile>
+				</configuration>
+				<version>1.0-SNAPSHOT</version>
+			</plugin>
+		</plugins>
+	</build>
 	<scm>
-		<connection>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</connection>
-		<developerConnection>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</developerConnection>
-		<url>scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial</url>
+		<connection>
+			scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+		</connection>
+		<developerConnection>
+			scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+		</developerConnection>
+		<url>
+			https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+		</url>
 	</scm>
+	<mailingLists>
+		<mailingList>
+			<name>MAJAS-dev</name>
+			<subscribe>
+				http://www.cadrie.com/mailman/listinfo/majas-dev
+			</subscribe>
+			<unsubscribe>
+				http://www.cadrie.com/mailman/listinfo/majas-dev
+			</unsubscribe>
+
+			<archive>
+				http://www.cadrie.com/pipermail/majas-dev/
+			</archive>
+		</mailingList>
+	</mailingLists>
 	<licenses>
 		<license>
-			<name>GNU General Public License (GPL), v2</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+			<url>http://www.gnu.org/licenses/lgpl.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -44,25 +96,45 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.0.4</version>
 		</dependency>
 	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<!--  Keep javadoc in modules.
+					<configuration>
+					<aggregate>true</aggregate>
+					</configuration> 
+				-->
+			</plugin>
+			<!-- 
+				<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				</plugin>
+			-->
+		</plugins>
+	</reporting>
+
 	<distributionManagement>
 		<site>
-			<id>Hibernate Spatial site</id>
+			<id>MAJAS Hibernate Spatial site</id>
 			<name>Hibernate Spatial</name>
-			<url>scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/majas/hibernate/spatial</url>
+			<url>
+				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/majas-hibernate/
+			</url>
 		</site>
 	</distributionManagement>
 	<developers>
-		<developer>
-			<id>jandm</id>
-			<name>Jan De Moerlose</name>
-			<email>jan.demoerlose@cadrie.com</email>
-			<roles>
-				<role>Architect</role>
-				<role>Lead Developer</role>
-			</roles>
-		</developer>
 		<developer>
 			<id>maesenka</id>
 			<name>Karel Maesen</name>
@@ -72,7 +144,15 @@
 				<role>Lead Developer</role>
 			</roles>
 		</developer>
-				<developer>
+		<developer>
+			<id>jandm</id>
+			<name>Jan De Moerlose</name>
+			<email>jan.demoerlose@cadrie.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
 			<id>pieterdg</id>
 			<name>Pieter De Graef</name>
 			<email>pieter.degraef@cadrie.com</email>
@@ -81,4 +161,5 @@
 			</roles>
 		</developer>
 	</developers>
+
 </project>
