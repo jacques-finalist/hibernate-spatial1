@@ -45,155 +45,155 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 public abstract class AbstractDBGeometryType implements UserType,
-	ParameterizedType {
+        ParameterizedType {
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
-         *      java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
+     *      java.lang.Object)
+     */
     public Object assemble(Serializable cached, Object owner)
-	    throws HibernateException {
-	return cached;
+            throws HibernateException {
+        return cached;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
+     */
     public Object deepCopy(Object value) throws HibernateException {
-	return value;
+        return value;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
+     */
     public Serializable disassemble(Object value) throws HibernateException {
-	return (Serializable) value;
+        return (Serializable) value;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
-         *      java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
+     *      java.lang.Object)
+     */
     public boolean equals(Object x, Object y) throws HibernateException {
-	if (x == y)
-	    return true;
-	if (x == null || y == null)
-	    return false;
-	return ((Geometry) x).equalsExact((Geometry) y);
+        if (x == y)
+            return true;
+        if (x == null || y == null)
+            return false;
+        return ((Geometry) x).equalsExact((Geometry) y);
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
+     */
     public int hashCode(Object x) throws HibernateException {
-	return x.hashCode();
+        return x.hashCode();
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#isMutable()
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#isMutable()
+     */
     public boolean isMutable() {
-	return false;
+        return false;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
-         *      java.lang.String[], java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
+     *      java.lang.String[], java.lang.Object)
+     */
     public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-	    throws HibernateException, SQLException {
-	Object geomObj = rs.getObject(names[0]);
-	return convert2JTS(geomObj);
+            throws HibernateException, SQLException {
+        Object geomObj = rs.getObject(names[0]);
+        return convert2JTS(geomObj);
     }
 
     /**
-         * Converts the native database geometry object to a JTS Geometry
-         * object.
-         * 
-         * Concrete subclasses should override this method.
-         * 
-         * @param geomObj
-         *                native database geometry object
-         * @return JTS Geometry
-         */
+     * Converts the native database geometry object to a JTS Geometry object.
+     * 
+     * Concrete subclasses should override this method.
+     * 
+     * @param geomObj
+     *            native database geometry object
+     * @return JTS Geometry
+     */
     public abstract Geometry convert2JTS(Object geomObj);
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
-         *      java.lang.Object, int)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
+     *      java.lang.Object, int)
+     */
     public void nullSafeSet(PreparedStatement st, Object value, int index)
-	    throws HibernateException, SQLException {
-	if (value == null) {
-	    st.setNull(index, sqlTypes()[0]);
-	} else {
-	    Geometry jtsGeom = (Geometry) value;
-	    Object dbGeom = conv2DBGeometry(jtsGeom, st.getConnection());
-	    st.setObject(index, dbGeom);
-	}
+            throws HibernateException, SQLException {
+        if (value == null) {
+            st.setNull(index, sqlTypes()[0]);
+        } else {
+            Geometry jtsGeom = (Geometry) value;
+            Object dbGeom = conv2DBGeometry(jtsGeom, st.getConnection());
+            st.setObject(index, dbGeom);
+        }
     }
 
     /**
-         * Converts a JTS geometry object to a native database geometry object.
-         * 
-         * Concrete subclasses should override this method.
-         * 
-         * @param geomObj
-         *                JTS Geometry
-         * @return native database geometry object
-         */
-    public abstract Object conv2DBGeometry(Geometry jtsGeom, Connection connection) ;
+     * Converts a JTS geometry object to a native database geometry object.
+     * 
+     * Concrete subclasses should override this method.
+     * 
+     * @param geomObj
+     *            JTS Geometry
+     * @return native database geometry object
+     */
+    public abstract Object conv2DBGeometry(Geometry jtsGeom,
+            Connection connection);
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
-         *      java.lang.Object, java.lang.Object)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
+     *      java.lang.Object, java.lang.Object)
+     */
     public Object replace(Object original, Object target, Object owner)
-	    throws HibernateException {
-	return original;
+            throws HibernateException {
+        return original;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#returnedClass()
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#returnedClass()
+     */
     public Class returnedClass() {
-	return Geometry.class;
+        return Geometry.class;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.UserType#sqlTypes()
-         * 
-         * This should be overriden by concrete subclasses
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.UserType#sqlTypes()
+     * 
+     * This should be overriden by concrete subclasses
+     */
     public abstract int[] sqlTypes();
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.usertype.ParameterizedType#setParameterValues(java.util.Properties)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.usertype.ParameterizedType#setParameterValues(java.util.Properties)
+     */
     public void setParameterValues(Properties parameters) {
     }
 

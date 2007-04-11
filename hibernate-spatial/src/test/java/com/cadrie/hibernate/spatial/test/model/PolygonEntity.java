@@ -28,39 +28,39 @@ public class PolygonEntity implements java.io.Serializable {
 
     /** minimal constructor */
     public PolygonEntity(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     /** full constructor */
     public PolygonEntity(long id, String name, Geometry geom) {
-	this.id = id;
-	this.name = name;
-	this.geometry = (Polygon)geom;
+        this.id = id;
+        this.name = name;
+        this.geometry = (Polygon) geom;
     }
 
     // Property accessors
     public long getId() {
-	return this.id;
+        return this.id;
     }
 
     public void setId(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getName() {
-	return this.name;
+        return this.name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public Geometry getGeometry() {
-	return this.geometry;
+        return this.geometry;
     }
 
     public void setGeometry(Geometry geom) {
-	this.geometry = (Polygon)geom;
+        this.geometry = (Polygon) geom;
     }
 
 }

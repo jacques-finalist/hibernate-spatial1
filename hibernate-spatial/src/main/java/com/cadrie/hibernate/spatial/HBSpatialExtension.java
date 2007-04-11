@@ -1,5 +1,5 @@
 /**
- * $Id: HBSpatialExtension.java 79 2007-02-01 18:03:43Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -24,18 +24,18 @@
 
 package com.cadrie.hibernate.spatial;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.cadrie.hibernate.spatial.helper.PropertyFileReader;
 import com.cadrie.hibernate.spatial.spi.SpatialDialectProvider;
 
 /**
@@ -56,100 +56,121 @@ public class HBSpatialExtension {
 
     protected static Set<SpatialDialectProvider> providers = new HashSet<SpatialDialectProvider>();
 
+    private static final Log log = LogFactory.getLog(HBSpatialExtension.class);
+
     private static SpatialDialect defaultSpatialDialect = null;
 
-    private static final Pattern nonCommentPattern = Pattern
-	    .compile("^([^#]+)");
+    private static final String DIALECT_PROP_NAME = "hibernate.spatial.dialect";
 
     static {
 
-	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	Enumeration<URL> resources = null;
-	try {
-	    resources = loader.getResources("META-INF/services/"
-		    + SpatialDialectProvider.class.getName());
-	    Set<String> names = new HashSet<String>();
-	    while (resources.hasMoreElements()) {
-		URL url = resources.nextElement();
-		InputStream is = url.openStream();
-		try {
-		    names.addAll(providerNamesFromReader(new BufferedReader(
-			    new InputStreamReader(is))));
-		} finally {
-		    is.close();
-		}
-	    }
+        log.info("Initializing HBSpatialExtension");
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Enumeration<URL> resources = null;
+        try {
+            resources = loader.getResources("META-INF/services/"
+                    + SpatialDialectProvider.class.getName());
+            Set<String> names = new HashSet<String>();
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                InputStream is = url.openStream();
+                try {
+                    names.addAll(providerNamesFromReader(is));
+                } finally {
+                    is.close();
+                }
+            }
 
-	    for (String s : names) {
-		try {
-		    SpatialDialectProvider provider = (SpatialDialectProvider) loader
-			    .loadClass(s).newInstance();
-		    // if no Default SpatialDialect, we ask the provider to
-		    // set one.
-		    if (defaultSpatialDialect == null)
-			setDefaultSpatialDialect(provider.getDefaultDialect());
-		    providers.add(provider);
-		} catch (Exception e) {
-		    throw new HibernateSpatialException(
-			    "Problem loading provider class", e);
-		}
-	    }
-	} catch (IOException e) {
-	    throw new HibernateSpatialException("No "
-		    + SpatialDialectProvider.class.getName()
-		    + " found in META-INF/services", e);
-	}
+            for (String s : names) {
+                try {
+                    log.info("Attempting to load Hibernate Spatial Provider "
+                            + s);
+                    SpatialDialectProvider provider = (SpatialDialectProvider) loader
+                            .loadClass(s).newInstance();
+                    // if no Default SpatialDialect, we ask the provider to
+                    // set one.
+                    if (defaultSpatialDialect == null)
+                        setDefaultSpatialDialect(provider.getDefaultDialect());
+                    providers.add(provider);
+                } catch (Exception e) {
+                    throw new HibernateSpatialException(
+                            "Problem loading provider class", e);
+                }
+            }
+        } catch (IOException e) {
+            throw new HibernateSpatialException("No "
+                    + SpatialDialectProvider.class.getName()
+                    + " found in META-INF/services", e);
+        }
+        // check if there is a system property
+        // 
+        String dialectProp = System.getProperty(DIALECT_PROP_NAME);
+        if (dialectProp != null) {
+            log.info("Spatial Dialect configured as system property: "
+                    + dialectProp);
+            boolean found = false;
+            search: for (SpatialDialectProvider provider : providers) {
+                for (String dialect : provider.getSupportedDialects()) {
+                    if (dialect.equals(dialectProp)) {
+                        defaultSpatialDialect = provider.createSpatialDialect(
+                                dialectProp, null);
+                        found = true;
+                        break search;
+                    }
+                }
+            }
+            if (!found)
+                log
+                        .warn("Spatial dialect "
+                                + dialectProp
+                                + " configured as sytem property, but dialect not found");
+        }
+
+        log.info("Hibernate Spatial configured. Using dialect: "
+                + defaultSpatialDialect.getClass().getCanonicalName());
 
     }
 
     /**
-         * Make sure nobody can instantiate this class
-         */
+     * Make sure nobody can instantiate this class
+     */
     private HBSpatialExtension() {
     }
 
     /**
-         * @param dialect
-         */
+     * @param dialect
+     */
     public static void setDefaultSpatialDialect(SpatialDialect dialect) {
-	defaultSpatialDialect = dialect;
+        defaultSpatialDialect = dialect;
     }
 
     public static SpatialDialect getDefaultSpatialDialect() {
-	return defaultSpatialDialect;
+        return defaultSpatialDialect;
     }
 
     public static SpatialDialect createSpatialDialect(String dialectName,
-	    Map properties) {
-	SpatialDialect dialect = null;
-	for (SpatialDialectProvider provider : providers) {
-	    dialect = provider.createSpatialDialect(dialectName, properties);
-	    if (dialect != null) {
-		break;
-	    }
-	}
-	if (dialect == null) {
-	    throw new HibernateSpatialException(
-		    "No SpatialDialect provider for persistenceUnit "
-			    + dialectName);
-	}
-	return dialect;
+            Map properties) {
+        SpatialDialect dialect = null;
+        for (SpatialDialectProvider provider : providers) {
+            dialect = provider.createSpatialDialect(dialectName, properties);
+            if (dialect != null) {
+                break;
+            }
+        }
+        if (dialect == null) {
+            throw new HibernateSpatialException(
+                    "No SpatialDialect provider for persistenceUnit "
+                            + dialectName);
+        }
+        return dialect;
     }
 
     // Helper methods
 
-    private static Set<String> providerNamesFromReader(BufferedReader reader)
-	    throws IOException {
-	Set<String> names = new HashSet<String>();
-	String line;
-	while ((line = reader.readLine()) != null) {
-	    line = line.trim();
-	    Matcher m = nonCommentPattern.matcher(line);
-	    if (m.find()) {
-		names.add(m.group().trim());
-	    }
-	}
-	return names;
+    private static Set<String> providerNamesFromReader(InputStream is)
+            throws IOException {
+        PropertyFileReader reader = new PropertyFileReader(is);
+        return reader.getNonCommentLines();
     }
 
 }

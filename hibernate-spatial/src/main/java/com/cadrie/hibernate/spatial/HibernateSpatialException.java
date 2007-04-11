@@ -1,5 +1,5 @@
 /**
- * $Id: HibernateSpatialException.java 79 2007-02-01 18:03:43Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -30,20 +30,20 @@ package com.cadrie.hibernate.spatial;
 public class HibernateSpatialException extends RuntimeException {
 
     /**
-         * generated serialVersionUID
-         */
+     * generated serialVersionUID
+     */
     private static final long serialVersionUID = -2153256823661407568L;
 
     public HibernateSpatialException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public HibernateSpatialException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 
     public HibernateSpatialException(String msg, Throwable cause) {
-	super(msg, cause);
+        super(msg, cause);
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialFilter.java 80 2007-02-01 18:04:02Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -50,28 +50,28 @@ public class SpatialFilter implements Criterion {
     private Geometry filter = null;
 
     public SpatialFilter(String propertyName, Geometry filter) {
-	this.propertyName = propertyName;
-	this.filter = filter;
+        this.propertyName = propertyName;
+        this.filter = filter;
     }
 
     public TypedValue[] getTypedValues(Criteria criteria,
-	    CriteriaQuery criteriaQuery) throws HibernateException {
-	return new TypedValue[] { criteriaQuery.getTypedValue(criteria,
-		propertyName, filter) };
+            CriteriaQuery criteriaQuery) throws HibernateException {
+        return new TypedValue[] { criteriaQuery.getTypedValue(criteria,
+                propertyName, filter) };
     }
 
     public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery)
-	    throws HibernateException {
-	SessionFactoryImplementor factory = criteriaQuery.getFactory();
-	String[] columns = criteriaQuery.getColumnsUsingProjection(criteria,
-		this.propertyName);
-	Dialect dialect = factory.getDialect();
-	if (dialect instanceof SpatialDialect) {
-	    SpatialDialect seDialect = (SpatialDialect) dialect;
-	    return seDialect.getSpatialFilterExpression(columns[0]);
-	} else
-	    throw new IllegalStateException(
-		    "Dialect must be spatially enabled dialect");
+            throws HibernateException {
+        SessionFactoryImplementor factory = criteriaQuery.getFactory();
+        String[] columns = criteriaQuery.getColumnsUsingProjection(criteria,
+                this.propertyName);
+        Dialect dialect = factory.getDialect();
+        if (dialect instanceof SpatialDialect) {
+            SpatialDialect seDialect = (SpatialDialect) dialect;
+            return seDialect.getSpatialFilterExpression(columns[0]);
+        } else
+            throw new IllegalStateException(
+                    "Dialect must be spatially enabled dialect");
 
     }
 

@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialRestrictions.java 80 2007-02-01 18:04:02Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -49,55 +49,55 @@ public class SpatialRestrictions {
     }
 
     public static SpatialRelateExpression eq(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.EQUALS);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.EQUALS);
     }
 
     public static SpatialRelateExpression within(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.WITHIN);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.WITHIN);
     }
 
     public static SpatialRelateExpression contains(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.CONTAINS);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.CONTAINS);
     }
 
     public static SpatialRelateExpression crosses(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.CROSSES);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.CROSSES);
     }
 
     public static SpatialRelateExpression disjoint(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.DISJOINT);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.DISJOINT);
     }
 
     public static SpatialRelateExpression intersects(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.INTERSECTS);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.INTERSECTS);
     }
 
     public static SpatialRelateExpression overlaps(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.OVERLAPS);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.OVERLAPS);
     }
 
     public static SpatialRelateExpression touches(String propertyName,
-	    Geometry filter, Geometry value) {
-	return new SpatialRelateExpression(propertyName, filter, value,
-		SpatialRelation.TOUCHES);
+            Geometry filter, Geometry value) {
+        return new SpatialRelateExpression(propertyName, filter, value,
+                SpatialRelation.TOUCHES);
     }
 
     public static SpatialFilter filter(String propertyName, Geometry filter) {
-	return new SpatialFilter(propertyName, filter);
+        return new SpatialFilter(propertyName, filter);
     }
 
 }

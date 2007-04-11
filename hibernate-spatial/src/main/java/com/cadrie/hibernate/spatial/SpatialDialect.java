@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialDialect.java 79 2007-02-01 18:03:43Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -28,7 +28,7 @@ import org.hibernate.usertype.UserType;
 
 /**
  * @author Karel Maesen, K.U.Leuven R&D Divisie SADL
- * @version $Id: SpatialDialect.java 79 2007-02-01 18:03:43Z maesenka $
+ * @version $Id$
  * 
  * Describes the features of a spatially enabled dialect.
  * 
@@ -36,42 +36,41 @@ import org.hibernate.usertype.UserType;
 public interface SpatialDialect {
 
     /**
-         * Returns the SQL fragment for the SQL WHERE-clause when parsing
-         * <code>org.walkonweb.spatial.criterion.SpatialRelateExpression</code>s
-         * into prepared statements.
-         * 
-         * If useFilter is specified, then a two-stage spatial query model is
-         * assumed (first stage using only spatial index; second stage
-         * performing exact comparisons between geometries). The returned
-         * SQL-fragement in that case should contains two input parameters. The
-         * first for setting the filter geometry, the second for the test
-         * geometry.
-         * 
-         * @param columnName
-         *                The name of the geometry-typed column to which the
-         *                relation is applied
-         * @param spatialRelation
-         *                The type of spatial relation (as defined in
-         *                <code>org.walkonweb.spatial.SpatialRelation</code>).
-         * @param useFilter
-         *                If true, the SpatialRelateExpression uses two-stage
-         *                query model
-         * @return - SQL fragment for use in the SQL WHERE-clause.
-         */
-    public String getSpatialRelateSQL(String columnName,
-	    int spatialRelation, boolean useFilter);
+     * Returns the SQL fragment for the SQL WHERE-clause when parsing
+     * <code>org.walkonweb.spatial.criterion.SpatialRelateExpression</code>s
+     * into prepared statements.
+     * 
+     * If useFilter is specified, then a two-stage spatial query model is
+     * assumed (first stage using only spatial index; second stage performing
+     * exact comparisons between geometries). The returned SQL-fragement in that
+     * case should contains two input parameters. The first for setting the
+     * filter geometry, the second for the test geometry.
+     * 
+     * @param columnName
+     *            The name of the geometry-typed column to which the relation is
+     *            applied
+     * @param spatialRelation
+     *            The type of spatial relation (as defined in
+     *            <code>org.walkonweb.spatial.SpatialRelation</code>).
+     * @param useFilter
+     *            If true, the SpatialRelateExpression uses two-stage query
+     *            model
+     * @return - SQL fragment for use in the SQL WHERE-clause.
+     */
+    public String getSpatialRelateSQL(String columnName, int spatialRelation,
+            boolean useFilter);
 
     /**
-         * Returns the SQL fragment for the SQL WHERE-expression when parsing
-         * <code>org.walkonweb.spatial.criterion.SpatialFilterExpression</code>s
-         * into prepared statements.
-         * 
-         * 
-         * @param columnName-
-         *                the name of the geometry-typed column to which the
-         *                filter is be applied.
-         * @return
-         */
+     * Returns the SQL fragment for the SQL WHERE-expression when parsing
+     * <code>org.walkonweb.spatial.criterion.SpatialFilterExpression</code>s
+     * into prepared statements.
+     * 
+     * 
+     * @param columnName-
+     *            the name of the geometry-typed column to which the filter is
+     *            be applied.
+     * @return
+     */
     public String getSpatialFilterExpression(String columnName);
 
     public UserType getGeometryUserType();

@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialRelation.java 79 2007-02-01 18:03:43Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -48,5 +48,5 @@ public interface SpatialRelation {
     public static int CONTAINS = 6;
 
     public static int INTERSECTS = 7;
-    
+
 }

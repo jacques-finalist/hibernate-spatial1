@@ -8,58 +8,56 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  */
 public class MultiPolygonEntity {
 
-        // Fields
-        private static final long serialVersionUID = 1L;
+    // Fields
+    private static final long serialVersionUID = 1L;
 
-        private long id;
+    private long id;
 
-        private String name;
+    private String name;
 
-        private MultiPolygon geometry;
+    private MultiPolygon geometry;
 
-        // Constructors
+    // Constructors
 
-        /** default constructor */
-        public MultiPolygonEntity() {
-        }
+    /** default constructor */
+    public MultiPolygonEntity() {
+    }
 
-        /** minimal constructor */
-        public MultiPolygonEntity(long id) {
-    	this.id = id;
-        }
+    /** minimal constructor */
+    public MultiPolygonEntity(long id) {
+        this.id = id;
+    }
 
-        /** full constructor */
-        public MultiPolygonEntity(long id, String name, Geometry geom) {
-    	this.id = id;
-    	this.name = name;
-    	this.geometry = (MultiPolygon) geom;
-        }
+    /** full constructor */
+    public MultiPolygonEntity(long id, String name, Geometry geom) {
+        this.id = id;
+        this.name = name;
+        this.geometry = (MultiPolygon) geom;
+    }
 
-        // Property accessors
-        public long getId() {
-    	return this.id;
-        }
+    // Property accessors
+    public long getId() {
+        return this.id;
+    }
 
-        public void setId(long id) {
-    	this.id = id;
-        }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-        public String getName() {
-    	return this.name;
-        }
+    public String getName() {
+        return this.name;
+    }
 
-        public void setName(String name) {
-    	this.name = name;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public Geometry getGeometry() {
-    	return this.geometry;
-        }
+    public Geometry getGeometry() {
+        return this.geometry;
+    }
 
-        public void setGeometry(Geometry geom) {
-    	this.geometry = (MultiPolygon) geom;
-        }
-
-
+    public void setGeometry(Geometry geom) {
+        this.geometry = (MultiPolygon) geom;
+    }
 
 }

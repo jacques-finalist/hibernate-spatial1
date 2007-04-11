@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialDialectProvider.java 81 2007-02-01 18:04:54Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -31,32 +31,45 @@ import com.cadrie.hibernate.spatial.SpatialDialect;
 /**
  * Interface that is implemented by a SpatialDialect Provider.
  * 
- * A <class>SpatialDialectProvider</class> creates a SpatialDialect for one
- * or more database systems. These databases are identified by a dialect string.
- * Usually this is the fully qualified class name of an
+ * A <class>SpatialDialectProvider</class> creates a SpatialDialect for one or
+ * more database systems. These databases are identified by a dialect string.
+ * Usually this is the fully qualified class name of a
  * <code>org.hibernate.dialect.Dialect</code> or <code>SpatialDialect</code>
  * implementation
- * 
- * @author Karel Maesen
  * 
  */
 
 public interface SpatialDialectProvider {
 
     /**
-         * @param dialect
-         *                Name of the persistence unit
-         * @param map
-         *                A map of properties for use by the provider
-         * @return the SpatialDialect provided by the provider implementation
-         */
+     * create Spatial Dialect with the provided name.
+     * 
+     * @param dialect
+     *            Name of the dialect to create.
+     * @param map
+     *            A map of properties for use by the provider when creating the
+     *            dialect.
+     * @return a SpatialDialect
+     */
     public SpatialDialect createSpatialDialect(String dialect, Map map);
 
     /**
-         * @return The Default Dialect provided by the implementation.
-         * 
-         * Implementations should never return null for this method.
-         */
+     * Returns the default dialect for this provider.
+     * 
+     * @return The Default Dialect provided by the implementation.
+     * 
+     * Implementations should never return null for this method.
+     */
     public SpatialDialect getDefaultDialect();
+
+    /**
+     * Returns the Dialect names
+     * 
+     * This method must return the canonical class names of the Spatialdialect
+     * implementations that this provider provides.
+     * 
+     * @return array of dialect names.
+     */
+    public String[] getSupportedDialects();
 
 }

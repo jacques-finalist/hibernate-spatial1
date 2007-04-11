@@ -8,58 +8,56 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class PointEntity {
 
-        // Fields
-        private static final long serialVersionUID = 1L;
+    // Fields
+    private static final long serialVersionUID = 1L;
 
-        private long id;
+    private long id;
 
-        private String name;
+    private String name;
 
-        private Point geometry;
+    private Point geometry;
 
-        // Constructors
+    // Constructors
 
-        /** default constructor */
-        public PointEntity() {
-        }
+    /** default constructor */
+    public PointEntity() {
+    }
 
-        /** minimal constructor */
-        public PointEntity(long id) {
-    	this.id = id;
-        }
+    /** minimal constructor */
+    public PointEntity(long id) {
+        this.id = id;
+    }
 
-        /** full constructor */
-        public PointEntity(long id, String name, Geometry geom) {
-    	this.id = id;
-    	this.name = name;
-    	this.geometry = (Point) geom;
-        }
+    /** full constructor */
+    public PointEntity(long id, String name, Geometry geom) {
+        this.id = id;
+        this.name = name;
+        this.geometry = (Point) geom;
+    }
 
-        // Property accessors
-        public long getId() {
-    	return this.id;
-        }
+    // Property accessors
+    public long getId() {
+        return this.id;
+    }
 
-        public void setId(long id) {
-    	this.id = id;
-        }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-        public String getName() {
-    	return this.name;
-        }
+    public String getName() {
+        return this.name;
+    }
 
-        public void setName(String name) {
-    	this.name = name;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public Geometry getGeometry() {
-    	return this.geometry;
-        }
+    public Geometry getGeometry() {
+        return this.geometry;
+    }
 
-        public void setGeometry(Geometry geom) {
-    	this.geometry = (Point) geom;
-        }
-
-
+    public void setGeometry(Geometry geom) {
+        this.geometry = (Point) geom;
+    }
 
 }

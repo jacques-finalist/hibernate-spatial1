@@ -28,40 +28,39 @@ public class MultiLineStringEntity implements java.io.Serializable {
 
     /** minimal constructor */
     public MultiLineStringEntity(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     /** full constructor */
-    public MultiLineStringEntity(long id, String name,
-	    Geometry geom) {
-	this.id = id;
-	this.name = name;
-	this.geometry = (MultiLineString)geom;
+    public MultiLineStringEntity(long id, String name, Geometry geom) {
+        this.id = id;
+        this.name = name;
+        this.geometry = (MultiLineString) geom;
     }
 
     // Property accessors
     public long getId() {
-	return this.id;
+        return this.id;
     }
 
     public void setId(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getName() {
-	return this.name;
+        return this.name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public Geometry getGeometry() {
-	return this.geometry;
+        return this.geometry;
     }
 
     public void setGeometry(MultiLineString geom) {
-	this.geometry = geom;
+        this.geometry = geom;
     }
 
 }

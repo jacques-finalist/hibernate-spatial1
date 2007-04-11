@@ -1,5 +1,5 @@
 /**
- * $Id: SpatialRelateExpression.java 80 2007-02-01 18:04:02Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -45,78 +45,79 @@ import com.vividsolutions.jts.geom.Geometry;
 public class SpatialRelateExpression implements Criterion {
 
     /**
-         * The geometry property
-         */
+     * The geometry property
+     */
     private String propertyName = null;
 
     /**
-         * The test geometry
-         */
+     * The test geometry
+     */
     private Geometry value = null;
 
     /**
-         * An optional (bounding box) filter geometry.
-         */
+     * An optional (bounding box) filter geometry.
+     */
     private Geometry filter = null;
 
     /**
-         * The spatial relation that is queried for.
-         */
+     * The spatial relation that is queried for.
+     */
     private int spatialRelation = -1;
 
     private static final long serialVersionUID = 1L;
 
     public SpatialRelateExpression(String propertyName, Geometry filter,
-	    Geometry value, int spatialRelation) {
-	this.propertyName = propertyName;
-	this.spatialRelation = spatialRelation;
-	this.filter = filter;
-	this.value = value;
+            Geometry value, int spatialRelation) {
+        this.propertyName = propertyName;
+        this.spatialRelation = spatialRelation;
+        this.filter = filter;
+        this.value = value;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.criterion.Criterion#getTypedValues(org.hibernate.Criteria,
-         *      org.hibernate.criterion.CriteriaQuery)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.criterion.Criterion#getTypedValues(org.hibernate.Criteria,
+     *      org.hibernate.criterion.CriteriaQuery)
+     */
     public TypedValue[] getTypedValues(Criteria criteria,
-	    CriteriaQuery criteriaQuery) throws HibernateException {
-	if (filter != null)
-	    return new TypedValue[] {
-		    criteriaQuery.getTypedValue(criteria, propertyName, filter),
-		    criteriaQuery.getTypedValue(criteria, propertyName, value) };
-	else
-	    return new TypedValue[] { criteriaQuery.getTypedValue(criteria,
-		    propertyName, value) };
+            CriteriaQuery criteriaQuery) throws HibernateException {
+        if (filter != null)
+            return new TypedValue[] {
+                    criteriaQuery
+                            .getTypedValue(criteria, propertyName, filter),
+                    criteriaQuery.getTypedValue(criteria, propertyName, value) };
+        else
+            return new TypedValue[] { criteriaQuery.getTypedValue(criteria,
+                    propertyName, value) };
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see org.hibernate.criterion.Criterion#toSqlString(org.hibernate.Criteria,
-         *      org.hibernate.criterion.CriteriaQuery)
-         */
+     * (non-Javadoc)
+     * 
+     * @see org.hibernate.criterion.Criterion#toSqlString(org.hibernate.Criteria,
+     *      org.hibernate.criterion.CriteriaQuery)
+     */
     public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery)
-	    throws HibernateException {
-	SessionFactoryImplementor factory = criteriaQuery.getFactory();
-	String[] columns = criteriaQuery.getColumnsUsingProjection(criteria,
-		this.propertyName);
-	Dialect dialect = factory.getDialect();
-	if (dialect instanceof SpatialDialect) {
-	    SpatialDialect seDialect = (SpatialDialect) dialect;
-	    if (filter != null) {
-		return seDialect.getSpatialRelateSQL(columns[0],
-			spatialRelation, true);
-	    } else {
-		return seDialect.getSpatialRelateSQL(columns[0],
-			spatialRelation, false);
-	    }
+            throws HibernateException {
+        SessionFactoryImplementor factory = criteriaQuery.getFactory();
+        String[] columns = criteriaQuery.getColumnsUsingProjection(criteria,
+                this.propertyName);
+        Dialect dialect = factory.getDialect();
+        if (dialect instanceof SpatialDialect) {
+            SpatialDialect seDialect = (SpatialDialect) dialect;
+            if (filter != null) {
+                return seDialect.getSpatialRelateSQL(columns[0],
+                        spatialRelation, true);
+            } else {
+                return seDialect.getSpatialRelateSQL(columns[0],
+                        spatialRelation, false);
+            }
 
-	} else {
-	    throw new IllegalStateException(
-		    "Dialect must be spatially enabled dialect");
-	}
+        } else {
+            throw new IllegalStateException(
+                    "Dialect must be spatially enabled dialect");
+        }
     }
 
 }
