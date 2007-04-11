@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="MAJAS Hibernate Spatial Extension">
+  
+  <bannerLeft>
+    <name>MAJAS Hibernate Spatial</name>
+    <href>http://www.cadrie.com/projects/majas-hibernate</href>
+  </bannerLeft>
+  
+  <bannerRight>
+    <name>Cadrie</name>
+    <src>http://www.cadrie.com/</src>    
+  </bannerRight>
+  
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-default-skin</artifactId>
+  </skin>
+
+  <publishDate format="yyyy MMM dd" />
+  
+  <body>
+  
+  	<menu name="Overview" inherit="top">
+      <item name="Introduction" href="hibernate-spatial-oracle/introduction.html"/>
+      <item name="Usage" href="hibernate-spatial-oracle/usage.html"/>
+    </menu>
+
+    
+  </body>
+</project>

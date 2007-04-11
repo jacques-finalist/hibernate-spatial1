@@ -10,33 +10,33 @@ import com.cadrie.hibernate.spatial.test.TestCRUD;
 
 public class TestOracleCRUD {
 
-    private final static TestCRUD delegate;
+	private final static TestCRUD delegate;
 
-    static {
-	delegate = new TestCRUD();
-    }
+	static {
+		delegate = new TestCRUD();
+	}
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-	delegate.setUpBeforeClass();
-    }
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		delegate.setUpBeforeClass();
+	}
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-	delegate.tearDownAfterClass();
-    }
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		delegate.tearDownAfterClass();
+	}
 
-    @Test
-    public void testSaveLineStringEntity() throws Exception {
-	delegate.testSaveLineStringEntity();
-    }
+	@Test
+	public void testSaveLineStringEntity() throws Exception {
+		delegate.testSaveLineStringEntity();
+	}
 
-    @Test
-    public void testSaveNullLineStringEntity() throws Exception {
-	delegate.testSaveNullLineStringEntity();
-    }
+	@Test
+	public void testSaveNullLineStringEntity() throws Exception {
+		delegate.testSaveNullLineStringEntity();
+	}
 
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(TestOracleCRUD.class);
-    }
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(TestOracleCRUD.class);
+	}
 }
