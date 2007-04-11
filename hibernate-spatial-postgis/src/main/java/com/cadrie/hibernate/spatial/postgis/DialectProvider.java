@@ -1,5 +1,5 @@
 /**
- * $Id: DialectProvider.java 138 2007-03-13 18:13:06Z maesenka $
+ * $Id$
  *
  * This file is part of MAJAS (Mapping with Asynchronous JavaScript and ASVG). a
  * framework for Rich Internet GIS Applications.
@@ -35,28 +35,36 @@ import com.cadrie.hibernate.spatial.spi.SpatialDialectProvider;
 public class DialectProvider implements SpatialDialectProvider {
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see com.cadrie.hibernate.spatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
-         *      java.util.Map)
-         */
+     * (non-Javadoc)
+     * 
+     * @see com.cadrie.hibernate.spatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
+     *      java.util.Map)
+     */
     public SpatialDialect createSpatialDialect(String dialect, Map map) {
-	if (dialect
-		.equals("com.cadrie.hibernate.spatial.postgis.PostgisDialect")
-		|| dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
-		|| dialect.equals("postgis"))
-	    return new PostgisDialect();
-	else
-	    return null;
+        if (dialect.equals(PostgisDialect.class.getCanonicalName())
+                || dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
+                || dialect.equals("postgis"))
+            return new PostgisDialect();
+        else
+            return null;
     }
 
     /*
-         * (non-Javadoc)
-         * 
-         * @see com.cadrie.hibernate.spatial.spi.SpatialDialectProvider#getDefaultDialect()
-         */
+     * (non-Javadoc)
+     * 
+     * @see com.cadrie.hibernate.spatial.spi.SpatialDialectProvider#getDefaultDialect()
+     */
     public SpatialDialect getDefaultDialect() {
-	return new PostgisDialect();
+        return new PostgisDialect();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.cadrie.hibernate.spatial.spi.SpatialDialectProvider#getSupportedDialects()
+     */
+    public String[] getSupportedDialects() {
+        return new String[] { PostgisDialect.class.getCanonicalName() };
     }
 
 }

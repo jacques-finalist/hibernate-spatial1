@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<header>
+</header>
+	<body>
+		<section name="What is Hibernate Spatial Extension">
+		<p>The Hibernate Spatial Extension is an extension on <a href="http://www.hibernate.org">Hibernate</a>, a popular ORM solution. It adds to Hibernate the capability to deal transparently with greographic data.  
+      </p>
+      	</section>
+  </body>
+</document>

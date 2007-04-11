@@ -13,32 +13,31 @@ public class TestPostgisCRUD {
     private final static TestCRUD delegate;
 
     static {
-	delegate = new TestCRUD();
+        delegate = new TestCRUD();
     }
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-	delegate.setUpBeforeClass();
+        delegate.setUpBeforeClass();
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-	delegate.tearDownAfterClass();
+        delegate.tearDownAfterClass();
     }
 
     @Test
     public void testSaveLineStringEntity() throws Exception {
-	delegate.testSaveLineStringEntity();
+        delegate.testSaveLineStringEntity();
     }
-    
+
     @Test
     public void testSaveNullLineStringEntity() throws Exception {
-	delegate.testSaveNullLineStringEntity();
+        delegate.testSaveNullLineStringEntity();
     }
 
     public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(TestPostgisCRUD.class);
+        return new JUnit4TestAdapter(TestPostgisCRUD.class);
     }
-    
-    
+
 }
