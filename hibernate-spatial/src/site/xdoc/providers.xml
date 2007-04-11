@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<header>
+</header>
+	<body>
+		<section name="Spatial Dialect Providers">
+		<p>
+		Hibernate Spatial requires Spatial Dialect Providers to supply the database specific support for geographic data. 
+		Currently providers exist for Postgresql (PostGis spatial Extension) and for Oracle 10g (Standard Locator).
+      	</p>
+      	<p>
+      	If you use only one database in you application, you just need to put the appropriate spatial dialect provider
+      	in your classpath. The Hibernate Spatial Extension will pick it up, and since it is the only provider in the classpath, use 
+      	the dialect it provides as the spatial dialect
+      	</p>
+      	</section>
+  </body>
+</document>

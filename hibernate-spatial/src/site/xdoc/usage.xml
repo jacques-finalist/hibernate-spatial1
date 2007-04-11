@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<header>
+</header>
+	<body>
+		<section name="Installing Hibernate Spatial">
+		<p>
+		You need will need to have the following libraries in your classpath:
+		hibernate (plus its dependencies), a JDBC driver for you database, 
+		hibernate-spatial.jar and the appropriate spatial dialect provider for your database, and finally
+		the java topology suit (jts.jar) from vividsolutions. 
+		Depending on the database that you use, you might also need some helper libraries for
+		that provide geographic data support for the JDBC driver. Consult the dialect provider 
+		documentation for more information about this.
+	  	</p>
+	  	<p>Hibernate-spatial.jar provides the generic extension mechanism for working 
+	  	with geographic data; the dialect providers contribute the database-specific 
+	  	parts. 			  	
+	  	</p>
+	  	<p>
+	  	Geographic objects (or features) are characterized by having a geometry attribute: an attribute that describes the 
+	  	location and geometry of the object by means of a set of coordinates. Hibernate Spatial 
+	  	uses the Geometry package of the <a href="http://www.vividsolutions.com/jts/jtshome.htm">Java Topology Suite</a>
+	  	to represent the geometries in Java.
+	  	</p>
+	  	</section>
+	  	<section name="Configuring a spatial dialect">
+	  	<p>
+	  	If you want to use the geographic data support, you will need to configure Hibernate
+	  	with the appropriate Spatial Dialect. For example, to use the postgis spatial data support
+	  	in Postgresql, you need to add the following line in your hibernate.cfg.xml.
+	  	</p>
+	  	<source>
+	  	...
+		&lt;property name="hibernate.dialect"&gt;com.cadrie.hibernate.spatial.postgis.PostgisDialect&lt;/property&gt;
+		...
+	  	</source>
+	  	<p>
+	  	The property value is here the class name of the dialect that extends the Hibernate Postgresql dialect to include support
+	  	for spatial data.
+		</p>
+		</section>
+		<section name="Mapping Geometries">	
+		<p>
+		Geographic objects can now be represented in Java by means of POJO's that have a Geometry-valued property. 
+		Since we use the Java Topology Suite to represent geometries, this looks like:		
+		</p>
+		<source>
+		import com.vividsolutions.jts.geom.Geometry;
+		...
+		public Class SomeGeographicClass {
+		...
+			private Geometry geometry;
+		...
+			public Geometry getGeometry(){
+				return this.geom;
+			}
+			
+			public void setGeometry(Geometry geometry){
+				this.geometry = geometry;
+			}
+		...
+		}
+		</source>
+		<p>
+		The geometry property can be mapped by Hibernate by means of the special type com.cadrie.hibernate.spatial.GeometryUserType, like this
+		</p>
+		<source>
+		...
+		&lt;property name="geometry" type="com.cadrie.hibernate.spatial.GeometryUserType"&gt;
+				&lt;column name="geom" /&gt;
+		&lt;/property&gt;
+		...
+		</source>
+		<p>
+		Working with geographic data (geometry-valued properties) is now exactly the same as working with any other Hibernate-supported type.
+		</p>
+	  	</section>
+  </body>
+</document>
