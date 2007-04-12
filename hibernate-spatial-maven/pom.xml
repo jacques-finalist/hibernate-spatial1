@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cadrie.hibernate</groupId>
 	<artifactId>majas-hibernate</artifactId>
-	<version>0.9</version>
+	<version>1.0-SNAPSHOT</version>
 	<name>Hibernate Spatial Extension</name>
 	<description>
 		This is the Maven parent project for all Hibernate Spatial
@@ -23,6 +23,14 @@
 	</modules>
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
 			<!--  We skip the unit tests when building and packaging because it
 				it requires specific test set-up.  
 			-->
