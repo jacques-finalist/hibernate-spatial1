@@ -25,7 +25,7 @@
  *
  * For more information, visit: http://www.cadrie.com/
  */
- 
+
 package com.cadrie.hibernate.spatial;
 
 import java.io.IOException;
@@ -60,7 +60,8 @@ public class HBSpatialExtension {
 
     protected static Set<SpatialDialectProvider> providers = new HashSet<SpatialDialectProvider>();
 
-    private static final Log log = LogFactory.getLog(HBSpatialExtension.class);
+    private static final Log log = LogFactory
+            .getLog(HBSpatialExtension.class);
 
     private static SpatialDialect defaultSpatialDialect = null;
 
@@ -116,8 +117,8 @@ public class HBSpatialExtension {
             search: for (SpatialDialectProvider provider : providers) {
                 for (String dialect : provider.getSupportedDialects()) {
                     if (dialect.equals(dialectProp)) {
-                        defaultSpatialDialect = provider.createSpatialDialect(
-                                dialectProp, null);
+                        defaultSpatialDialect = provider
+                                .createSpatialDialect(dialectProp, null);
                         found = true;
                         break search;
                     }
@@ -130,9 +131,12 @@ public class HBSpatialExtension {
                                 + " configured as sytem property, but dialect not found");
         }
 
-        log.info("Hibernate Spatial configured. Using dialect: "
-                + defaultSpatialDialect.getClass().getCanonicalName());
-
+        if (defaultSpatialDialect == null) {
+            log.warn("Hibernate Spatial Configured but no spatial dialect");
+        } else {
+            log.info("Hibernate Spatial configured. Using dialect: "
+                    + defaultSpatialDialect.getClass().getCanonicalName());
+        }
     }
 
     /**

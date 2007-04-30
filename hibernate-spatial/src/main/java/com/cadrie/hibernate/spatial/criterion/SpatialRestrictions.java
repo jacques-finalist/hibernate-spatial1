@@ -25,10 +25,11 @@
  *
  * For more information, visit: http://www.cadrie.com/
  */
- 
+
 package com.cadrie.hibernate.spatial.criterion;
 
 import com.cadrie.hibernate.spatial.SpatialRelation;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -102,6 +103,11 @@ public class SpatialRestrictions {
 
     public static SpatialFilter filter(String propertyName, Geometry filter) {
         return new SpatialFilter(propertyName, filter);
+    }
+
+    public static SpatialFilter filter(String propertyName,
+            Envelope envelope, int SRID) {
+        return new SpatialFilter(propertyName, envelope, SRID);
     }
 
 }

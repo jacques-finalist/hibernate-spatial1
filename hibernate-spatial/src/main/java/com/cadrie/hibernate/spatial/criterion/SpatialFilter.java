@@ -25,7 +25,7 @@
  *
  * For more information, visit: http://www.cadrie.com/
  */
- 
+
 package com.cadrie.hibernate.spatial.criterion;
 
 import org.hibernate.Criteria;
@@ -37,6 +37,8 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.TypedValue;
 
 import com.cadrie.hibernate.spatial.SpatialDialect;
+import com.cadrie.hibernate.spatial.helper.EnvelopeAdapter;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -57,6 +59,12 @@ public class SpatialFilter implements Criterion {
     public SpatialFilter(String propertyName, Geometry filter) {
         this.propertyName = propertyName;
         this.filter = filter;
+    }
+
+    public SpatialFilter(String propertyName, Envelope envelope, int SRID) {
+        this.propertyName = propertyName;
+        this.filter = EnvelopeAdapter.toPolygon(envelope, SRID);
+
     }
 
     public TypedValue[] getTypedValues(Criteria criteria,
