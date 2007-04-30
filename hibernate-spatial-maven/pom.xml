@@ -141,6 +141,24 @@
 				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/majas-hibernate/
 			</url>
 		</site>
+
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>cadrie</id>
+			<name>CaDriE repository</name>
+			<url>
+				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/repository/
+			</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>cadrie</id>
+			<name>CaDriE repository</name>
+			<url>
+				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/repository/
+			</url>
+		</snapshotRepository>
+
 	</distributionManagement>
 	<developers>
 		<developer>
@@ -169,5 +187,6 @@
 			</roles>
 		</developer>
 	</developers>
+
 
 </project>
