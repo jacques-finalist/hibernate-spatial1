@@ -21,11 +21,13 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial/introduction.html"/>
+      <item name="Introduction" href="hibernate-spatial/index.html"/>
       <item name="Usage" href="hibernate-spatial/usage.html"/>
     </menu>
+    <menu name="Downloads" inherit="top">
+    	<item name="Releases" href="hibernate-spatial/download.html"/>
+    </menu>
 	<menu name="Documentation" inherit="top">
-      <item name="How it works" href="hibernate-spatial/how-it-works.hmt"/>
       <item name="Configuring providers" href="hibernate-spatial/providers.html"/> 
       <item name="JavaDocs" href="hibernate-spatial/apidocs/index.html"/>     
     </menu>

@@ -4,9 +4,9 @@
 <header>
 </header>
 	<body>
-		<section name="Spatial Dialect Providers">
+		<section name="TODO">
 		<p>
-		Hibernate Spatial requires Spatial Dialect Providers to supply the database specific support for geographic data. Currently providers exist for Postgresql (PostGis spatial Extension) and for Oracle 10g (Standard Locator).
+			
       </p>
       	</section>
   </body>
