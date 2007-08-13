@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.cadrie.hibernate</groupId>
-		<artifactId>majas-hibernate</artifactId>
+		<artifactId>hibernate-spatial-maven</artifactId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../hibernate-spatial-maven</relativePath>
 	</parent>
@@ -15,18 +15,6 @@
 	<description>
 		Oracle 10g dialact provider for Hibernate Spatial
 	</description>
-
-<!-- 
-	<distributionManagement>
-		<site>
-			<id>MAJAS Hibernate Spatial site</id>
-			<name>Hibernate Spatial</name>
-			<url>
-				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/majas-hibernate/hibernate-spatial-oracle
-			</url>
-		</site>
-	</distributionManagement>
- -->
  
 	<dependencies>
 		<dependency>
