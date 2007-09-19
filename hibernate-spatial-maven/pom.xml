@@ -2,7 +2,7 @@
 <!--  $Id$ -->
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.cadrie.hibernate</groupId>
+	<groupId>org.hibernatespatial</groupId>
 	<artifactId>hibernate-spatial-maven</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Hibernate Spatial Extension</name>
@@ -14,7 +14,7 @@
 		data support. For more information on how to use Spatial
 		Hibernate, go to the Hibernate Spatial site.
 	</description>
-	<url>http://www.cadrie.com/projects/majas-hibernate/</url>
+	<url>http://www.hibernatespatial.org/maven</url>
 	<packaging>pom</packaging>
 	<modules>
 		<module>../hibernate-spatial</module>
@@ -54,30 +54,59 @@
 	</build>
 	<scm>
 		<connection>
-			scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+			scm:svn:http://www.hibernatespatial.org/svn/trunk/hibernate-spatial-maven
 		</connection>
 		<developerConnection>
-			scm:svn:https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+			scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
 		</developerConnection>
 		<url>
-			https://www.cadrie.com/svn/majas/trunk/hibernate-spatial-maven
+			https://www.hibernatespatial.org/svn/trunk/hibernate-spatial-maven
 		</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
-			<name>MAJAS-dev</name>
+			<name>hibernatespatial-dev</name>
 			<subscribe>
-				http://www.cadrie.com/mailman/listinfo/majas-dev
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
 			</subscribe>
 			<unsubscribe>
-				http://www.cadrie.com/mailman/listinfo/majas-dev
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
 			</unsubscribe>
 
 			<archive>
-				http://www.cadrie.com/pipermail/majas-dev/
+				http://www.hibernatespatial.org/pipermail/hibernatespatial-dev/
+			</archive>
+		</mailingList>
+		
+		<mailingList>
+			<name>hibernatespatial-users</name>
+			<subscribe>
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
+			</subscribe>
+			<unsubscribe>
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
+			</unsubscribe>
+
+			<archive>
+				http://www.hibernatespatial.org/pipermail/hibernatespatial-users/
+			</archive>
+		</mailingList>
+		
+		<mailingList>
+			<name>hibernatespatial-announce</name>
+			<subscribe>
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
+			</subscribe>
+			<unsubscribe>
+				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
+			</unsubscribe>
+
+			<archive>
+				http://www.hibernatespatial.org/pipermail/hibernatespatial-announce
 			</archive>
 		</mailingList>
 	</mailingLists>
+		
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
@@ -86,8 +115,8 @@
 		</license>
 	</licenses>
 	<organization>
-		<name>Caffeine-Driven Enterprises</name>
-		<url>http://www.cadrie.com</url>
+		<name>hibernatespatial.org</name>
+		<url>http://www.hibernatespatial.org/</url>
 	</organization>
 	<dependencies>
 		<dependency>
@@ -138,7 +167,7 @@
 			<id>MAJAS Hibernate Spatial site</id>
 			<name>Hibernate Spatial</name>
 			<url>
-				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/projects/hibernate-spatial/
+				scp://www.hibernatespatial.org/var/www/www.hibernatespatial.org/
 			</url>
 		</site>
 
@@ -164,26 +193,26 @@
 		<developer>
 			<id>maesenka</id>
 			<name>Karel Maesen</name>
-			<email>karel.maesen@cadrie.com</email>
+			<email>karel@geovise.com</email>
 			<roles>
-				<role>Architect</role>
-				<role>Lead Developer</role>
+				<role>Project Lead</role>
+				<role>Committer</role>
 			</roles>
 		</developer>
 		<developer>
 			<id>jandm</id>
 			<name>Jan De Moerlose</name>
-			<email>jan.demoerlose@cadrie.com</email>
+			<email>janDM@dfc.be</email>
 			<roles>
-				<role>Developer</role>
+				<role>Contributor</role>
 			</roles>
 		</developer>
 		<developer>
 			<id>pieterdg</id>
 			<name>Pieter De Graef</name>
-			<email>pieter.degraef@cadrie.com</email>
+			<email>pieter@dfc.be</email>
 			<roles>
-				<role>Developer</role>
+				<role>Contributor</role>
 			</roles>
 		</developer>
 	</developers>
