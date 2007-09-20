@@ -5,7 +5,7 @@
 	<groupId>org.hibernatespatial</groupId>
 	<artifactId>hibernate-spatial-maven</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>Hibernate Spatial Extension</name>
+	<name>Hibernate Spatial</name>
 	<description>
 		This is the Maven parent project for all Hibernate Spatial
 		Extension Modules. The main module is Hibernate Spatial, which
@@ -54,16 +54,15 @@
 	</build>
 	<scm>
 		<connection>
-			scm:svn:http://www.hibernatespatial.org/svn/trunk/hibernate-spatial-maven
+			scm:svn:http://www.hibernatespatial.org/svn/hibernate-spatial/trunk/hibernate-spatial-maven
 		</connection>
 		<developerConnection>
 			scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
 		</developerConnection>
-		<url>
-			https://www.hibernatespatial.org/svn/trunk/hibernate-spatial-maven
-		</url>
+		<url>http://www.hibernatespatial.org/websvn/</url>
 	</scm>
 	<mailingLists>
+
 		<mailingList>
 			<name>hibernatespatial-dev</name>
 			<subscribe>
@@ -72,12 +71,11 @@
 			<unsubscribe>
 				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
 			</unsubscribe>
-
 			<archive>
 				http://www.hibernatespatial.org/pipermail/hibernatespatial-dev/
 			</archive>
 		</mailingList>
-		
+
 		<mailingList>
 			<name>hibernatespatial-users</name>
 			<subscribe>
@@ -91,7 +89,7 @@
 				http://www.hibernatespatial.org/pipermail/hibernatespatial-users/
 			</archive>
 		</mailingList>
-		
+
 		<mailingList>
 			<name>hibernatespatial-announce</name>
 			<subscribe>
@@ -106,7 +104,7 @@
 			</archive>
 		</mailingList>
 	</mailingLists>
-		
+
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
@@ -164,7 +162,7 @@
 
 	<distributionManagement>
 		<site>
-			<id>MAJAS Hibernate Spatial site</id>
+			<id>Hibernate Spatial site</id>
 			<name>Hibernate Spatial</name>
 			<url>
 				scp://www.hibernatespatial.org/var/www/www.hibernatespatial.org/
@@ -173,18 +171,18 @@
 
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
-			<id>cadrie</id>
-			<name>CaDriE repository</name>
+			<id>hibernatespatial</id>
+			<name>Hibernate Spatial Maven Repo</name>
 			<url>
-				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/repository/
+				scp://www.hibernatespatial.org/var/maven/repository/
 			</url>
 		</repository>
-		<!-- use the following if you ARE using a snapshot version. -->
+		<!-- use the following if you are using a snapshot version. -->
 		<snapshotRepository>
-			<id>cadrie</id>
-			<name>CaDriE repository</name>
+			<id>hibernatespatial</id>
+			<name>Hibernate Spatial Maven Repo</name>
 			<url>
-				scp://www.cadrie.com/var/www/www.cadrie.com/htdocs/repository/
+				scp://www.hibernatespatial.org/var/maven/repository/
 			</url>
 		</snapshotRepository>
 

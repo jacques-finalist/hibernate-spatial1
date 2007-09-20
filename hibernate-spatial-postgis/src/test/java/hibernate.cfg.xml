@@ -8,7 +8,7 @@
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/test</property>
         <property name="hibernate.connection.username">postgres</property>
        
-        <property name="hibernate.dialect">com.cadrie.hibernate.spatial.postgis.PostgisDialect</property>
+        <property name="hibernate.dialect">org.hibernatespatial.postgis.PostgisDialect</property>
         
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">1</property>

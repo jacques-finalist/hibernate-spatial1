@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="MAJAS Hibernate Spatial Extension">
+<project name="Hibernate Spatial">
   
   <bannerLeft>
-    <name>MAJAS Hibernate Spatial</name>
+    <name>Hibernate Spatial</name>
     <href>http://www.cadrie.com/projects/majas-hibernate</href>
   </bannerLeft>
   
@@ -21,7 +21,7 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial-oracle/introduction.html"/>
+      <item name="Introduction" href="hibernate-spatial-oracle/index.html"/>
       <item name="Usage" href="hibernate-spatial-oracle/usage.html"/>
     </menu>
 

@@ -33,7 +33,7 @@
 	  	</p>
 	  	<source>
 	  	...
-		&lt;property name="hibernate.dialect"&gt;com.cadrie.hibernate.spatial.postgis.PostgisDialect&lt;/property&gt;
+		&lt;property name="hibernate.dialect"&gt;org.hibernatespatial.postgis.PostgisDialect&lt;/property&gt;
 		...
 	  	</source>
 	  	<p>
@@ -64,11 +64,11 @@
 		}
 		</source>
 		<p>
-		The geometry property can be mapped by Hibernate by means of the special type com.cadrie.hibernate.spatial.GeometryUserType, like this
+		The geometry property can be mapped by Hibernate by means of the special type org.hibernatespatial.GeometryUserType, like this
 		</p>
 		<source>
 		...
-		&lt;property name="geometry" type="com.cadrie.hibernate.spatial.GeometryUserType"&gt;
+		&lt;property name="geometry" type="org.hibernatespatial.GeometryUserType"&gt;
 				&lt;column name="geom" /&gt;
 		&lt;/property&gt;
 		...

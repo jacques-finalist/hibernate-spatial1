@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+<header>
+</header>
+
+	<body>
+		<section name="Hibernate Spatial Oracle Provider Usage">
+		<p>To have Hibernate Spatial use this provider, simply drop the jar on the class-path alongside the hibernate-spatial.jar. When
+		the Hibernate Spatial library is loaded it will find the provider and use it to retrieve the Hibernate dialect for Oracle Spatial. 
+		This dialect is a subclass of <code>org.hibernate.dialect.Oracle9Dialect</code></p>
+		<p>With the provider installed, you can use it by setting the dialect in the Hibernate configuration file as in the following snippet.</p>
+		<source>
+	  	...
+		&lt;property name="hibernate.dialect"&gt;
+			org.hibernatespatial.oracle.OracleSpatial10gDialect
+		&lt;/property&gt;
+		...
+	  	</source>
+		
+		<p>When there is more than one Hibernate Spatial provider on the Class-Path, you should explicitly label the dialect for
+		the Geometry valued properties. </p>
+		<source>
+		...
+		&lt;property name="geometry" type="org.hibernatespatial.GeometryUserType"&gt;
+				&lt;column name="geom" /&gt;
+				&lt;param name="dialect"&gt;oracle&lt;/param&gt;
+		&lt;/property&gt;
+		...
+		</source>
+      	<p>This provider can be configured to run in either OGC strict or non-strict mode. In OGC strict mode, the Open Geospatial compliant functions of Oracle Spatial 
+      	are used in spatial operations. In non-strict mode the usual Oracle Spatial functions are used directly, and mimic the OGC semantics. <em>The default is OGC strict mode</em>.
+      	You can change this to non-strict mode by creating a properties file with the name <code>org.hibernatespatial.oracle.OracleSpatial10gDialect.java</code> that contains the line:</p>
+      	<source>
+      	OGC_STRICT = false
+      	</source>
+        <p>Note that changing from strict to non-strict mode changes the semantics of the spatial operation. We have attempted to implement the OGC semantics as well we could using the
+        standard Oracle Spatial operators, but this was not possible in all cases.</p>
+      	</section>
+      	
+  </body>
+</document>

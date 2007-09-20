@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="MAJAS Hibernate Spatial Extension">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Hibernate Spatial">
   
   <bannerLeft>
-    <name>MAJAS Hibernate Spatial</name>
-    <href>http://www.cadrie.com/projects/majas-hibernate/hibernate-spatial</href>
+    <name>Hibernate Spatial</name>
+    <href>http://www.hibernatespatial.org/</href>
   </bannerLeft>
   
   <bannerRight>
-    <name>Cadrie</name>
-    <src>http://www.cadrie.com/</src>    
+    <name>GEOVISE</name>
+    <src>http://www.geovise.com/</src>    
   </bannerRight>
   
   <skin>

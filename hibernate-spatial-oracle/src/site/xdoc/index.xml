@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+	<header />
+
+	<body>
+		<section name="The Hibernate Spatial Oracle Provider">
+			<p>
+				The Oracle Provider adds support for Oracle Spatial to
+				Hibernate Spatial. It has been tested with Oracle 10i,
+				but it should work equally well with Oracle 9i and
+				Oracle 11g.
+			</p>
+			<p>
+				The Provider makes use of the proprietary Oracle SDO
+				Java API.
+			</p>
+		</section>
+	</body>
+</document>

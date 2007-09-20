@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">spatialtest</property>
         <property name="hibernate.connection.password">spatialtest</property>
        
-        <property name="hibernate.dialect">com.cadrie.hibernate.spatial.oracle.OracleSpatial10gDialect</property>
+        <property name="hibernate.dialect">org.hibernatespatial.oracle.OracleSpatial10gDialect</property>
         
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">1</property>

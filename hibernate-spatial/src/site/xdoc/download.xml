@@ -15,6 +15,22 @@
 					</tr>
 					<tr>
 						<td>1.0-SNAPSHOT</td>
+						<td>2007-09-20</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0-SNAPSHOT/hibernate-spatial-1.0-20070920.111959-1.jar">
+								hibernate-spatial-1.0-20070920.111959-1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0-SNAPSHOT/hibernate-spatial-1.0-20070920.111959-1.jar.md5">
+								hibernate-spatial-1.0-20070920.111959-1.jar.md5
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td>1.0-SNAPSHOT</td>
 						<td>2007-06-02</td>
 						<td>
 							<a
@@ -31,8 +47,8 @@
 					</tr>
 				</table>
 			</subsection>
-		   
-		   <subsection name="Oracle Spatial Provider">
+
+			<subsection name="Oracle Spatial Provider">
 				<table>
 					<tr>
 						<th>Release</th>
@@ -40,6 +56,23 @@
 						<th>File name</th>
 						<th>MD5 checksum</th>
 					</tr>
+					<tr>
+						<td>1.0-SNAPSHOT</td>
+						<td>2007-09-20</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0-SNAPSHOT/hibernate-spatial-oracle-1.0-20070920.111959-1.jar">
+								hibernate-spatial-oracle-1.0-20070920.111959-1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0-SNAPSHOT/hibernate-spatial-oracle-1.0-20070920.111959-1.jar.md5">
+								hibernate-spatial-oracle-1.0-20070920.111959-1.jar.md5
+							</a>
+						</td>
+					</tr>					
+					
 					<tr>
 						<td>1.0-SNAPSHOT</td>
 						<td>2007-06-02</td>
@@ -58,7 +91,7 @@
 					</tr>
 				</table>
 			</subsection>
-			
+
 			<subsection name="Hibernate Postgis Provider">
 				<table>
 					<tr>
@@ -66,6 +99,22 @@
 						<th>Date</th>
 						<th>File name</th>
 						<th>MD5 checksum</th>
+					</tr>
+					<tr>
+						<td>1.0-SNAPSHOT</td>
+						<td>2007-09-20</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0-SNAPSHOT/hibernate-spatial-postgis-1.0-20070920.111959-1.jar">
+								hibernate-spatial-postgis-1.0-20070920.111959-1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0-SNAPSHOT/hibernate-spatial-postgis-1.0-20070920.111959-1.jar.md5">
+								hibernate-spatial-postgis-1.0-20070920.111959-1.jar.md5
+							</a>
+						</td>
 					</tr>
 					<tr>
 						<td>1.0-SNAPSHOT</td>
