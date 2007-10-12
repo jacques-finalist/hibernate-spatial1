@@ -26,7 +26,6 @@ package org.hibernatespatial.mgeom;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 public class EventLocator {
@@ -34,42 +33,27 @@ public class EventLocator {
 	/**
 	 * 
 	 * @return a Point Geometry as a point geometry
+	 * @throws MGeometryException
 	 */
-	public static Geometry getPointGeometry(MGeometry lrs, double position) {
-		try {
-			Coordinate c = lrs.getCoordinateAtM(position);
-			CoordinateSequence cs = lrs.getFactory()
-					.getCoordinateSequenceFactory().create(
-							new Coordinate[] { c });
-			return new Point(cs, lrs.getFactory());
-		} catch (MGeometryException e) {
-			if (e.getType() == MGeometryException.OPERATION_REQUIRES_MONOTONE) {
-				throw new RuntimeException("Route unexpectedly non-monotone");
-			} else {
-				throw new RuntimeException(
-						"Unexpected error when determining Geometry");
-			}
-		}
+	public static Point getPointGeometry(MGeometry lrs, double position)
+			throws MGeometryException {
+		Coordinate c = lrs.getCoordinateAtM(position);
+		CoordinateSequence cs = lrs.getFactory().getCoordinateSequenceFactory()
+				.create(new Coordinate[] { c });
+		return new Point(cs, lrs.getFactory());
 	}
 
-	public static Geometry getGeometry(MGeometry lrs, double begin, double end) {
-		try {
-			MGeometryFactory factory = (MGeometryFactory) lrs.getFactory();
-			CoordinateSequence[] cs = lrs.getCoordinatesBetween(begin, end);
-			MLineString[] mlar = new MLineString[cs.length];
-			for (int i = 0; i < cs.length; i++) {
-				MLineString ml = factory.createMLineString(cs[i]);
-				mlar[i] = ml;
-			}
-			return factory.createMultiMLineString(mlar);
-		} catch (MGeometryException e) {
-			if (e.getType() == MGeometryException.OPERATION_REQUIRES_MONOTONE) {
-				throw new RuntimeException("Route unexpectedly non-monotone");
-			} else {
-				throw new RuntimeException(
-						"Unexpected error when determining Geometry");
-			}
+	public static MultiMLineString getLinearGeometry(MGeometry lrs,
+			double begin, double end) throws MGeometryException {
+
+		MGeometryFactory factory = (MGeometryFactory) lrs.getFactory();
+		CoordinateSequence[] cs = lrs.getCoordinatesBetween(begin, end);
+		MLineString[] mlar = new MLineString[cs.length];
+		for (int i = 0; i < cs.length; i++) {
+			MLineString ml = factory.createMLineString(cs[i]);
+			mlar[i] = ml;
 		}
+		return factory.createMultiMLineString(mlar);
 	}
 
 }
