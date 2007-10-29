@@ -32,8 +32,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * (x,y,z) are coordinates in a 3 dimensional space (cartesian for example), and
  * the fourth is a measure value used for linear referencing. Note that the
  * measure value is independent of whether the (x,y,z) values are used. For
- * example, the z value can not be used while the measure value is used. 
- * <p/>
+ * example, the z value can not be used while the measure value is used. <p/>
  * While this class extends the Coordinate class, it can be used seamlessly as a
  * substitute in the event that the Measure value is not used. In these cases
  * the Measure value shall simply be Double.NaN
@@ -159,9 +158,19 @@ public class MCoordinate extends Coordinate {
 		return result;
 	}
 
+	/*
+	 * Default equality is now equality in 2D-plane. This is required to remain
+	 * consistent with JTS.
+	 * 
+	 * TODO:check whether this method is still needed.
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see com.vividsolutions.jts.geom.Coordinate#equals(java.lang.Object)
+	 */
 	public boolean equals(Object other) {
-		if (other instanceof MCoordinate) {
-			return equals2DWithMeasure((Coordinate) other);
+		if (other instanceof Coordinate) {
+			return equals2D((Coordinate) other);
 		} else {
 			return false;
 		}
