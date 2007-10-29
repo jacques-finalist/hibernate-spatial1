@@ -51,5 +51,7 @@ public interface SpatialRelation {
     public static int CONTAINS = 6;
 
     public static int INTERSECTS = 7;
+    
+    public static int FILTER = 8;
 
 }
