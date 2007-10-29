@@ -1,5 +1,5 @@
 /**
- * $Id$
+ * $Id:SpatialRestrictions.java 40 2007-09-20 15:33:24Z maesenka $
  *
  * This file is part of Spatial Hibernate, an extension to the 
  * hibernate ORM solution for geographic data. 
@@ -28,6 +28,7 @@
 
 package org.hibernatespatial.criterion;
 
+import org.hibernate.criterion.Criterion;
 import org.hibernatespatial.SpatialRelation;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -109,6 +110,31 @@ public class SpatialRestrictions {
     public static SpatialFilter filter(String propertyName,
             Envelope envelope, int SRID) {
         return new SpatialFilter(propertyName, envelope, SRID);
+    }
+    
+    public static Criterion spatialRestriction(int relation, String propertyName, Geometry filter, Geometry value){
+    	switch(relation){
+    	case SpatialRelation.CONTAINS:
+    		return contains(propertyName,filter,value);
+    	case SpatialRelation.CROSSES:
+    		return crosses(propertyName, filter, value);
+    	case SpatialRelation.DISJOINT:
+    		return disjoint(propertyName, filter, value);
+    	case SpatialRelation.INTERSECTS:
+    		return intersects(propertyName, filter, value);
+    	case SpatialRelation.EQUALS:
+    		return eq(propertyName, filter, value);
+    	case SpatialRelation.FILTER:
+    		return filter(propertyName, value);
+    	case SpatialRelation.OVERLAPS:
+    		return overlaps(propertyName, filter, value);
+    	case SpatialRelation.TOUCHES:
+    		return touches(propertyName, filter, value);
+    	case SpatialRelation.WITHIN:
+    		return within(propertyName, filter, value);
+    	default:
+    		throw new IllegalArgumentException("Non-existant spatial relation passed.");
+    	}   	
     }
 
 }
