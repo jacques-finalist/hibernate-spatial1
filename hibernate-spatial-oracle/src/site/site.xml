@@ -2,7 +2,7 @@
 <project name="Hibernate Spatial">
   
   <bannerLeft>
-    <name>Hibernate Spatial</name>
+    <name>Hibernate Spatial Oracle Provider</name>
     <href>http://www.cadrie.com/projects/majas-hibernate</href>
   </bannerLeft>
   

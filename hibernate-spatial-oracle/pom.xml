@@ -23,11 +23,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-spatial-jtsm</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
+		<dependency>
 			<groupId>com.oracle.jdbc</groupId>
 			<artifactId>ojdbc14</artifactId>
 			<version>10.2.0.1.0</version>
 		</dependency>
-		<!-- Dependencies on Oracle Java Spatial Library. Due to licensing restrictions, you will have to download this yourself. Check http://www.oracle.com/technology/software/products/spatial/index.html -->
+		<!-- Dependencies on Oracle Java Spatial Library. D
+		Due to licensing restrictions, you will have to download this yourself. 
+		Use the one you can download from  -->
 		<dependency>
 			<groupId>com.oracle.spatial</groupId>
 			<artifactId>sdoapi</artifactId>

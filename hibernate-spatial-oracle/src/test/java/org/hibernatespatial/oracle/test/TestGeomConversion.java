@@ -25,7 +25,7 @@
  *
  * For more information, visit: http://www.cadrie.com/
  */
- 
+
 package org.hibernatespatial.oracle.test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +38,12 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernatespatial.mgeom.MCoordinate;
+import org.hibernatespatial.mgeom.MCoordinateSequence;
+import org.hibernatespatial.mgeom.MGeometry;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.oracle.test.model.TestGeom;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +51,6 @@ import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -56,11 +60,8 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 /**
  * Test cases for the Oracle SDO_GEOMETRY to JTS Geometry conversion routines
  * 
- * @author Karel Maesen
- * 
- * The test geometries are those from the Oracle Spatial User's Guide and
- * Reference, section 2.5, Example 2-13
- * 
+ * @author Karel Maesen <p/> The test geometries are those from the Oracle
+ *         Spatial User's Guide and Reference, section 2.5, Example 2-13
  */
 public class TestGeomConversion {
 
@@ -68,7 +69,7 @@ public class TestGeomConversion {
 
 	private static final Map<Long, Geometry> expected = new HashMap<Long, Geometry>();
 
-	private static final GeometryFactory geomFactory = new GeometryFactory(
+	private static final MGeometryFactory geomFactory = new MGeometryFactory(
 			new PrecisionModel());
 
 	static {
@@ -254,13 +255,39 @@ public class TestGeomConversion {
 		LinearRing shell = geomFactory.createLinearRing(coordinates);
 		coordinates = new Coordinate[5];
 		coordinates[0] = new Coordinate(51., 136.);
-		coordinates[1] = new Coordinate(59., 136.);
+		coordinates[1] = new Coordinate(51., 139);
 		coordinates[2] = new Coordinate(59., 139.);
-		coordinates[3] = new Coordinate(51., 139);
+		coordinates[3] = new Coordinate(59., 136.);
 		coordinates[4] = new Coordinate(51., 136);
 		LinearRing hole = geomFactory.createLinearRing(coordinates);
 		geom = geomFactory.createPolygon(shell, new LinearRing[] { hole });
 		expected.put(27L, geom);
+
+		// case 33: MLineString
+		MCoordinate[] mCoordinates = new MCoordinate[4];
+		mCoordinates[0] = MCoordinate.create2dWithMeasure(10., 25., 1);
+		mCoordinates[1] = MCoordinate.create2dWithMeasure(20., 30., 2);
+		mCoordinates[2] = MCoordinate.create2dWithMeasure(25., 25., 3);
+		mCoordinates[3] = MCoordinate.create2dWithMeasure(30., 30., 4);
+		geom = geomFactory.createMLineString(mCoordinates);
+		expected.put(33L, geom);
+
+		// case 34: LRS arcsegment
+		mCoordinates = new MCoordinate[3];
+		mCoordinates[0] = MCoordinate.create2dWithMeasure(10., 15., 0);
+		mCoordinates[1] = MCoordinate.create2dWithMeasure(15., 20., 3);
+		mCoordinates[2] = MCoordinate.create2dWithMeasure(20., 15., 5);
+		geom = geomFactory.createMultiPoint(mCoordinates);
+		expected.put(34L, geom);
+
+		// case 35: LRS Point
+		geom = geomFactory.createPoint(MCoordinate
+				.create2dWithMeasure(10, 5, 0));
+		expected.put(35L, geom);
+
+		// case 36: Simple point
+		geom = geom = geomFactory.createPoint(new Coordinate(12, 14));
+		expected.put(36L, geom);
 	}
 
 	@BeforeClass
@@ -326,6 +353,7 @@ public class TestGeomConversion {
 		System.out.println("Case 11: Polygon");
 		Geometry geom = testCaseById(11L, false);
 		assertTrue(geom.getGeometryType().equalsIgnoreCase("polygon"));
+		geom.normalize();
 		assertTrue(((Polygon) geom).isValid());
 	}
 
@@ -391,12 +419,32 @@ public class TestGeomConversion {
 		assertEquals(((Polygon) geom).getNumInteriorRing(), 1);
 	}
 
+	@Test
+	public void testMLineString() {
+		System.out.println("Case 33: 2D LineString with Measure");
+		testLrsCaseById(33L, false);
+	}
+
+	@Test
+	public void testSimplePoint() {
+		System.out.println("Case 36: Point");
+		testCaseById(36L, false);
+	}
+
+	@Test
+	public void testMArcSegment() {
+		System.out.println("Case 34: ArcSegment with Measure");
+		testLrsCaseById(34L, true);
+	}
+
 	private Geometry testCaseById(long id, boolean isArc) {
 		Session session = null;
 		try {
 			session = sf.openSession();
 			TestGeom testGeom = (TestGeom) session.get(TestGeom.class, id);
 			Geometry geom = testGeom.getGeom();
+			// Test whether geometries as retrieved are equal to what is
+			// expected
 			if (!isArc) {
 				assertTrue("Geometries differ for case#: " + id, expected.get(
 						id).equalsExact(geom));
@@ -410,12 +458,73 @@ public class TestGeomConversion {
 							.isWithinDistance(mpco.getGeometryN(i), 0.03));
 				}
 			}
+			// write geometry to table and read again
+			Transaction tx = null;
+			try {
+				tx = session.beginTransaction();
+				TestGeom writeTest = new TestGeom();
+				writeTest.setGeom(geom);
+				writeTest.setDescription("Testing jts to SDO case: " + id);
+				session.save(writeTest);
+				tx.commit();
+				long writtenId = writeTest.getId();
+				writeTest = null;
+				TestGeom read2Test = (TestGeom) session.get(TestGeom.class,
+						writtenId);
+				Geometry read2Geom = read2Test.getGeom();
+				assertTrue("Geometries differ for case#: " + id, expected.get(
+						id).equalsExact(read2Geom));
+				assertTrue("Geometries differ for case#: " + id, expected.get(
+						id).equalsExact(read2Test.getGeom()));
+				// tx = session.beginTransaction();
+				// session.delete(read2Test);
+				// tx.commit();
+			} catch (Exception e) {
+				try {
+					tx.rollback();
+				} catch (Exception re) {
+				}
+				throw new RuntimeException(e);
+			}
+
 			return geom;
 		} finally {
 			System.out.println("Closing session");
 			if (session != null)
 				session.close();
 		}
+	}
+
+	private Geometry testLrsCaseById(long id, boolean isArc) {
+		Geometry actualGeom = testCaseById(id, isArc);
+		Geometry expectedGeom = expected.get(id);
+
+		assertTrue(actualGeom instanceof MGeometry);
+		MCoordinateSequence actualCS = new MCoordinateSequence(actualGeom
+				.getCoordinates());
+		MCoordinateSequence expectedCS = new MCoordinateSequence(expectedGeom
+				.getCoordinates());
+		if (isArc) {
+			// verify the LRS begin and end measures didn't change
+			int lastIndex = actualGeom.getCoordinates().length - 1;
+			MCoordinate actualCBegin = (MCoordinate) actualGeom.getCoordinate();
+			MCoordinate actualCEnd = (MCoordinate) actualGeom.getCoordinates()[lastIndex];
+
+			lastIndex = expectedGeom.getCoordinates().length - 1;
+			MCoordinate expectedCBegin = (MCoordinate) expectedGeom
+					.getCoordinate();
+			MCoordinate expectedCEnd = (MCoordinate) expectedGeom
+					.getCoordinates()[lastIndex];
+
+			assertTrue(Double.compare(actualCBegin.m, expectedCBegin.m) == 0);
+			assertTrue(Double.compare(actualCEnd.m, expectedCEnd.m) == 0);
+		} else {
+			// compare each of the measures
+			for (int i = 0; i < expectedCS.size(); i++) {
+				assertEquals(expectedCS.getM(i), actualCS.getM(i));
+			}
+		}
+		return actualGeom;
 	}
 
 	@AfterClass

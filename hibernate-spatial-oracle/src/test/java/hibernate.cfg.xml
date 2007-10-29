@@ -8,9 +8,9 @@
         <property name="hibernate.connection.url">jdbc:oracle:thin:@//192.168.0.101/ORCL</property>
         <property name="hibernate.connection.username">spatialtest</property>
         <property name="hibernate.connection.password">spatialtest</property>
-       
+
         <property name="hibernate.dialect">org.hibernatespatial.oracle.OracleSpatial10gDialect</property>
-        
+
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">1</property>
 
@@ -23,7 +23,12 @@
 
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">true</property>
-        
-        
+
+        <!-- Add HBM files -->
+        <mapping resource="org/hibernatespatial/oracle/test/model/Lrs2d.hbm.xml"/>
+        <mapping resource="org/hibernatespatial/oracle/test/model/Lrs2dm.hbm.xml"/>
+        <mapping resource="org/hibernatespatial/oracle/test/model/Lrs3d.hbm.xml"/>
+        <mapping resource="org/hibernatespatial/oracle/test/model/Lrs3dm.hbm.xml"/>
+
     </session-factory>
 </hibernate-configuration>

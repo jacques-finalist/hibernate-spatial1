@@ -33,12 +33,31 @@ import java.sql.DriverManager;
 
 import junit.framework.JUnit4TestAdapter;
 
+
 import org.hibernatespatial.test.TestSpatialQueries;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 
+/*
+ * This is the Spatial Queries unit test suite for
+ * the Oracle Spatial provider
+ * 
+ * This unit test suite has been tested with 
+ * Oracle 10g version 10.2.0.1.0
+ * 
+ * Remarks:
+ * <il>
+ * <li>Unit tests for the EQUALS relation fails due to bugs in the Oracle implementation</li>
+ * <li>Unit test for Boundary functions fails due to bugs in Oracle Implementation. Oracle's boundary function returns 
+ * null values when applied to linear (1-dimension) features.</li>
+ * <li>Unit test for convexHull fails. Oracle's ConvexHull returns null for some geometries.</li>
+ * <li>ST_Geometry(SDO_GEOMETRY) and ST_Geometry.FROM_SDO_GEOMETRY(SDO_GEOMETRY) does not return the same result! (Don't ask me why, I don't understand it either.)
+ * <li>Experience shows that ST_Geometry.FROM_SDO_GEOMETRY is the safer choice.
+ * </il>
+ * 
+ */
 public class TestOracleSpatialQueries {
 
 	private final static String DBURL = "jdbc:oracle:thin:@//192.168.0.101/ORCL";
@@ -74,18 +93,18 @@ public class TestOracleSpatialQueries {
 	}
 
 	@Test
-	public void testHGLGeometryType() throws Exception {
-		delegate.testHGLGeometryType();
+	public void testHQLGeometryType() throws Exception {
+		delegate.testHQLGeometryType();
 	}
 
 	@Test
-	public void testHQLAsTextLineString() throws Exception {
-		delegate.testHQLAsTextLineString();
+	public void testHQLAsText() throws Exception {
+		delegate.testHQLAsText();
 	}
 
 	@Test
-	public void testHQLDimensionLineString() throws Exception {
-		delegate.testHQLDimensionLineString();
+	public void testHQLDimension() throws Exception {
+		delegate.testHQLDimension();
 	}
 
 	@Test
@@ -95,31 +114,33 @@ public class TestOracleSpatialQueries {
 
 	@Test
 	public void testHQLIntersectsLineString() throws Exception {
-		String sqlString = "select count(*) from linestringtest l where sdo_relate(l.geom,sdo_geometry( ? , 31370), 'mask=ANYINTERACT') = 'TRUE' ";
+		String sqlString = "select count(*) from $table$ where sdo_relate(geom,sdo_geometry( ? , 31370), 'mask=ANYINTERACT') = 'TRUE' ";
 		delegate.testHQLIntersectsLineString(sqlString);
 	}
 
 	@Test
 	public void testHQLIsEmpty() throws Exception {
-		String sql = "select mdsys.ogc_isempty(mdsys.st_geometry.from_sdo_geom(geom)) from linestringtest where id = ?";
+		String sql = "select count(*) from $table$ where geom is not null and MDSYS.OGC_ISEMPTY(MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(geom)) = 1";
 		delegate.testHQLIsEmpty(sql);
 	}
 
 	@Test
 	public void testHQLIsSimple() throws Exception {
-		String sql = "select mdsys.ogc_issimple(mdsys.st_geometry.from_sdo_geom(geom)) from linestringtest where id = ?";
+		String sql = "select count(*) from $table$ where geom is not null and MDSYS.OGC_ISSIMPLE(MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(geom)) = 1";
 		delegate.testHQLIsSimple(sql);
 	}
 
 	@Test
 	public void testHQLBoundary() throws Exception {
+		// This unit test throws an error for LineStrings. 
+		// Oracle 10g returns null values for linestring boundaries. 
 		delegate.testHQLBoundary();
 	}
 
 	@Test
-	public void testHQLOverlapsLineString() throws Exception {
-		String sql = "select count(*) from linestringtest where mdsys.OGC_OVERLAP(mdsys.st_geometry.from_sdo_geom(sdo_geometry(?, 31370)), mdsys.st_geometry.from_sdo_geom(geom)) = 1";
-		delegate.testHQLOverlapsLineString(sql);
+	public void testHQLOverlaps() throws Exception {
+		String sql = "select count(*) from $table$ where geom is not null and mdsys.OGC_OVERLAP(mdsys.st_geometry.from_sdo_geom(sdo_geometry(?, 31370)), mdsys.st_geometry.from_sdo_geom(geom)) = 1";
+		delegate.testHQLOverlaps(sql);
 	}
 
 	@Test
@@ -128,21 +149,15 @@ public class TestOracleSpatialQueries {
 	}
 
 	@Test
-	public void testLineStringFiltering() throws Exception {
-		String sql = "select count(*) from linestringtest where SDO_FILTER(geom, sdo_geometry(?,31370)) = 'TRUE'";
-		delegate.testLineStringFiltering(sql);
+	public void testFiltering() throws Exception {
+		String sql = "select count(*) from $table$ where SDO_FILTER(geom, sdo_geometry(?,31370)) = 'TRUE'";
+		delegate.testFiltering(sql);
 	}
 
 	@Test
-	public void testMultiLineStringFiltering() throws Exception {
-		String sql = "select count(*) from multilinestringtest where SDO_FILTER(geom, sdo_geometry(?,31370)) = 'TRUE'";
-		delegate.testMultiLineStringFiltering(sql);
-	}
-
-	@Test
-	public void testPolygonFiltering() throws Exception {
-		String sql = "select count(*) from polygontest where SDO_FILTER(geom, sdo_geometry(?,31370)) = 'TRUE'";
-		delegate.testPolygonFiltering(sql);
+	public void testContains() throws Exception {
+		String sql = "select count(*) from $table$ where SDO_CONTAINS(geom, sdo_geometry(?,31370)) = 'TRUE'";
+		delegate.testContains(sql);
 	}
 
 	@Test
@@ -150,6 +165,12 @@ public class TestOracleSpatialQueries {
 		delegate.testHQLRelateLineString();
 	}
 
+    @Test
+    public void testHQLDisjoint() throws Exception{
+    	String sql = "select count(*) from $table$ where geom is not null and mdsys.OGC_DISJOINT(mdsys.st_geometry.from_sdo_geom(sdo_geometry(?, 31370)), mdsys.st_geometry.from_sdo_geom(geom)) = 1";
+    	delegate.testHQLDisjoint(sql);
+    }
+	
 	@Test
 	public void testHQLDistance() throws Exception {
 		delegate.testHQLDistance();
@@ -187,6 +208,53 @@ public class TestOracleSpatialQueries {
 
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(TestOracleSpatialQueries.class);
+	}
+
+	@Test
+	public void testCrosses() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_CROSS(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testCrosses(sqlTemplate);
+	}
+
+	@Test
+	public void testDisjoint() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_DISJOINT(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testDisjoint(sqlTemplate);
+	}
+	
+	@Test
+	public void testEquals() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_EQUALS(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testEquals(sqlTemplate);
+	}
+
+	@Test
+	public void testHQLAsBinary() throws Exception {
+		delegate.testHQLAsBinary();
+	}
+
+	@Test
+	public void testIntersects() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_INTERSECTS(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testIntersects(sqlTemplate);
+	}
+
+	@Test
+	public void testOverlaps() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_OVERLAP(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testOverlaps(sqlTemplate);
+	}
+
+	@Test
+	public void testTouches() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_TOUCH(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testTouches(sqlTemplate);
+	}
+	
+	@Test
+	public void testWithin() throws Exception {
+		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_WITHIN(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
+		delegate.testWithin(sqlTemplate);
 	}
 
 }

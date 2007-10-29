@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="true" default-cascade="none">
+
+    <class
+            name="org.hibernatespatial.oracle.test.model.LrsSegment"
+            table="lrs_2d_m"
+            entity-name="lrs2dm"
+            >
+
+        <id
+                name="id"
+                column="ID"
+                type="integer"
+                unsaved-value="-1"
+                >
+
+            <generator  class="increment"/>
+        </id>
+
+        <property
+                name="description"
+                column="DESCRIPTION"
+                />
+
+        <property
+                name="geometry"
+                column="GEOMETRY"
+                type="org.hibernatespatial.GeometryUserType"
+                />
+
+    </class>
+</hibernate-mapping>
