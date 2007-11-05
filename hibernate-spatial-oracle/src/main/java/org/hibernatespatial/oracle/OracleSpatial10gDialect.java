@@ -49,7 +49,6 @@ import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialAnalysis;
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.SpatialRelation;
-import org.hibernatespatial.criterion.SpatialAggregation;
 import org.hibernatespatial.helper.PropertyFileReader;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -346,9 +345,9 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		// keyword. (See also postgis documentation).
 
 		// Spatial Aggregation
-		registerFunction("lrsconcat", new SpatialAggregationFunction(
-				"lrsconcat", new CustomType(SDOGeometryType.class, null),
-				false, SpatialAggregation.LRS_CONCAT));
+//		registerFunction("lrsconcat", new SpatialAggregationFunction(
+//				"lrsconcat", new CustomType(SDOGeometryType.class, null),
+//				false, SpatialAggregation.LRS_CONCAT));
 	}
 
 	public UserType getGeometryUserType() {
@@ -448,30 +447,31 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	public String getNativeSpatialAggregateSQL(String arg1, int aggregation,
 			boolean isProjection) {
 
-		StringBuffer aggregateFunction = new StringBuffer();
-
-		SpatialAggregate sa = new SpatialAggregate(aggregation);
-
-		if (sa._aggregateSyntax == null) {
-			throw new IllegalArgumentException("Unknown Spatial Aggregation ("
-					+ aggregation + ").");
-		}
-
-		aggregateFunction.append(sa._aggregateSyntax);
-
-		aggregateFunction.append("(");
-		if (sa.isAggregateType()) {
-			aggregateFunction.append("SDOAGGRTYPE(");
-		}
-		aggregateFunction.append(arg1);
-		if (sa.isAggregateType()) {
-			aggregateFunction.append(", ").append(.001).append(")");
-		}
-		aggregateFunction.append(")");
-		if (isProjection) {
-			aggregateFunction.append(" as y");
-		}
-		return aggregateFunction.toString();
+//		StringBuffer aggregateFunction = new StringBuffer();
+//
+//		SpatialAggregate sa = new SpatialAggregate(aggregation);
+//
+//		if (sa._aggregateSyntax == null) {
+//			throw new IllegalArgumentException("Unknown Spatial Aggregation ("
+//					+ aggregation + ").");
+//		}
+//
+//		aggregateFunction.append(sa._aggregateSyntax);
+//
+//		aggregateFunction.append("(");
+//		if (sa.isAggregateType()) {
+//			aggregateFunction.append("SDOAGGRTYPE(");
+//		}
+//		aggregateFunction.append(arg1);
+//		if (sa.isAggregateType()) {
+//			aggregateFunction.append(", ").append(.001).append(")");
+//		}
+//		aggregateFunction.append(")");
+//		if (isProjection) {
+//			aggregateFunction.append(" as y");
+//		}
+//		return aggregateFunction.toString();
+		return null;
 	}
 
 	private StringBuffer wrapInSTGeometry(String geomColumn, StringBuffer toAdd) {
@@ -645,31 +645,31 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		protected SpatialAggregate() {
 		}
 
-		private SpatialAggregate(int aggregation) {
-
-			String specificAggrSyntax;
-
-			switch (aggregation) {
-			case SpatialAggregation.LRS_CONCAT:
-				specificAggrSyntax = "LRS_CONCAT";
-				_aggregateType = true;
-				break;
-			case SpatialAggregation.CENTROID:
-				specificAggrSyntax = "CENTROID";
-				_aggregateType = true;
-				break;
-			case SpatialAggregation.CONCAT:
-				specificAggrSyntax = "CONCAT_LINES";
-				_aggregateType = false;
-				break;
-			default:
-				specificAggrSyntax = null;
-				break;
-			}
-			if (specificAggrSyntax != null) {
-				_aggregateSyntax = SDO_AGGR + specificAggrSyntax;
-			}
-		}
+//		private SpatialAggregate(int aggregation) {
+//
+//			String specificAggrSyntax;
+//
+//			switch (aggregation) {
+//			case SpatialAggregation.LRS_CONCAT:
+//				specificAggrSyntax = "LRS_CONCAT";
+//				_aggregateType = true;
+//				break;
+//			case SpatialAggregation.CENTROID:
+//				specificAggrSyntax = "CENTROID";
+//				_aggregateType = true;
+//				break;
+//			case SpatialAggregation.CONCAT:
+//				specificAggrSyntax = "CONCAT_LINES";
+//				_aggregateType = false;
+//				break;
+//			default:
+//				specificAggrSyntax = null;
+//				break;
+//			}
+//			if (specificAggrSyntax != null) {
+//				_aggregateSyntax = SDO_AGGR + specificAggrSyntax;
+//			}
+//		}
 
 		public boolean isAggregateType() {
 			return _aggregateType;
