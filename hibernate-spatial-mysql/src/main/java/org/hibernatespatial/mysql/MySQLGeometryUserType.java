@@ -1,14 +1,15 @@
 /**
- * $Id:PGGeometryUserType.java 40 2007-09-20 15:33:24Z maesenka $
+ * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the 
+ * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,26 +24,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
-
 package org.hibernatespatial.mysql;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Types;
 
 import org.hibernatespatial.AbstractDBGeometryType;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.ByteOrderValues;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 
 /**
- * Specific <code>GeometryType</code> for Postgis geometry type
+ * Specific <code>GeometryType</code> for MySQL geometry type
  * 
  * @author Karel Maesen
  */
@@ -57,16 +54,14 @@ public class MySQLGeometryUserType extends AbstractDBGeometryType {
 
 	private static final int[] geometryTypes = new int[] { Types.ARRAY };
 
-	private static final GeometryFactory geomFactory = new GeometryFactory();
-
 	public int[] sqlTypes() {
-		return geometryTypes;// PostgisDialect.getGeometrySQLType()
+		return geometryTypes;
 	}
 
 	/**
 	 * Converts the native geometry object to a JTS <code>Geometry</code>.
 	 * 
-	 * @param geomObj
+	 * @param object
 	 *            native database geometry object (depends on the JDBC spatial
 	 *            extension of the database)
 	 * @return JTS geometry corresponding to geomObj.

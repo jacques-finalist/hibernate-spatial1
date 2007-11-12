@@ -13,10 +13,10 @@
 	</parent>
 	<artifactId>hibernate-spatial-mysql</artifactId>
 	<packaging>jar</packaging>
-	<name>Postgis DialectProvider</name>
+	<name>MySQL DialectProvider</name>
 	<url>http://www.hibernatespatial.org/hibernate-spatial-mysql</url>
 	<description>
-		Postgis (Postgresql) dialect provider for Hibernate Spatial
+		MySQL dialect provider for Hibernate Spatial (for MySQL 5.0 or higher).
 	</description>
 
 	<dependencies>
