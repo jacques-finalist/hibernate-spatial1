@@ -4,17 +4,16 @@
 <header>
 </header>
 	<body>
-		<section name="Using Hibernate Spatial">
-		<p>Hibernate Spatial is a generic extension to Hibernate for handling geographic data.
-		It is generic in the sense that it works in the same way across different databases.
+		<section name="Welcome to Hibernate Spatial">
+		<p>Hibernate Spatial is a generic extension to Hibernate for handling geographic data. Hibernate Spatial is open source and licensed, like Hibernate, under the LGPL license.
       </p>
       <p>
-      Hibernate Spatial allows you to deal with geographic data in a standardized way, whatever 
-      database that you use (as long as a Spatial Dialect Provider exists for it). In other words,
-      it abstracts away from the specific way your database supports geographic data, and provides 
+      Hibernate Spatial allows you to deal with geographic data in a standardized way. It abstracts away from the specific way your database supports geographic data, and provides 
       a  standardized, cross-database interface to geographic data storage and query functions. 
       </p>
-      <p>Hibernate Spatial supports most of the functions of the OGC Simple Feature Specification.
+      <p>Hibernate Spatial supports most of the functions of the OGC Simple Feature Specification. Supported databases are: Oracle 10g/11g and Postgresql/Postgis.
+      </p>
+      <p>There is a similar project for NHibernate: <a href="http://www.codeplex.com/NHibernateSpatial">NHibernate.Spatial</a>.
       </p>
       </section>
   </body>

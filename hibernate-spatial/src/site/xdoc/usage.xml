@@ -6,7 +6,7 @@
 	<body>
 		<section name="Installing Hibernate Spatial">
 		<p>
-		You need will need to have the following libraries in your classpath:
+		You will need to have the following libraries in your classpath:
 		hibernate (plus its dependencies), a JDBC driver for you database, 
 		hibernate-spatial.jar and the appropriate spatial dialect provider for your database, and finally
 		the java topology suit (jts.jar) from vividsolutions. 

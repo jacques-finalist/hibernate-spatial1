@@ -26,66 +26,38 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.test.model;
+package org.hibernatespatial.mgeom;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Point;
 
-/**
- * Test class for testing Points
- */
-public class PointEntity {
+public class EventLocator {
 
-	// Fields
-	private static final long serialVersionUID = 1L;
-
-	private long id;
-
-	private String name;
-
-	private Point geometry;
-
-	// Constructors
-
-	/** default constructor */
-	public PointEntity() {
+	/**
+	 * 
+	 * @return a Point Geometry as a point geometry
+	 * @throws MGeometryException
+	 */
+	public static Point getPointGeometry(MGeometry lrs, double position)
+			throws MGeometryException {
+		Coordinate c = lrs.getCoordinateAtM(position);
+		CoordinateSequence cs = lrs.getFactory().getCoordinateSequenceFactory()
+				.create(new Coordinate[] { c });
+		return new Point(cs, lrs.getFactory());
 	}
 
-	/** minimal constructor */
-	public PointEntity(long id) {
-		this.id = id;
-	}
+	public static MultiMLineString getLinearGeometry(MGeometry lrs,
+			double begin, double end) throws MGeometryException {
 
-	/** full constructor */
-	public PointEntity(long id, String name, Geometry geom) {
-		this.id = id;
-		this.name = name;
-		this.geometry = (Point) geom;
-	}
-
-	// Property accessors
-	public long getId() {
-		return this.id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Geometry getGeometry() {
-		return this.geometry;
-	}
-
-	public void setGeometry(Geometry geom) {
-		this.geometry = (Point) geom;
+		MGeometryFactory factory = (MGeometryFactory) lrs.getFactory();
+		CoordinateSequence[] cs = lrs.getCoordinatesBetween(begin, end);
+		MLineString[] mlar = new MLineString[cs.length];
+		for (int i = 0; i < cs.length; i++) {
+			MLineString ml = factory.createMLineString(cs[i]);
+			mlar[i] = ml;
+		}
+		return factory.createMultiMLineString(mlar);
 	}
 
 }

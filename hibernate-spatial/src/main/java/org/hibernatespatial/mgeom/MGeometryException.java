@@ -26,66 +26,41 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.test.model;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+package org.hibernatespatial.mgeom;
 
 /**
- * Test class for testing Points
+ * @author Karel Maesen
+ * 
+ * 
  */
-public class PointEntity {
+public class MGeometryException extends Exception {
 
-	// Fields
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	public final static int OPERATION_REQUIRES_MONOTONE = 1;
 
-	private String name;
+	public final static int UNIONM_ON_DISJOINT_MLINESTRINGS = 2;
 
-	private Point geometry;
+	public final static int GENERAL_MGEOMETRY_EXCEPTION = 0;
 
-	// Constructors
+	// type of exception
+	private final int type;
 
-	/** default constructor */
-	public PointEntity() {
+	public MGeometryException(String s) {
+		super(s);
+		type = 0;
 	}
 
-	/** minimal constructor */
-	public PointEntity(long id) {
-		this.id = id;
+	public MGeometryException(int type) {
+		super();
+		this.type = type;
 	}
 
-	/** full constructor */
-	public PointEntity(long id, String name, Geometry geom) {
-		this.id = id;
-		this.name = name;
-		this.geometry = (Point) geom;
-	}
-
-	// Property accessors
-	public long getId() {
-		return this.id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Geometry getGeometry() {
-		return this.geometry;
-	}
-
-	public void setGeometry(Geometry geom) {
-		this.geometry = (Point) geom;
+	public int getType() {
+		return type;
 	}
 
 }

@@ -6,11 +6,15 @@
     <href>http://www.hibernatespatial.org/</href>
   </bannerLeft>
   
+ <!--   
+ 
+ This creates an empty image and generates a hit on the Geovise Website
   <bannerRight>
     <name>GEOVISE</name>
     <src>http://www.geovise.com/</src>    
   </bannerRight>
   
+    -->
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-default-skin</artifactId>
@@ -21,15 +25,16 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial/index.html"/>
-      <item name="Usage" href="hibernate-spatial/usage.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
     </menu>
     <menu name="Downloads" inherit="top">
-    	<item name="Releases" href="hibernate-spatial/download.html"/>
+    	<item name="Releases" href="download.html"/>
     </menu>
 	<menu name="Documentation" inherit="top">
-      <item name="Configuring providers" href="hibernate-spatial/providers.html"/> 
-      <item name="JavaDocs" href="hibernate-spatial/apidocs/index.html"/>     
+	  <item name="Tutorial" href="tutorial.html"/>
+      <item name="Configuring providers" href="providers.html"/> 
+      <item name="JavaDocs" href="apidocs/index.html"/>     
     </menu>
     <menu name="Providers" inherit="top">
     	<item name="Oracle10g" href="hibernate-spatial-oracle/index.html"/>

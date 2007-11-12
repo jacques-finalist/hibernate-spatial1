@@ -16,4 +16,20 @@
 		Interface
 	</description>
 	<packaging>jar</packaging>
+	<build>
+		<plugins>
+			<!--  this ensures that the common test cases are available for providers -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
