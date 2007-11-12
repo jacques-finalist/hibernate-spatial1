@@ -20,6 +20,7 @@
 		<module>../hibernate-spatial</module>
 		<module>../hibernate-spatial-postgis</module>
 		<module>../hibernate-spatial-oracle</module>
+	 	<module>../hibernate-spatial-mysql</module>
 	</modules>
 	<build>
 		<plugins>
@@ -59,7 +60,9 @@
 		<developerConnection>
 			scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
 		</developerConnection>
-		<url>http://www.hibernatespatial.org/websvn/</url>
+		<url>
+			<![CDATA[ http://www.hibernatespatial.org/websvn/listing.php?repname=hibernate-spatial&path=/trunk/${project.artifactId}/rev=0&sc=0]]>
+		</url>
 	</scm>
 	<mailingLists>
 
@@ -125,7 +128,7 @@
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
 			<artifactId>jts</artifactId>
-			<version>1.7.1</version>
+			<version>1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -134,10 +137,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<reporting>
@@ -209,6 +214,14 @@
 			<id>pieterdg</id>
 			<name>Pieter De Graef</name>
 			<email>pieter@dfc.be</email>
+			<roles>
+				<role>Contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>AcreeTom</id>
+			<name>Tom Acree</name>
+			<email></email>
 			<roles>
 				<role>Contributor</role>
 			</roles>
