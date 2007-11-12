@@ -1,14 +1,15 @@
 /**
  * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the 
+ * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,9 +24,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
-
 package org.hibernatespatial.oracle.test;
 
 import static org.junit.Assert.assertEquals;
@@ -54,6 +54,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
@@ -135,7 +136,18 @@ public class TestGeomConversion {
 		geom = geomFactory.createLineString(coordinates);
 		expected.put(7L, geom);
 
-		// case 8 - 10 not implemented
+		// case 8 Closes arc String
+		// 15, 65, 10, 68, 15, 70, 20, 68, 15, 65
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(15., 65);
+		coordinates[1] = new Coordinate(10, 68.);
+		coordinates[2] = new Coordinate(15., 70);
+		coordinates[3] = new Coordinate(20., 68);
+		coordinates[4] = new Coordinate(15., 65);
+		geom = geomFactory.createMultiPoint(coordinates);
+		expected.put(8L, geom);
+
+		// case 9 - 10 not implemented
 
 		// case 11: Polygon
 		coordinates = new Coordinate[5];
@@ -158,7 +170,7 @@ public class TestGeomConversion {
 		geom = geomFactory.createMultiPoint(coordinates);
 		expected.put(12L, geom);
 
-		// case 13: compount polygon
+		// case 13: compound polygon
 		// 10,128, 10,125, 20,125, 20,128, 15,130, 10,128))
 		coordinates = new Coordinate[6];
 		coordinates[0] = new Coordinate(10., 128.);
@@ -182,7 +194,14 @@ public class TestGeomConversion {
 				.createLinearRing(coordinates), null);
 		expected.put(14L, geom);
 
-		// case 15 - not implemented
+		// case 15 - Circle
+		// 15, 145, 10, 150, 20, 150
+		coordinates = new Coordinate[3];
+		coordinates[0] = new Coordinate(15., 145.);
+		coordinates[1] = new Coordinate(10., 150.);
+		coordinates[2] = new Coordinate(20., 150.);
+		geom = geomFactory.createMultiPoint(coordinates);
+		expected.put(15L, geom);
 
 		// Case 16: point cluster
 		// 50,5, 55,7, 60,5
@@ -286,8 +305,17 @@ public class TestGeomConversion {
 		expected.put(35L, geom);
 
 		// case 36: Simple point
-		geom = geom = geomFactory.createPoint(new Coordinate(12, 14));
+		geom = geomFactory.createPoint(new Coordinate(12, 14));
 		expected.put(36L, geom);
+
+		// case 37: MLineString with null internal measures
+		mCoordinates = new MCoordinate[4];
+		mCoordinates[0] = MCoordinate.create2dWithMeasure(10., 25., 1);
+		mCoordinates[1] = MCoordinate.create2dWithMeasure(20., 30., Double.NaN);
+		mCoordinates[2] = MCoordinate.create2dWithMeasure(25., 25., Double.NaN);
+		mCoordinates[3] = MCoordinate.create2dWithMeasure(30., 30., 4);
+		geom = geomFactory.createMLineString(mCoordinates);
+		expected.put(37L, geom);
 	}
 
 	@BeforeClass
@@ -349,6 +377,14 @@ public class TestGeomConversion {
 	}
 
 	@Test
+	public void testClosedArcString() {
+		System.out.println("Case 8: closed arc string");
+		Geometry geom = testCaseById(8L, true);
+		assertTrue(geom.getGeometryType().equalsIgnoreCase("linestring"));
+		assertTrue(((LineString) geom).isClosed());
+	}
+
+	@Test
 	public void testPolygon() {
 		System.out.println("Case 11: Polygon");
 		Geometry geom = testCaseById(11L, false);
@@ -377,6 +413,14 @@ public class TestGeomConversion {
 	public void testRectPolygon() {
 		System.out.println("Case 14: Rectangle");
 		Geometry geom = testCaseById(14L, false);
+		assertTrue(geom.getGeometryType().equalsIgnoreCase("polygon"));
+		assertTrue(((Polygon) geom).isValid());
+	}
+
+	@Test
+	public void testCircle() {
+		System.out.println("Case 15: Circle");
+		Geometry geom = testCaseById(15L, true);
 		assertTrue(geom.getGeometryType().equalsIgnoreCase("polygon"));
 		assertTrue(((Polygon) geom).isValid());
 	}
@@ -426,15 +470,29 @@ public class TestGeomConversion {
 	}
 
 	@Test
+	public void testMArcSegment() {
+		System.out.println("Case 34: ArcSegment with Measure");
+		testLrsCaseById(34L, true);
+	}
+
+	@Test
+	public void testLrsPoint() {
+		System.out.println("Case 35: LRS Point");
+		testLrsCaseById(35L, false);
+	}
+
+	@Test
 	public void testSimplePoint() {
-		System.out.println("Case 36: Point");
+		System.out.println("Case 36: Simple Point");
 		testCaseById(36L, false);
 	}
 
 	@Test
-	public void testMArcSegment() {
-		System.out.println("Case 34: ArcSegment with Measure");
-		testLrsCaseById(34L, true);
+	public void testLrsLineString() {
+		System.out
+				.println("Case 37: LRS LineString with Null internal Measures");
+		testCaseById(37L, false);
+
 	}
 
 	private Geometry testCaseById(long id, boolean isArc) {
@@ -457,6 +515,8 @@ public class TestGeomConversion {
 							+ "(point : " + mpco.getGeometryN(i) + "):", geom
 							.isWithinDistance(mpco.getGeometryN(i), 0.03));
 				}
+				// skip write test if it is an arc
+				return geom;
 			}
 			// write geometry to table and read again
 			Transaction tx = null;
@@ -476,9 +536,9 @@ public class TestGeomConversion {
 						id).equalsExact(read2Geom));
 				assertTrue("Geometries differ for case#: " + id, expected.get(
 						id).equalsExact(read2Test.getGeom()));
-				// tx = session.beginTransaction();
-				// session.delete(read2Test);
-				// tx.commit();
+				tx = session.beginTransaction();
+				session.delete(read2Test);
+				tx.commit();
 			} catch (Exception e) {
 				try {
 					tx.rollback();
@@ -499,7 +559,9 @@ public class TestGeomConversion {
 		Geometry actualGeom = testCaseById(id, isArc);
 		Geometry expectedGeom = expected.get(id);
 
-		assertTrue(actualGeom instanceof MGeometry);
+		if (!(actualGeom instanceof Point)) {
+			assertTrue(actualGeom instanceof MGeometry);
+		}
 		MCoordinateSequence actualCS = new MCoordinateSequence(actualGeom
 				.getCoordinates());
 		MCoordinateSequence expectedCS = new MCoordinateSequence(expectedGeom

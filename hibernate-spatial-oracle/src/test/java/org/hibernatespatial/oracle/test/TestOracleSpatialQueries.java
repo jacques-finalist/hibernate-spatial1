@@ -1,14 +1,15 @@
 /**
  * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the 
+ * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,9 +24,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
- 
 package org.hibernatespatial.oracle.test;
 
 import java.sql.Connection;
@@ -33,29 +33,25 @@ import java.sql.DriverManager;
 
 import junit.framework.JUnit4TestAdapter;
 
-
 import org.hibernatespatial.test.TestSpatialQueries;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 /*
- * This is the Spatial Queries unit test suite for
- * the Oracle Spatial provider
+ * This is the Spatial Queries unit test suite for the Oracle Spatial provider
  * 
- * This unit test suite has been tested with 
- * Oracle 10g version 10.2.0.1.0
+ * This unit test suite has been tested with Oracle 10g version 10.2.0.1.0
  * 
- * Remarks:
- * <il>
- * <li>Unit tests for the EQUALS relation fails due to bugs in the Oracle implementation</li>
- * <li>Unit test for Boundary functions fails due to bugs in Oracle Implementation. Oracle's boundary function returns 
- * null values when applied to linear (1-dimension) features.</li>
- * <li>Unit test for convexHull fails. Oracle's ConvexHull returns null for some geometries.</li>
- * <li>ST_Geometry(SDO_GEOMETRY) and ST_Geometry.FROM_SDO_GEOMETRY(SDO_GEOMETRY) does not return the same result! (Don't ask me why, I don't understand it either.)
- * <li>Experience shows that ST_Geometry.FROM_SDO_GEOMETRY is the safer choice.
- * </il>
+ * Remarks: <il> <li>Unit tests for the EQUALS relation fails due to bugs in
+ * the Oracle implementation</li> <li>Unit test for Boundary functions fails
+ * due to bugs in Oracle Implementation. Oracle's boundary function returns null
+ * values when applied to linear (1-dimension) features.</li> <li>Unit test
+ * for convexHull fails. Oracle's ConvexHull returns null for some geometries.</li>
+ * <li>ST_Geometry(SDO_GEOMETRY) and
+ * ST_Geometry.FROM_SDO_GEOMETRY(SDO_GEOMETRY) does not return the same result!
+ * (Don't ask me why, I don't understand it either.) <li>Experience shows that
+ * ST_Geometry.FROM_SDO_GEOMETRY is the safer choice. </il>
  * 
  */
 public class TestOracleSpatialQueries {
@@ -132,8 +128,8 @@ public class TestOracleSpatialQueries {
 
 	@Test
 	public void testHQLBoundary() throws Exception {
-		// This unit test throws an error for LineStrings. 
-		// Oracle 10g returns null values for linestring boundaries. 
+		// This unit test throws an error for LineStrings.
+		// Oracle 10g returns null values for linestring boundaries.
 		delegate.testHQLBoundary();
 	}
 
@@ -165,12 +161,12 @@ public class TestOracleSpatialQueries {
 		delegate.testHQLRelateLineString();
 	}
 
-    @Test
-    public void testHQLDisjoint() throws Exception{
-    	String sql = "select count(*) from $table$ where geom is not null and mdsys.OGC_DISJOINT(mdsys.st_geometry.from_sdo_geom(sdo_geometry(?, 31370)), mdsys.st_geometry.from_sdo_geom(geom)) = 1";
-    	delegate.testHQLDisjoint(sql);
-    }
-	
+	@Test
+	public void testHQLDisjoint() throws Exception {
+		String sql = "select count(*) from $table$ where geom is not null and mdsys.OGC_DISJOINT(mdsys.st_geometry.from_sdo_geom(sdo_geometry(?, 31370)), mdsys.st_geometry.from_sdo_geom(geom)) = 1";
+		delegate.testHQLDisjoint(sql);
+	}
+
 	@Test
 	public void testHQLDistance() throws Exception {
 		delegate.testHQLDistance();
@@ -221,7 +217,7 @@ public class TestOracleSpatialQueries {
 		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_DISJOINT(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
 		delegate.testDisjoint(sqlTemplate);
 	}
-	
+
 	@Test
 	public void testEquals() throws Exception {
 		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_EQUALS(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
@@ -250,7 +246,7 @@ public class TestOracleSpatialQueries {
 		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_TOUCH(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";
 		delegate.testTouches(sqlTemplate);
 	}
-	
+
 	@Test
 	public void testWithin() throws Exception {
 		String sqlTemplate = "select count(*) from $table$ where geom is not null and mdsys.OGC_WITHIN(mdsys.st_geometry.from_sdo_geom(geom), mdsys.ogc_polygonfromtext(?, 31370)) = 1";

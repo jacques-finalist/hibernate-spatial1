@@ -301,7 +301,7 @@ INSERT INTO testgeom (i, d, g)
 VALUES (
   35,
   'LRS Point',
-  sdo_geometry (2301, null, null, sdo_elem_info_array (1,1,1),
+  sdo_geometry (3301, null, null, sdo_elem_info_array (1,1,1),
     sdo_ordinate_array (10,5, 0))
 );
 
@@ -310,6 +310,14 @@ VALUES(
 	36,
 	'SIMPLE POINT',
 	sdo_geometry(2001, null, sdo_point_type(12,14,null), null,null));
+
+INSERT INTO testgeom (i, d, g)
+VALUES (
+  37,
+  'LRS 2D LineString with internal null measures',
+  sdo_geometry (3302, null, null, sdo_elem_info_array (1,2,1),
+    sdo_ordinate_array (10,25,1, 20,30,null, 25,25,null, 30,30,4))
+);
 
 
 CREATE TABLE linestringtest (

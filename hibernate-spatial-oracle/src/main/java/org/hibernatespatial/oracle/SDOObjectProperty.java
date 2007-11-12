@@ -1,14 +1,15 @@
 /**
  * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the 
+ * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,9 +24,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
- 
 package org.hibernatespatial.oracle;
 
 import java.util.List;
@@ -37,70 +37,69 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.type.Type;
 
 /**
- * Special function for accessing a member variable 
- * of an Oracle Object
+ * Special function for accessing a member variable of an Oracle Object
  * 
  * @author Karel Maesen
  * 
  */
 public class SDOObjectProperty implements SQLFunction {
 
-    private final Type type;
+	private final Type type;
 
-    private final String name;
+	private final String name;
 
-    public SDOObjectProperty(String name, Type type) {
-        this.type = type;
-        this.name = name;
-    }
+	public SDOObjectProperty(String name, Type type) {
+		this.type = type;
+		this.name = name;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.hibernate.dialect.function.SQLFunction#getReturnType(org.hibernate.type.Type,
-     *      org.hibernate.engine.Mapping)
-     */
-    public Type getReturnType(Type columnType, Mapping mapping)
-            throws QueryException {
-        return type == null ? columnType : type;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.hibernate.dialect.function.SQLFunction#getReturnType(org.hibernate.type.Type,
+	 *      org.hibernate.engine.Mapping)
+	 */
+	public Type getReturnType(Type columnType, Mapping mapping)
+			throws QueryException {
+		return type == null ? columnType : type;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.hibernate.dialect.function.SQLFunction#hasArguments()
-     */
-    public boolean hasArguments() {
-        return true;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.hibernate.dialect.function.SQLFunction#hasArguments()
+	 */
+	public boolean hasArguments() {
+		return true;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.hibernate.dialect.function.SQLFunction#hasParenthesesIfNoArguments()
-     */
-    public boolean hasParenthesesIfNoArguments() {
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.hibernate.dialect.function.SQLFunction#hasParenthesesIfNoArguments()
+	 */
+	public boolean hasParenthesesIfNoArguments() {
+		return false;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.hibernate.dialect.function.SQLFunction#render(java.util.List,
-     *      org.hibernate.engine.SessionFactoryImplementor)
-     */
-    public String render(List args, SessionFactoryImplementor factory)
-            throws QueryException {
-        StringBuffer buf = new StringBuffer();
-        if (args.isEmpty())
-            throw new QueryException(
-                    "First Argument in arglist must be object of which property is queried");
-        buf.append(args.get(0)).append(".").append(name);
-        return buf.toString();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.hibernate.dialect.function.SQLFunction#render(java.util.List,
+	 *      org.hibernate.engine.SessionFactoryImplementor)
+	 */
+	public String render(List args, SessionFactoryImplementor factory)
+			throws QueryException {
+		StringBuffer buf = new StringBuffer();
+		if (args.isEmpty())
+			throw new QueryException(
+					"First Argument in arglist must be object of which property is queried");
+		buf.append(args.get(0)).append(".").append(name);
+		return buf.toString();
+	}
 
 }

@@ -26,15 +26,30 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle.test;
+package org.hibernatespatial.oracle;
 
-import org.hibernatespatial.test.model.DataGenerator;
+/**
+ * Factory class for SpationProjection functions *
+ * 
+ * @author Tom Acree
+ */
+public final class OracleSpatialProjections {
 
-public class GenerateData {
-
-	public static void main(String[] args) {
-		DataGenerator generator = new DataGenerator();
-		generator.generate();
+	private OracleSpatialProjections() {
 	}
 
+	public static SpatialAggregateProjection concatLrs(String propertyName) {
+		return new SpatialAggregateProjection(
+				OracleSpatialAggregation.LRS_CONCAT, propertyName, true);
+	}
+
+	public static SpatialAggregateProjection centroid(String propertyName) {
+		return new SpatialAggregateProjection(
+				OracleSpatialAggregation.CENTROID, propertyName, true);
+	}
+
+	public static SpatialAggregateProjection concat(String propertyName) {
+		return new SpatialAggregateProjection(OracleSpatialAggregation.CONCAT,
+				propertyName, true);
+	}
 }

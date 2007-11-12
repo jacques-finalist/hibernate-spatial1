@@ -3,13 +3,9 @@
   
   <bannerLeft>
     <name>Hibernate Spatial Oracle Provider</name>
-    <href>http://www.cadrie.com/projects/majas-hibernate</href>
+    <href>http://www.hibernatespatial.org/hibernate-spatial-oracle/index.html</href>
   </bannerLeft>
   
-  <bannerRight>
-    <name>Cadrie</name>
-    <src>http://www.cadrie.com/</src>    
-  </bannerRight>
   
   <skin>
     <groupId>org.apache.maven.skins</groupId>
@@ -21,8 +17,8 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial-oracle/index.html"/>
-      <item name="Usage" href="hibernate-spatial-oracle/usage.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
     </menu>
 
     

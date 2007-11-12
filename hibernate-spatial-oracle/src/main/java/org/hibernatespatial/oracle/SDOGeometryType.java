@@ -1,12 +1,13 @@
 /**
  * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the
- * hibernate ORM solution for geographic data.
- *
+ * This file is part of Hibernate Spatial, an extension to the 
+ * hibernate ORM solution for geographic data. 
+ *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
- * This work was partially supported by the European Commission,
+ * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,9 +24,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
-
 package org.hibernatespatial.oracle;
 
 import java.lang.reflect.Array;
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import oracle.jdbc.driver.OracleConnection;
-import oracle.spatial.geometry.JGeometry;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import oracle.sql.Datum;
@@ -49,6 +48,7 @@ import oracle.sql.StructDescriptor;
 import org.hibernate.HibernateException;
 import org.hibernatespatial.AbstractDBGeometryType;
 import org.hibernatespatial.HibernateSpatialException;
+import org.hibernatespatial.Circle;
 import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.mgeom.MLineString;
@@ -187,7 +187,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		int dim = getCoordDimension(lineString);
 		int lrsPos = getCoordinateLrsPosition(lineString);
 		boolean isLrs = lrsPos > 0;
-		double[] ordinates = convertCoordinates(lineString.getCoordinates(),
+		Double[] ordinates = convertCoordinates(lineString.getCoordinates(),
 				dim, isLrs);
 		// if (isLrs) {
 		// dim = dim - 1; // only include the X,Y,Z coordinates in the dimension
@@ -196,7 +196,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		// lineString.getSRID());
 		// }
 		SDO_GEOMETRY geom = new SDO_GEOMETRY();
-		geom.setGType(new SDO_GTYPE(dim, 0, TypeGeometry.LINE));
+		geom.setGType(new SDO_GTYPE(dim, lrsPos, TypeGeometry.LINE));
 		geom.setSRID(lineString.getSRID());
 		ELEM_INFO info = new ELEM_INFO(1);
 		info.setElement(0, 1, ElementType.LINE_STRAITH_SEGMENTS, 0);
@@ -209,13 +209,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	private SDO_GEOMETRY convertJTSMultiPoint(MultiPoint multiPoint) {
 		int dim = getCoordDimension(multiPoint);
 		int lrsDim = getCoordinateLrsPosition(multiPoint);
-		boolean isLrs = (lrsDim == 0) ? false : true;
+		boolean isLrs = (lrsDim != 0);
 		SDO_GEOMETRY geom = new SDO_GEOMETRY();
 		geom.setGType(new SDO_GTYPE(dim, lrsDim, TypeGeometry.MULTIPOINT));
 		geom.setSRID(multiPoint.getSRID());
 		ELEM_INFO info = new ELEM_INFO(multiPoint.getNumPoints());
 		int oordinatesOffset = 1;
-		double[] ordinates = new double[] {};
+		Double[] ordinates = new Double[] {};
 		for (int i = 0; i < multiPoint.getNumPoints(); i++) {
 			info.setElement(i, oordinatesOffset, ElementType.POINT, 0);
 			ordinates = convertAddCoordinates(ordinates, multiPoint
@@ -229,10 +229,14 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private SDO_GEOMETRY convertJTSPoint(Point jtsGeom) {
 		int dim = getCoordDimension(jtsGeom);
-		double[] coord = convertCoordinates(jtsGeom.getCoordinates(), dim,
-				false); // todo needs implemented for LRS
+
+		int lrsDim = getCoordinateLrsPosition(jtsGeom);
+		boolean isLrs = (lrsDim != 0);
+
+		Double[] coord = convertCoordinates(jtsGeom.getCoordinates(), dim,
+				isLrs);
 		SDO_GEOMETRY geom = new SDO_GEOMETRY();
-		geom.setGType(new SDO_GTYPE(dim, 0, TypeGeometry.POINT));
+		geom.setGType(new SDO_GTYPE(dim, lrsDim, TypeGeometry.POINT));
 		geom.setSRID(jtsGeom.getSRID());
 		ELEM_INFO info = new ELEM_INFO(1);
 		info.setElement(0, 1, ElementType.POINT, 1);
@@ -258,7 +262,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		if (geom.getOrdinates() != null) {
 			ordinatesOffset = geom.getOrdinates().getOrdinateArray().length + 1;
 		}
-		double[] ordinates = new double[] {};
+		Double[] ordinates = new Double[] {};
 		for (int i = 0; i < info.getSize(); i++) {
 			ElementType et;
 			Coordinate[] coords;
@@ -288,13 +292,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			MultiLineString multiLineString) {
 		int dim = getCoordDimension(multiLineString);
 		int lrsDim = getCoordinateLrsPosition(multiLineString);
-		boolean isLrs = (lrsDim == 0) ? false : true;
+		boolean isLrs = (lrsDim != 0);
 		SDO_GEOMETRY geom = new SDO_GEOMETRY();
 		geom.setGType(new SDO_GTYPE(dim, lrsDim, TypeGeometry.MULTILINE));
 		geom.setSRID(multiLineString.getSRID());
 		ELEM_INFO info = new ELEM_INFO(multiLineString.getNumGeometries());
 		int oordinatesOffset = 1;
-		double[] ordinates = new double[] {};
+		Double[] ordinates = new Double[] {};
 		for (int i = 0; i < multiLineString.getNumGeometries(); i++) {
 			info.setElement(i, oordinatesOffset,
 					ElementType.LINE_STRAITH_SEGMENTS, 0);
@@ -307,35 +311,60 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return geom;
 	}
 
-	private double[] convertAddCoordinates(double[] ordinates,
+	private Double[] convertAddCoordinates(Double[] ordinates,
 			Coordinate[] coordinates, int dim, boolean isLrs) {
-		double[] no = convertCoordinates(coordinates, dim, isLrs);
-		double[] newordinates = new double[ordinates.length + no.length];
+		Double[] no = convertCoordinates(coordinates, dim, isLrs);
+		Double[] newordinates = new Double[ordinates.length + no.length];
 		System.arraycopy(ordinates, 0, newordinates, 0, ordinates.length);
 		System.arraycopy(no, 0, newordinates, ordinates.length, no.length);
 		return newordinates;
 	}
 
-	private double[] convertCoordinates(Coordinate[] coordinates, int dim,
+	/**
+	 * Convert the coordinates to a double array for purposes of persisting them
+	 * to the database. Note that Double.NaN values are to be converted to null
+	 * values in the array.
+	 * 
+	 * @param coordinates
+	 *            Coordinates to be converted to the array
+	 * @param dim
+	 *            Coordinate dimension
+	 * @param isLrs
+	 *            true if the coordinates contain measures
+	 * @return
+	 */
+	private Double[] convertCoordinates(Coordinate[] coordinates, int dim,
 			boolean isLrs) {
 		if (dim > 4)
 			throw new IllegalArgumentException(
 					"Dim parameter value cannot be greater than 4");
-		double[] converted = new double[coordinates.length * dim];
+		Double[] converted = new Double[coordinates.length * dim];
 		for (int i = 0; i < coordinates.length; i++) {
 			MCoordinate c = MCoordinate.convertCoordinate(coordinates[i]);
 
 			// set the X and Y values
-			converted[i * dim] = c.x;
-			converted[i * dim + 1] = c.y;
+			converted[i * dim] = toDouble(c.x);
+			converted[i * dim + 1] = toDouble(c.y);
 			if (dim == 3)
-				converted[i * dim + 2] = isLrs ? c.m : c.z;
+				converted[i * dim + 2] = isLrs ? toDouble(c.m) : toDouble(c.z);
 			else if (dim == 4) {
-				converted[i * dim + 2] = c.z;
-				converted[i * dim + 3] = c.m;
+				converted[i * dim + 2] = toDouble(c.z);
+				converted[i * dim + 3] = toDouble(c.m);
 			}
 		}
 		return converted;
+	}
+
+	/**
+	 * This method converts a double primitive to a Double wrapper instance, but
+	 * treats a Double.NaN value as null.
+	 * 
+	 * @param d
+	 *            the value to be converted
+	 * @return A Double instance of d, Null if the parameter is Double.NaN
+	 */
+	private Double toDouble(double d) {
+		return Double.isNaN(d) ? null : d;
 	}
 
 	// /**
@@ -472,13 +501,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	}
 
 	private Point convertSDOPoint(SDO_GEOMETRY sdoGeom) {
-		double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
+		Double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
 		if (ordinates.length == 0) {
 			if (sdoGeom.getDimension() == 2) {
-				ordinates = new double[] { sdoGeom.getPoint().x,
+				ordinates = new Double[] { sdoGeom.getPoint().x,
 						sdoGeom.getPoint().y };
 			} else {
-				ordinates = new double[] { sdoGeom.getPoint().y,
+				ordinates = new Double[] { sdoGeom.getPoint().y,
 						sdoGeom.getPoint().y, sdoGeom.getPoint().z };
 			}
 		}
@@ -491,7 +520,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private MultiPoint convertSDOMultiPoint(int dim, int lrsDim,
 			SDO_GEOMETRY sdoGeom) {
-		double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
+		Double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
 		CoordinateSequence cs = convertOrdinateArray(ordinates, sdoGeom);
 		MultiPoint multipoint = geomFactory.createMultiPoint(cs);
 		multipoint.setSRID(sdoGeom.getSRID());
@@ -510,7 +539,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 				i += 1 + numCompounds;
 			} else {
-				cs = add(cs, getElementCSeq(i, null, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom));
 				i++;
 			}
 		}
@@ -538,7 +567,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				lines[i] = line;
 				i += 1 + numCompounds;
 			} else {
-				cs = add(cs, getElementCSeq(i, null, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom));
 				LineString line = lrs ? geomFactory.createMLineString(cs)
 						: geomFactory.createLineString(cs);
 				lines[i] = line;
@@ -567,7 +596,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 			} else {
-				cs = add(cs, getElementCSeq(i, null, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
 				holes[idxInteriorRings] = geomFactory.createLinearRing(cs);
@@ -598,7 +627,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 			} else {
-				cs = add(cs, getElementCSeq(i, null, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
 				LinearRing lr = geomFactory.createLinearRing(cs);
@@ -644,10 +673,18 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	private CoordinateSequence getCompoundCSeq(int idxFirst, int idxLast,
 			SDO_GEOMETRY sdoGeom) {
 		CoordinateSequence cs = null;
-		Coordinate startCoordinate = null;
 		for (int i = idxFirst; i <= idxLast; i++) {
-			cs = add(cs, getElementCSeq(i, startCoordinate, sdoGeom));
-			startCoordinate = cs.getCoordinate(cs.size() - 1);
+			// pop off the last element as it is added with the next
+			// coordinate sequence
+			if (cs != null && cs.size() > 0) {
+				Coordinate[] coordinates = cs.toCoordinateArray();
+				Coordinate[] newCoordinates = new Coordinate[coordinates.length - 1];
+				System.arraycopy(coordinates, 0, newCoordinates, 0,
+						coordinates.length - 1);
+				cs = geomFactory.getCoordinateSequenceFactory().create(
+						newCoordinates);
+			}
+			cs = add(cs, getElementCSeq(i, sdoGeom));
 		}
 		return cs;
 	}
@@ -656,25 +693,23 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	 * Gets the CoordinateSequence corresponding to an element.
 	 * 
 	 * @param i
-	 * @param startCoordinate
 	 * @param sdoGeom
 	 * @return
 	 */
-	private CoordinateSequence getElementCSeq(int i,
-			Coordinate startCoordinate, SDO_GEOMETRY sdoGeom) {
+	private CoordinateSequence getElementCSeq(int i, SDO_GEOMETRY sdoGeom) {
 		ElementType type = sdoGeom.getInfo().getElementType(i);
-		double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom);
+		Double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom);
 		CoordinateSequence cs = null;
 		if (type.isStraightSegment()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
-		} else if (type.isArcSegment()) {
+		} else if (type.isArcSegment() || type.isCircle()) {
 			// remember that the last point of a subelement is the first point
 			// of the next subelement.
 			// throw new UnsupportedOperationException("Serialization of arc
 			// segments not yet implemented");
-			double[] linearized = linearize(startCoordinate, elemOrdinates,
-					sdoGeom.getDimension(), sdoGeom.isLRSGeometry());
-			cs = convertOrdinateArray(linearized, sdoGeom);
+			Coordinate[] linearized = linearize(elemOrdinates, sdoGeom
+					.getDimension(), sdoGeom.isLRSGeometry(), type.isCircle());
+			cs = geomFactory.getCoordinateSequenceFactory().create(linearized);
 		} else if (type.isRect()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
 			Coordinate ll = cs.getCoordinate(0);
@@ -711,15 +746,19 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return geomFactory.getCoordinateSequenceFactory().create(c3);
 	}
 
-	private double[] extractOrdinatesOfElement(int element, SDO_GEOMETRY sdoGeom) {
+	private Double[] extractOrdinatesOfElement(int element, SDO_GEOMETRY sdoGeom) {
 		int start = sdoGeom.getInfo().getOordinatesOffset(element);
 		if (element < sdoGeom.getInfo().getSize() - 1) {
 			int end = sdoGeom.getInfo().getOordinatesOffset(element + 1);
+			// if this is a compound geometry, need to include the next group of
+			// coordinates
+			if (sdoGeom.getInfo().isCompound(0)) {
+				end += sdoGeom.getDimension();
+			}
 			return sdoGeom.getOrdinates().getOrdinatesArray(start, end);
 		} else {
 			return sdoGeom.getOrdinates().getOrdinatesArray(start);
 		}
-
 	}
 
 	// public Geometry convert2JTS(Object geomObj) {
@@ -841,7 +880,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	// return ring;
 	// }
 
-	private CoordinateSequence convertOrdinateArray(double[] oordinates,
+	private CoordinateSequence convertOrdinateArray(Double[] oordinates,
 			SDO_GEOMETRY sdoGeom) {
 		int dim = sdoGeom.getDimension();
 		Coordinate[] coordinates = new Coordinate[oordinates.length / dim];
@@ -887,10 +926,22 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return ar;
 	}
 
-	private double[] linearize(Coordinate startCoordinate,
-			double[] arcOrdinates, int dim, boolean lrs) {
-
-		double[] linearizedCoords = new double[0];
+	/**
+	 * Linearizes arcs and circles.
+	 * 
+	 * @param arcOrdinates
+	 *            arc or circle coordinates
+	 * @param dim
+	 *            coordinate dimension
+	 * @param lrs
+	 *            whether this is an lrs geometry
+	 * @param entireCirlce
+	 *            whether the whole arc should be linearized
+	 * @return linearized interpolation of arcs or circle
+	 */
+	private Coordinate[] linearize(Double[] arcOrdinates, int dim, boolean lrs,
+			boolean entireCirlce) {
+		Coordinate[] linearizedCoords = new Coordinate[0];
 		// CoordDim is the dimension that includes only non-measure (X,Y,Z)
 		// ordinates in its value
 		int coordDim = lrs ? dim - 1 : dim;
@@ -903,115 +954,60 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		int numOrd = dim;
 		while (numOrd < arcOrdinates.length) {
 			numOrd = numOrd - dim;
-			// at the start, first check if we need to use startCoordinate
-			double x1, y1, m1;
-			if (numOrd == 0 && startCoordinate != null) {
-				x1 = startCoordinate.x;
-				y1 = startCoordinate.y;
-				m1 = lrs ? ((MCoordinate) startCoordinate).m : Double.NaN;
-			} else {
-				x1 = arcOrdinates[numOrd++];
-				y1 = arcOrdinates[numOrd++];
-				m1 = lrs ? arcOrdinates[numOrd++] : Double.NaN;
-			}
+			double x1 = arcOrdinates[numOrd++];
+			double y1 = arcOrdinates[numOrd++];
+			double m1 = lrs ? arcOrdinates[numOrd++] : Double.NaN;
 			double x2 = arcOrdinates[numOrd++];
 			double y2 = arcOrdinates[numOrd++];
 			double m2 = lrs ? arcOrdinates[numOrd++] : Double.NaN;
 			double x3 = arcOrdinates[numOrd++];
 			double y3 = arcOrdinates[numOrd++];
 			double m3 = lrs ? arcOrdinates[numOrd++] : Double.NaN;
-			double[] result = JGeometry.linearizeArc(x1, y1, x2, y2, x3, y3);
+
+			Coordinate[] coords;
+			if (entireCirlce) {
+				coords = Circle.linearizeCircle(x1, y1, x2, y2, x3, y3);
+			} else {
+				coords = Circle.linearizeArc(x1, y1, x2, y2, x3, y3);
+			}
 
 			// if this is an LRS geometry, fill the measure values into
 			// the linearized array
 			if (lrs) {
-				result = fillLinearizedOrdsWithMeasures(result, x1, y1, m1, x2,
-						y2, m2, x3, y3, m3);
+				MCoordinate[] mcoord = new MCoordinate[coords.length];
+				int lastIndex = coords.length - 1;
+				mcoord[0] = MCoordinate.create2dWithMeasure(x1, y1, m1);
+				mcoord[lastIndex] = MCoordinate.create2dWithMeasure(x3, y3, m3);
+				// convert the middle coordinates to MCoordinate
+				for (int i = 1; i < lastIndex; i++) {
+					mcoord[i] = MCoordinate.convertCoordinate(coords[i]);
+					// if we happen to split on the middle measure, then
+					// assign it
+					if (Double.compare(mcoord[i].x, x2) == 0
+							&& Double.compare(mcoord[i].y, y2) == 0) {
+						mcoord[i].m = m2;
+					}
+				}
+				coords = mcoord;
 			}
 
 			// if this is not the first arcsegment, the first linearized
 			// point is already in linearizedArc, so disregard this.
-			int resultBegin = 2;
+			int resultBegin = 1;
 			if (linearizedCoords.length == 0)
 				resultBegin = 0;
 
 			int destPos = linearizedCoords.length;
-			double[] tmpCoords = new double[linearizedCoords.length
-					+ result.length - resultBegin];
+			Coordinate[] tmpCoords = new Coordinate[linearizedCoords.length
+					+ coords.length - resultBegin];
 			System.arraycopy(linearizedCoords, 0, tmpCoords, 0,
 					linearizedCoords.length);
-			System.arraycopy(result, resultBegin, tmpCoords, destPos,
-					result.length - resultBegin);
+			System.arraycopy(coords, resultBegin, tmpCoords, destPos,
+					coords.length - resultBegin);
+
 			linearizedCoords = tmpCoords;
 		}
-
-		// guarentee that first and last oordinate pairs of the
-		// linearizedOrdinates are exactly the same as in input ArcOrdinates
-		// This is needed because JGeometry linearization "bruises"
-		// coordinates which causes problems in case of linear rings.
-		// Note that this is already addressed for LRS coordinates -- Tom Acree
-		// 2007-10-10
-		// if (lrs) { //not only when lrs geometries. - KM!
-		linearizedCoords[0] = arcOrdinates[0];
-		linearizedCoords[1] = arcOrdinates[1];
-		linearizedCoords[linearizedCoords.length - 1] = arcOrdinates[arcOrdinates.length - 1];
-		linearizedCoords[linearizedCoords.length - 2] = arcOrdinates[arcOrdinates.length - 2];
-		// }
-
 		return linearizedCoords;
-	}
-
-	/**
-	 * In cases where an arc has been linearized and the arc was an LRS
-	 * Geometry, this method plugs in the original measures, and fills
-	 * interpolated ordinates with empty (Double.NaN) values.
-	 * 
-	 * @param ords
-	 *            the linearized ordinates
-	 * @param controlPoints
-	 *            the original ordinates prior to linearization, also containing
-	 *            the original measures. Must be the original 9 values as
-	 *            x1,y1,m1...x3,y3,m3
-	 * @return an array filled with the linearized ordinates and any filled
-	 *         measures.
-	 */
-	private double[] fillLinearizedOrdsWithMeasures(double[] ords,
-			double... controlPoints) {
-		assert controlPoints != null && controlPoints.length == 9 : "Control Points must be 9 elements";
-		assert ords != null && ords.length % 3 == 0 && ords.length >= 9 : "Invalid linearized ordinates";
-		// each vertex gets a measure added so size the resulting array
-		// accordingly
-		int resultSize = ords.length + (ords.length / 2);
-		double[] results = new double[resultSize];
-
-		// hard code the begin and end coordinates to ease the potential
-		// "coordinate bruising"
-		// caused by the linearizing process
-		results[0] = controlPoints[0];
-		results[1] = controlPoints[1];
-		results[2] = controlPoints[2];
-		results[resultSize - 3] = controlPoints[6];
-		results[resultSize - 2] = controlPoints[7];
-		results[resultSize - 1] = controlPoints[8];
-		// copy the middle ordinates, filling in missing measure if possible
-		double midX = controlPoints[3];
-		double midY = controlPoints[4];
-		double midM = controlPoints[5];
-
-		for (int i = 3, j = 2; i < (resultSize - 3); i += 3, j += 2) {
-			results[i] = ords[j];
-			results[i + 1] = ords[j + 1];
-			// if we match the mid points, assign the middle measure
-			// todo is this good enough, or should there be a match to
-			// a closest matching mid point? Didn't want to add the
-			// overhead if not necessary
-			if (Double.compare(midX, ords[j]) == 0
-					&& Double.compare(midY, ords[j + 1]) == 0) {
-				results[i + 2] = midM;
-			} else
-				results[i + 2] = Double.NaN;
-		}
-		return results;
 	}
 
 	@Override
@@ -1395,36 +1391,41 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 		private static ArrayDescriptor arrayDescriptor = null;
 
-		private double[] ordinates;
+		private Double[] ordinates;
 
-		public ORDINATES(double[] ordinates) {
+		public ORDINATES(Double[] ordinates) {
 			this.ordinates = ordinates;
 		}
 
 		public ORDINATES(ARRAY array) {
 			if (array == null) {
-				this.ordinates = new double[] {};
+				this.ordinates = new Double[] {};
 				return;
 			}
 			try {
-				this.ordinates = array.getDoubleArray();
+				Number[] ords = (Number[]) array.getArray();
+				this.ordinates = new Double[ords.length];
+				for (int i = 0; i < ords.length; i++) {
+					this.ordinates[i] = ords[i] != null ? ords[i].doubleValue()
+							: Double.NaN;
+				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		public double[] getOrdinateArray() {
+		public Double[] getOrdinateArray() {
 			return this.ordinates;
 		}
 
-		public double[] getOrdinatesArray(int startPosition, int endPosition) {
-			double[] a = new double[endPosition - startPosition];
+		public Double[] getOrdinatesArray(int startPosition, int endPosition) {
+			Double[] a = new Double[endPosition - startPosition];
 			System.arraycopy(this.ordinates, startPosition - 1, a, 0, a.length);
 			return a;
 		}
 
-		public double[] getOrdinatesArray(int startPosition) {
-			double[] a = new double[this.ordinates.length - (startPosition - 1)];
+		public Double[] getOrdinatesArray(int startPosition) {
+			Double[] a = new Double[this.ordinates.length - (startPosition - 1)];
 			System.arraycopy(this.ordinates, startPosition - 1, a, 0, a.length);
 			return a;
 		}
@@ -1433,8 +1434,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return arrayToString(this.ordinates);
 		}
 
-		public void addOrdinates(double[] ordinatesToAdd) {
-			double[] newOrdinates = new double[this.ordinates.length
+		public void addOrdinates(Double[] ordinatesToAdd) {
+			Double[] newOrdinates = new Double[this.ordinates.length
 					+ ordinatesToAdd.length];
 			System.arraycopy(this.ordinates, 0, newOrdinates, 0,
 					this.ordinates.length);
@@ -1616,7 +1617,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return stb.toString();
 		}
 
-		public void addOrdinates(double[] newOrdinates) {
+		public void addOrdinates(Double[] newOrdinates) {
 			if (this.ordinates == null) {
 				this.ordinates = new ORDINATES(newOrdinates);
 			} else {

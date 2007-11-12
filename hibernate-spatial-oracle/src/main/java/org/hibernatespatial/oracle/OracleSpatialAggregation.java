@@ -26,15 +26,16 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle.test;
+package org.hibernatespatial.oracle;
 
-import org.hibernatespatial.test.model.DataGenerator;
+/**
+ * Defines types of OracleSpatialAggregation
+ */
+public interface OracleSpatialAggregation {
 
-public class GenerateData {
+	public static int LRS_CONCAT = 1;
 
-	public static void main(String[] args) {
-		DataGenerator generator = new DataGenerator();
-		generator.generate();
-	}
+	public static int CENTROID = 2;
 
+	public static int CONCAT = 3;
 }

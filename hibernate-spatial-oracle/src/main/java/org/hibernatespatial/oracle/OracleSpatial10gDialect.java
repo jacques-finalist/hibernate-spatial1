@@ -1,14 +1,15 @@
 /**
  * $Id$
  *
- * This file is part of Spatial Hibernate, an extension to the 
+ * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
+ * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
  * under the 6th Framework Programme, contract IST-2-004688-STP.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,9 +24,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * For more information, visit: http://www.cadrie.com/
+ * For more information, visit: http://www.hibernatespatial.org/
  */
-
 package org.hibernatespatial.oracle;
 
 import java.io.IOException;
@@ -232,24 +232,24 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 
 	}
 
-	private class SpatialAggregationFunction extends StandardSQLFunction {
-
-		private final int aggregation;
-
-		private final boolean isProjection;
-
-		public SpatialAggregationFunction(String name, Type returnType,
-				boolean isProjection, int aggregation) {
-			super(name, returnType);
-			this.aggregation = aggregation;
-			this.isProjection = isProjection;
-		}
-
-		public String render(List args, SessionFactoryImplementor factory) {
-			return getNativeSpatialAggregateSQL((String) args.get(0),
-					this.aggregation, isProjection);
-		}
-	}
+	// private class SpatialAggregationFunction extends StandardSQLFunction {
+	//
+	// private final int aggregation;
+	//
+	// private final boolean isProjection;
+	//
+	// public SpatialAggregationFunction(String name, Type returnType,
+	// boolean isProjection, int aggregation) {
+	// super(name, returnType);
+	// this.aggregation = aggregation;
+	// this.isProjection = isProjection;
+	// }
+	//
+	// public String render(List args, SessionFactoryImplementor factory) {
+	// return getNativeSpatialAggregateSQL((String) args.get(0),
+	// this.aggregation, isProjection);
+	// }
+	// }
 
 	public final static String SHORT_NAME = "oraclespatial";
 
@@ -285,9 +285,9 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 				new StandardSQLFunction("SDO_GEOM.SDO_MBR", new CustomType(
 						SDOGeometryType.class, null)));
 		registerFunction("astext", new AsTextFunction());
-		// Can't get these functions to work on XE
-		// registerFunction("asbinary", new
-		// StandardSQLFunction("SDO_UTIL.TO_WKBGEOMETRY"));
+		// Can't get the AsBinary function to work on XE
+		registerFunction("asbinary", new StandardSQLFunction(
+				"SDO_UTIL.TO_WKBGEOMETRY"));
 		registerFunction("isempty", new WrappedOGCFunction("OGC_ISEMPTY",
 				Hibernate.BOOLEAN, new boolean[] { true }));
 		registerFunction("issimple", new WrappedOGCFunction("OGC_ISSIMPLE",
@@ -345,9 +345,9 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		// keyword. (See also postgis documentation).
 
 		// Spatial Aggregation
-//		registerFunction("lrsconcat", new SpatialAggregationFunction(
-//				"lrsconcat", new CustomType(SDOGeometryType.class, null),
-//				false, SpatialAggregation.LRS_CONCAT));
+		// registerFunction("lrsconcat", new SpatialAggregationFunction(
+		// "lrsconcat", new CustomType(SDOGeometryType.class, null),
+		// false, OracleSpatialAggregation.LRS_CONCAT));
 	}
 
 	public UserType getGeometryUserType() {
@@ -447,30 +447,30 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	public String getNativeSpatialAggregateSQL(String arg1, int aggregation,
 			boolean isProjection) {
 
-//		StringBuffer aggregateFunction = new StringBuffer();
-//
-//		SpatialAggregate sa = new SpatialAggregate(aggregation);
-//
-//		if (sa._aggregateSyntax == null) {
-//			throw new IllegalArgumentException("Unknown Spatial Aggregation ("
-//					+ aggregation + ").");
-//		}
-//
-//		aggregateFunction.append(sa._aggregateSyntax);
-//
-//		aggregateFunction.append("(");
-//		if (sa.isAggregateType()) {
-//			aggregateFunction.append("SDOAGGRTYPE(");
-//		}
-//		aggregateFunction.append(arg1);
-//		if (sa.isAggregateType()) {
-//			aggregateFunction.append(", ").append(.001).append(")");
-//		}
-//		aggregateFunction.append(")");
-//		if (isProjection) {
-//			aggregateFunction.append(" as y");
-//		}
-//		return aggregateFunction.toString();
+		// StringBuffer aggregateFunction = new StringBuffer();
+		//
+		// SpatialAggregate sa = new SpatialAggregate(aggregation);
+		//
+		// if (sa._aggregateSyntax == null) {
+		// throw new IllegalArgumentException("Unknown Spatial Aggregation ("
+		// + aggregation + ").");
+		// }
+		//
+		// aggregateFunction.append(sa._aggregateSyntax);
+		//
+		// aggregateFunction.append("(");
+		// if (sa.isAggregateType()) {
+		// aggregateFunction.append("SDOAGGRTYPE(");
+		// }
+		// aggregateFunction.append(arg1);
+		// if (sa.isAggregateType()) {
+		// aggregateFunction.append(", ").append(.001).append(")");
+		// }
+		// aggregateFunction.append(")");
+		// if (isProjection) {
+		// aggregateFunction.append(" as y");
+		// }
+		// return aggregateFunction.toString();
 		return null;
 	}
 
@@ -634,50 +634,49 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	/**
 	 * Provides Aggregate type spatial function interpretation
 	 */
-	private class SpatialAggregate {
-
-		boolean _aggregateType;
-
-		String _aggregateSyntax;
-
-		private final String SDO_AGGR = "SDO_AGGR_";
-
-		protected SpatialAggregate() {
-		}
-
-//		private SpatialAggregate(int aggregation) {
-//
-//			String specificAggrSyntax;
-//
-//			switch (aggregation) {
-//			case SpatialAggregation.LRS_CONCAT:
-//				specificAggrSyntax = "LRS_CONCAT";
-//				_aggregateType = true;
-//				break;
-//			case SpatialAggregation.CENTROID:
-//				specificAggrSyntax = "CENTROID";
-//				_aggregateType = true;
-//				break;
-//			case SpatialAggregation.CONCAT:
-//				specificAggrSyntax = "CONCAT_LINES";
-//				_aggregateType = false;
-//				break;
-//			default:
-//				specificAggrSyntax = null;
-//				break;
-//			}
-//			if (specificAggrSyntax != null) {
-//				_aggregateSyntax = SDO_AGGR + specificAggrSyntax;
-//			}
-//		}
-
-		public boolean isAggregateType() {
-			return _aggregateType;
-		}
-
-		public String getAggregateSyntax() {
-			return _aggregateSyntax;
-		}
-
-	}
+	// private class SpatialAggregate {
+	//
+	// boolean _aggregateType;
+	//
+	// String _aggregateSyntax;
+	//
+	// private final String SDO_AGGR = "SDO_AGGR_";
+	//
+	// protected SpatialAggregate() {
+	// }
+	// private SpatialAggregate(int aggregation) {
+	//
+	// String specificAggrSyntax;
+	//
+	// switch (aggregation) {
+	// case OracleSpatialAggregation.LRS_CONCAT:
+	// specificAggrSyntax = "LRS_CONCAT";
+	// _aggregateType = true;
+	// break;
+	// case OracleSpatialAggregation.CENTROID:
+	// specificAggrSyntax = "CENTROID";
+	// _aggregateType = true;
+	// break;
+	// case OracleSpatialAggregation.CONCAT:
+	// specificAggrSyntax = "CONCAT_LINES";
+	// _aggregateType = false;
+	// break;
+	// default:
+	// specificAggrSyntax = null;
+	// break;
+	// }
+	// if (specificAggrSyntax != null) {
+	// _aggregateSyntax = SDO_AGGR + specificAggrSyntax;
+	// }
+	// }
+	//
+	// public boolean isAggregateType() {
+	// return _aggregateType;
+	// }
+	//
+	// public String getAggregateSyntax() {
+	// return _aggregateSyntax;
+	// }
+	//
+	// }
 }
