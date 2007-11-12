@@ -1,0 +1,118 @@
+/**
+ * $Id:PGGeometryUserType.java 40 2007-09-20 15:33:24Z maesenka $
+ *
+ * This file is part of Spatial Hibernate, an extension to the 
+ * hibernate ORM solution for geographic data. 
+ *  
+ * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
+ *
+ * This work was partially supported by the European Commission, 
+ * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * For more information, visit: http://www.cadrie.com/
+ */
+
+package org.hibernatespatial.mysql;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Types;
+
+import org.hibernatespatial.AbstractDBGeometryType;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.ByteOrderValues;
+import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKBWriter;
+
+/**
+ * Specific <code>GeometryType</code> for Postgis geometry type
+ * 
+ * @author Karel Maesen
+ */
+public class MySQLGeometryUserType extends AbstractDBGeometryType {
+
+	private static final int SRIDLEN = 4;
+
+	private final WKBReader reader = new WKBReader();
+
+	private final WKBWriter writer = new WKBWriter(2,
+			ByteOrderValues.LITTLE_ENDIAN);
+
+	private static final int[] geometryTypes = new int[] { Types.ARRAY };
+
+	private static final GeometryFactory geomFactory = new GeometryFactory();
+
+	public int[] sqlTypes() {
+		return geometryTypes;// PostgisDialect.getGeometrySQLType()
+	}
+
+	/**
+	 * Converts the native geometry object to a JTS <code>Geometry</code>.
+	 * 
+	 * @param geomObj
+	 *            native database geometry object (depends on the JDBC spatial
+	 *            extension of the database)
+	 * @return JTS geometry corresponding to geomObj.
+	 */
+	public Geometry convert2JTS(Object object) {
+		if (object == null) {
+			return null;
+		}
+		byte[] data = (byte[]) object;
+		byte[] wkb = new byte[data.length - SRIDLEN];
+		System.arraycopy(data, SRIDLEN, wkb, 0, wkb.length);
+		int srid = 0;
+		// WKB in MySQL Spatial is always little endian.
+		srid = data[3] << 24 | (data[2] & 0xff) << 16 | (data[1] & 0xff) << 8
+				| (data[0] & 0xff);
+		Geometry geom = null;
+		try {
+			geom = reader.read(wkb);
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Couldn't parse incoming MySQL Spatial data.");
+		}
+		geom.setSRID(srid);
+		return geom;
+	}
+
+	/**
+	 * Converts a JTS <code>Geometry</code> to a native geometry object.
+	 * 
+	 * @param jtsGeom
+	 *            JTS Geometry to convert
+	 * @param connection
+	 *            the current database connection
+	 * @return native database geometry object corresponding to jtsGeom.
+	 */
+	public Object conv2DBGeometry(Geometry jtsGeom, Connection connection) {
+		int srid = jtsGeom.getSRID();
+		byte[] wkb = writer.write(jtsGeom);
+
+		byte[] byteArr = new byte[wkb.length + SRIDLEN];
+		byteArr[3] = (byte) ((srid >> 24) & 0xFF);
+		byteArr[2] = (byte) ((srid >> 16) & 0xFF);
+		byteArr[1] = (byte) ((srid >> 8) & 0xFF);
+		byteArr[0] = (byte) (srid & 0xFF);
+		System.arraycopy(wkb, 0, byteArr, SRIDLEN, wkb.length);
+		return byteArr;
+	}
+
+}

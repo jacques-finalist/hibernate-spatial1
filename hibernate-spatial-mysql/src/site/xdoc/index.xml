@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+	<header />
+
+	<body>
+		<section name="The Hibernate Spatial Postgis Provider">
+			<p>
+				The Postgis Provider adds support for Postgis to
+				Hibernate Spatial. It has been tested with Postgis 1.1.6
+				and should work with any version later than that.
+			</p>
+		</section>
+	</body>
+</document>
