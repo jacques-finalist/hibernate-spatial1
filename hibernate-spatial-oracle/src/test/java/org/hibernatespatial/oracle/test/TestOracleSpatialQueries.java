@@ -56,11 +56,11 @@ import org.junit.Test;
  */
 public class TestOracleSpatialQueries {
 
-	private final static String DBURL = "jdbc:oracle:thin:@//192.168.0.101/ORCL";
+	private final static String DBURL = "jdbc:oracle:thin:@test.geovise.com/orcl";
 
-	private final static String DBNAME = "spatialtest";
+	private final static String DBNAME = "hbs";
 
-	private final static String DBPASSWD = "spatialtest";
+	private final static String DBPASSWD = "hbs";
 
 	private static Connection conn;
 
