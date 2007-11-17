@@ -287,7 +287,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		registerFunction("astext", new AsTextFunction());
 		// Can't get the AsBinary function to work on XE
 		registerFunction("asbinary", new StandardSQLFunction(
-				"SDO_UTIL.TO_WKBGEOMETRY"));
+				"SDO_UTIL.TO_WKBGEOMETRY", Hibernate.BINARY));
 		registerFunction("isempty", new WrappedOGCFunction("OGC_ISEMPTY",
 				Hibernate.BOOLEAN, new boolean[] { true }));
 		registerFunction("issimple", new WrappedOGCFunction("OGC_ISSIMPLE",
