@@ -189,12 +189,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		boolean isLrs = lrsPos > 0;
 		Double[] ordinates = convertCoordinates(lineString.getCoordinates(),
 				dim, isLrs);
-		// if (isLrs) {
-		// dim = dim - 1; // only include the X,Y,Z coordinates in the dimension
-		// parameter
-		// return JGeometry.createLRSLinearLineString(ordinates, dim,
-		// lineString.getSRID());
-		// }
 		SDO_GEOMETRY geom = new SDO_GEOMETRY();
 		geom.setGType(new SDO_GTYPE(dim, lrsPos, TypeGeometry.LINE));
 		geom.setSRID(lineString.getSRID());
@@ -367,21 +361,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return Double.isNaN(d) ? null : d;
 	}
 
-	// /**
-	// * @param coordinateArrays array of Coordinate arrays
-	// * @param dim -dimension of the coordinates
-	// * @return
-	// */
-	// private Object[] convertCoordinateArrays(Object[] coordinateArrays, int
-	// dim) {
-	// Object[] converted = new Object[coordinateArrays.length];
-	// for (int i = 0; i < coordinateArrays.length; i++) {
-	// Coordinate[] coordinates = (Coordinate[]) (coordinateArrays[i]);
-	// converted[i] = convertCoordinates(coordinates, dim, false); // todo needs
-	// implemented for LRS
-	// }
-	// return converted;
-	// }
 
 	/**
 	 * Return the dimension required for building the gType in the SDO_GEOMETRY
@@ -480,7 +459,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		int dim = sdoGeom.getGType().getDimension();
 		int lrsDim = sdoGeom.getGType().getLRSDimension();
 
-		switch (sdoGeom.getGType().getGType()) {
+		switch (sdoGeom.getGType().getTypeGeometry()) {
 		case POINT:
 			return convertSDOPoint(sdoGeom);
 		case LINE:
@@ -495,7 +474,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return convertSDOMultiPolygon(dim, lrsDim, sdoGeom);
 		default:
 			throw new IllegalArgumentException("Type not supported: "
-					+ sdoGeom.getGType().getGType());
+					+ sdoGeom.getGType().getTypeGeometry());
 		}
 
 	}
@@ -539,7 +518,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 				i += 1 + numCompounds;
 			} else {
-				cs = add(cs, getElementCSeq(i, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 				i++;
 			}
 		}
@@ -567,7 +546,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				lines[i] = line;
 				i += 1 + numCompounds;
 			} else {
-				cs = add(cs, getElementCSeq(i, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 				LineString line = lrs ? geomFactory.createMLineString(cs)
 						: geomFactory.createLineString(cs);
 				lines[i] = line;
@@ -596,7 +575,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 			} else {
-				cs = add(cs, getElementCSeq(i, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
 				holes[idxInteriorRings] = geomFactory.createLinearRing(cs);
@@ -627,7 +606,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
 			} else {
-				cs = add(cs, getElementCSeq(i, sdoGeom));
+				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
 				LinearRing lr = geomFactory.createLinearRing(cs);
@@ -684,7 +663,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = geomFactory.getCoordinateSequenceFactory().create(
 						newCoordinates);
 			}
-			cs = add(cs, getElementCSeq(i, sdoGeom));
+			cs = add(cs, getElementCSeq(i, sdoGeom, (i < idxLast)));
 		}
 		return cs;
 	}
@@ -696,9 +675,9 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	 * @param sdoGeom
 	 * @return
 	 */
-	private CoordinateSequence getElementCSeq(int i, SDO_GEOMETRY sdoGeom) {
+	private CoordinateSequence getElementCSeq(int i, SDO_GEOMETRY sdoGeom, boolean hasNextSE) {
 		ElementType type = sdoGeom.getInfo().getElementType(i);
-		Double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom);
+		Double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom, hasNextSE);
 		CoordinateSequence cs = null;
 		if (type.isStraightSegment()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
@@ -746,13 +725,14 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return geomFactory.getCoordinateSequenceFactory().create(c3);
 	}
 
-	private Double[] extractOrdinatesOfElement(int element, SDO_GEOMETRY sdoGeom) {
+	private Double[] extractOrdinatesOfElement(int element, SDO_GEOMETRY sdoGeom, boolean hasNextSE) {
 		int start = sdoGeom.getInfo().getOordinatesOffset(element);
 		if (element < sdoGeom.getInfo().getSize() - 1) {
 			int end = sdoGeom.getInfo().getOordinatesOffset(element + 1);
-			// if this is a compound geometry, need to include the next group of
-			// coordinates
-			if (sdoGeom.getInfo().isCompound(0)) {
+			// if this is a subelement of a compound geometry, 
+			// the last point is the first point of
+			// the next subelement.
+			if (hasNextSE) {
 				end += sdoGeom.getDimension();
 			}
 			return sdoGeom.getOrdinates().getOrdinatesArray(start, end);
@@ -1167,7 +1147,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				TypeGeometry typeGeometry) {
 			setDimension(dimension);
 			setLrsDimension(lrsDimension);
-			setGType(typeGeometry);
+			setTypeGeometry(typeGeometry);
 		}
 
 		public int getDimension() {
@@ -1182,11 +1162,11 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			this.dimension = dimension;
 		}
 
-		public TypeGeometry getGType() {
+		public TypeGeometry getTypeGeometry() {
 			return typeGeometry;
 		}
 
-		public void setGType(TypeGeometry typeGeometry) {
+		public void setTypeGeometry(TypeGeometry typeGeometry) {
 
 			this.typeGeometry = typeGeometry;
 		}
