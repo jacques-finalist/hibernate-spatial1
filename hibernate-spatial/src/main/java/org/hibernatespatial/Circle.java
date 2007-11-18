@@ -48,7 +48,7 @@ public class Circle {
 
 	private double radius = 0;
 
-	private PrecisionModel precisionModel = new PrecisionModel(Math.pow(10, 16));
+	private PrecisionModel precisionModel = new PrecisionModel();
 
 	// Constructors **********************************************************
 
