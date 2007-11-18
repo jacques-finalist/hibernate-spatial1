@@ -47,8 +47,8 @@ import oracle.sql.StructDescriptor;
 
 import org.hibernate.HibernateException;
 import org.hibernatespatial.AbstractDBGeometryType;
-import org.hibernatespatial.HibernateSpatialException;
 import org.hibernatespatial.Circle;
+import org.hibernatespatial.HibernateSpatialException;
 import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.mgeom.MLineString;
@@ -57,6 +57,7 @@ import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -66,7 +67,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * Implements Oracle 9i/10g specific geometrytype.
+ * Implements Oracle 9i/10g/11g SDO_GEOMETRY type.
  * 
  * @author Karel Maesen
  */
@@ -94,7 +95,22 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	@Override
 	public Object conv2DBGeometry(Geometry jtsGeom, Connection connection) {
-		// note: we assume that there is no LRS used in jtsGeom.
+		SDO_GEOMETRY geom = convertJTSGeometry(jtsGeom);
+		if (geom != null)
+			try {
+				return SDO_GEOMETRY.store(geom, (OracleConnection) connection);
+			} catch (SQLException e) {
+				throw new HibernateSpatialException(
+						"Problem during conversion from JTS to JGeometry", e);
+			}
+		else {
+			throw new UnsupportedOperationException("Conversion of "
+					+ jtsGeom.getClass().getSimpleName()
+					+ " to Oracle STRUCT not supported");
+		}
+	}
+
+	private SDO_GEOMETRY convertJTSGeometry(Geometry jtsGeom) {
 		SDO_GEOMETRY geom = null;
 		if (jtsGeom.getClass() == Point.class) {
 			geom = convertJTSPoint((Point) jtsGeom);
@@ -109,20 +125,21 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			geom = convertJTSMultiLineString((MultiLineString) jtsGeom);
 		} else if (jtsGeom.getClass() == MultiPolygon.class) {
 			geom = convertJTSMultiPolygon((MultiPolygon) jtsGeom);
+		} else if (jtsGeom.getClass() == GeometryCollection.class) {
+			geom = convertJTSGeometryCollection((GeometryCollection) jtsGeom);
 		}
+		return geom;
+	}
 
-		if (geom != null)
-			try {
-				return SDO_GEOMETRY.store(geom, (OracleConnection) connection);
-			} catch (SQLException e) {
-				throw new HibernateSpatialException(
-						"Problem during conversion from JTS to JGeometry", e);
-			}
-		else {
-			throw new UnsupportedOperationException("Conversion of "
-					+ jtsGeom.getClass().getSimpleName()
-					+ " to Oracle STRUCT not supported");
+	private SDO_GEOMETRY convertJTSGeometryCollection(
+			GeometryCollection collection) {
+		SDO_GEOMETRY[] sdoElements = new SDO_GEOMETRY[collection
+				.getNumGeometries()];
+		for (int i = 0; i < collection.getNumGeometries(); i++) {
+			Geometry geom = collection.getGeometryN(i);
+			sdoElements[i] = convertJTSGeometry(geom);
 		}
+		return SDO_GEOMETRY.join(sdoElements);
 	}
 
 	/**
@@ -361,7 +378,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return Double.isNaN(d) ? null : d;
 	}
 
-
 	/**
 	 * Return the dimension required for building the gType in the SDO_GEOMETRY
 	 * object. Has support for LRS type geometries.
@@ -416,39 +432,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return measurePos;
 	}
 
-	// private Object[] convertGeometryToCoordArrays(Geometry geom) {
-	//
-	// if (geom.getClass() == MultiPoint.class
-	// || geom.getClass() == MultiLineString.class) {
-	// Object[] arr = new Object[geom.getNumGeometries()];
-	// for (int i = 0; i < arr.length; i++) {
-	// arr[i] = geom.getGeometryN(i).getCoordinates();
-	// }
-	// return arr;
-	// } else if (geom.getClass() == Polygon.class) {
-	// Polygon poly = (Polygon) geom;
-	// Object[] arr = new Object[poly.getNumInteriorRing() + 1];
-	// Coordinate[] outer = poly.getExteriorRing().getCoordinates();
-	// // For Oracle Spatial, outer ring must be counter clockwise
-	// if (!CGAlgorithms.isCCW(outer))
-	// arr[0] = reverseRing(outer);
-	// else
-	// arr[0] = outer;
-	//
-	// for (int i = 0; i < poly.getNumInteriorRing(); i++) {
-	// Coordinate[] inner = poly.getInteriorRingN(i).getCoordinates();
-	// if (CGAlgorithms.isCCW(inner))
-	// arr[i + 1] = reverseRing(inner);
-	// else
-	// arr[i + 1] = inner;
-	//
-	// }
-	// return arr;
-	// } else
-	// throw new IllegalArgumentException(
-	// "geom must of of type MultiPoint, MultiLineString or Polygon");
-	// }
-
 	@Override
 	public Geometry convert2JTS(Object struct) {
 		if (struct == null) {
@@ -456,6 +439,10 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		}
 
 		SDO_GEOMETRY sdoGeom = SDO_GEOMETRY.load((STRUCT) struct);
+		return convert2JTS(sdoGeom);
+	}
+
+	public Geometry convert2JTS(SDO_GEOMETRY sdoGeom) {
 		int dim = sdoGeom.getGType().getDimension();
 		int lrsDim = sdoGeom.getGType().getLRSDimension();
 
@@ -472,11 +459,25 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return convertSDOMultiLine(dim, lrsDim, sdoGeom);
 		case MULTIPOLYGON:
 			return convertSDOMultiPolygon(dim, lrsDim, sdoGeom);
+		case COLLECTION:
+			return convertSDOCollection(dim, lrsDim, sdoGeom);
 		default:
 			throw new IllegalArgumentException("Type not supported: "
 					+ sdoGeom.getGType().getTypeGeometry());
 		}
 
+	}
+
+	private Geometry convertSDOCollection(int dim, int lrsDim,
+			SDO_GEOMETRY sdoGeom) {
+		System.out.println(sdoGeom);
+		List<Geometry> geometries = new ArrayList<Geometry>();
+		for (SDO_GEOMETRY elemGeom : sdoGeom.getElementGeometries()) {
+			geometries.add(convert2JTS(elemGeom));
+		}
+		Geometry[] geomArray = new Geometry[geometries.size()];
+		return geomFactory.createGeometryCollection(geometries
+				.toArray(geomArray));
 	}
 
 	private Point convertSDOPoint(SDO_GEOMETRY sdoGeom) {
@@ -675,17 +676,15 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	 * @param sdoGeom
 	 * @return
 	 */
-	private CoordinateSequence getElementCSeq(int i, SDO_GEOMETRY sdoGeom, boolean hasNextSE) {
+	private CoordinateSequence getElementCSeq(int i, SDO_GEOMETRY sdoGeom,
+			boolean hasNextSE) {
 		ElementType type = sdoGeom.getInfo().getElementType(i);
-		Double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom, hasNextSE);
+		Double[] elemOrdinates = extractOrdinatesOfElement(i, sdoGeom,
+				hasNextSE);
 		CoordinateSequence cs = null;
 		if (type.isStraightSegment()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
 		} else if (type.isArcSegment() || type.isCircle()) {
-			// remember that the last point of a subelement is the first point
-			// of the next subelement.
-			// throw new UnsupportedOperationException("Serialization of arc
-			// segments not yet implemented");
 			Coordinate[] linearized = linearize(elemOrdinates, sdoGeom
 					.getDimension(), sdoGeom.isLRSGeometry(), type.isCircle());
 			cs = geomFactory.getCoordinateSequenceFactory().create(linearized);
@@ -725,11 +724,12 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return geomFactory.getCoordinateSequenceFactory().create(c3);
 	}
 
-	private Double[] extractOrdinatesOfElement(int element, SDO_GEOMETRY sdoGeom, boolean hasNextSE) {
-		int start = sdoGeom.getInfo().getOordinatesOffset(element);
+	private Double[] extractOrdinatesOfElement(int element,
+			SDO_GEOMETRY sdoGeom, boolean hasNextSE) {
+		int start = sdoGeom.getInfo().getOrdinatesOffset(element);
 		if (element < sdoGeom.getInfo().getSize() - 1) {
-			int end = sdoGeom.getInfo().getOordinatesOffset(element + 1);
-			// if this is a subelement of a compound geometry, 
+			int end = sdoGeom.getInfo().getOrdinatesOffset(element + 1);
+			// if this is a subelement of a compound geometry,
 			// the last point is the first point of
 			// the next subelement.
 			if (hasNextSE) {
@@ -740,125 +740,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return sdoGeom.getOrdinates().getOrdinatesArray(start);
 		}
 	}
-
-	// public Geometry convert2JTS(Object geomObj) {
-	// if (geomObj == null)
-	// return null;
-	//
-	// JGeometry jgeom;
-	// try {
-	// jgeom = JGeometry.load((STRUCT) geomObj);
-	// } catch (SQLException e) {
-	// throw new HibernateSpatialException(
-	// "Error loading Oracle Spatial Geometry Object", e);
-	// }
-	//
-	// if (jgeom.getDimensions() > 4)
-	// throw new UnsupportedOperationException(
-	// "Cannot handle LRS Geometries, or geometries with more than 4
-	// dimensions");
-	//
-	// Geometry jtsGeom = null;
-	// if (jgeom.getType() == JGeometry.GTYPE_POINT) {
-	// double[] ordinates = jgeom.getOrdinatesArray();
-	// if (ordinates == null)
-	// ordinates = jgeom.getPoint();
-	// CoordinateSequence cs = convertOrdinateArray(jgeom
-	// .getOrdinatesArray(), jgeom.getDimensions(), jgeom.isLRSGeometry());
-	// jtsGeom = geomFactory.createPoint(cs);
-	// jtsGeom.setSRID(jgeom.getSRID());
-	// } else if (jgeom.getType() == JGeometry.GTYPE_MULTIPOINT) {
-	// CoordinateSequence cs = convertOrdinateArray(jgeom
-	// .getOrdinatesArray(), jgeom.getDimensions(), jgeom.isLRSGeometry());
-	// jtsGeom = geomFactory.createMultiPoint(cs);
-	// jtsGeom.setSRID(jgeom.getSRID());
-	// } else if (jgeom.getType() == JGeometry.GTYPE_CURVE) {
-	// Element elem = new Element(jgeom.isLRSGeometry());
-	// elem.parse(jgeom.getOrdinatesArray(), jgeom.getElemInfo(),
-	// jgeom.getDimensions());
-	// jtsGeom = createLineString(elem, jgeom.getDimensions(), jgeom.getSRID(),
-	// jgeom.isLRSGeometry());
-	//
-	// } else if (jgeom.getType() == JGeometry.GTYPE_MULTICURVE) {
-	// Element elem = new Element();
-	// elem.parse(jgeom.getOrdinatesArray(), jgeom.getElemInfo(), jgeom
-	// .getDimensions());
-	// LineString[] linestrings = new LineString[elem.getNumElems()];
-	// for (int i = 0; elem != null; elem = elem.getNext(), i++) {
-	// linestrings[i] = createLineString(elem, jgeom.getDimensions(),
-	// jgeom.getSRID(), jgeom.isLRSGeometry());
-	// }
-	// jtsGeom = geomFactory.createMultiLineString(linestrings);
-	// jtsGeom.setSRID(jgeom.getSRID());
-	// } else if (jgeom.getType() == JGeometry.GTYPE_POLYGON) {
-	// Element elem = new Element();
-	// elem.parse(jgeom.getOrdinatesArray(), jgeom.getElemInfo(), jgeom
-	// .getDimensions());
-	// jtsGeom = createPolygon(elem, jgeom.getDimensions(), jgeom
-	// .getSRID());
-	// } else if (jgeom.getType() == JGeometry.GTYPE_MULTIPOLYGON) {
-	// Element elem = new Element();
-	// elem.parse(jgeom.getOrdinatesArray(), jgeom.getElemInfo(), jgeom
-	// .getDimensions());
-	// Element[] polyElems = elem.toPolyElems();
-	// Polygon[] polygons = new Polygon[polyElems.length];
-	// for (int i = 0; i < polyElems.length; i++) {
-	// polygons[i] = createPolygon(polyElems[i], jgeom
-	// .getDimensions(), jgeom.getSRID());
-	// }
-	// jtsGeom = geomFactory.createMultiPolygon(polygons);
-	// jtsGeom.setSRID(jgeom.getSRID());
-	// } else {
-	// throw new IllegalArgumentException("Unsupported JGeometry type");
-	// }
-	//
-	// return jtsGeom;
-	// }
-
-	// private Polygon createPolygon(Element elem, int dimensions, int srid) {
-	// LinearRing shell = null;
-	// LinearRing[] holes = null;
-	// int idxInteriorRings = 0;
-	// LinearRing[] rings = new LinearRing[elem.getNumElems()];
-	// for (int i = 0; i < rings.length; i++) {
-	// if (elem.getElementType() == ElementType.INTERIOR_RING_ARC_SEGMENTS
-	// || elem.getElementType() == ElementType.INTERIOR_RING_CIRCLE
-	// || elem.getElementType() == ElementType.INTERIOR_RING_RECT
-	// || elem.getElementType() == ElementType.INTERIOR_RING_STRAIGHT_SEGMENTS)
-	// {
-	// rings[idxInteriorRings] = createRing(elem, dimensions);
-	// rings[idxInteriorRings].setSRID(srid);
-	// idxInteriorRings++;
-	// } else {
-	// if (shell != null)
-	// break;
-	// shell = createRing(elem, dimensions);
-	// shell.setSRID(srid);
-	// }
-	// elem = elem.getNext();
-	// }
-	// holes = new LinearRing[idxInteriorRings];
-	// System.arraycopy(rings, 0, holes, 0, idxInteriorRings);
-	//
-	// Polygon polygon = geomFactory.createPolygon(shell, holes);
-	// polygon.setSRID(srid);
-	// return polygon;
-	// }
-
-	// private LinearRing createRing(int i, SDO_GEOMETRY sdoGeom) {
-	// CoordinateSequence cs = null ;
-	// cs = getElementCSeq(i,null,sdoGeom);
-	// if (sdoGeom.getInfo().getElementType(i).isRect()) {
-	// Coordinate ll = cs.getCoordinate(0);
-	// Coordinate ur = cs.getCoordinate(1);
-	// Coordinate lr = new Coordinate(ur.x, ll.y);
-	// Coordinate ul = new Coordinate(ll.x, ur.y);
-	// cs = geomFactory.getCoordinateSequenceFactory().create(
-	// new Coordinate[]{ll, lr, ur, ul, ll});
-	// }
-	// LinearRing ring = geomFactory.createLinearRing(cs);
-	// return ring;
-	// }
 
 	private CoordinateSequence convertOrdinateArray(Double[] oordinates,
 			SDO_GEOMETRY sdoGeom) {
@@ -1009,23 +890,10 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		return stb.toString();
 	}
 
-	// public static String arrayToString(int[] ds){
-	// if (ds != null || ds.length == 0 ){
-	// return "";
-	// }
-	// StringBuilder stb = new StringBuilder();
-	// stb.append(ds[0]);
-	// for ( int i = 1; i < ds.length; i++){
-	// stb.append(",").append(ds[i]);
-	// }
-	// stb.append(")");
-	// return stb.toString();
-	// }
-
 	public enum TypeGeometry {
 
 		UNKNOWN_GEOMETRY(0), POINT(1), LINE(2), POLYGON(3), COLLECTION(4), MULTIPOINT(
-				5), MULTILINE(6), MULTIPOLYGON(7);
+				5), MULTILINE(6), MULTIPOLYGON(7), SOLID(8), MULTISOLID(9);
 
 		private int gtype = 0;
 
@@ -1300,8 +1168,12 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return this.triplets.length / 3;
 		}
 
-		public int getOordinatesOffset(int i) {
+		public int getOrdinatesOffset(int i) {
 			return this.triplets[i * 3];
+		}
+
+		public void setOrdinatesOffset(int i, int offset) {
+			this.triplets[i * 3] = offset;
 		}
 
 		public ElementType getElementType(int i) {
@@ -1350,6 +1222,18 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 		public void addElement(ELEM_INFO element) {
 			this.addElement(element.getElements());
+		}
+
+		public int[] getElement(int i) {
+			int[] ea = null;
+			if (this.getElementType(i).isCompound()) {
+				int numCompounds = this.getNumCompounds(i);
+				ea = new int[numCompounds + 1];
+			} else {
+				ea = new int[3];
+			}
+			System.arraycopy(this.triplets, 3 * i, ea, 0, ea.length);
+			return ea;
 		}
 
 		public ARRAY toOracleArray(OracleConnection conn) throws SQLException {
@@ -1444,7 +1328,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 		private SDO_GTYPE gtype;
 
-		private Integer srid;
+		private int srid;
 
 		private SDO_POINT point;
 
@@ -1454,6 +1338,42 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 		public SDO_GEOMETRY() {
 
+		}
+
+		/**
+		 * This joins an array of SDO_GEOMETRIES to a SDO_GEOMETRY of type
+		 * COLLECTION
+		 * 
+		 * @param sdoElements
+		 * @return
+		 */
+		public static SDO_GEOMETRY join(SDO_GEOMETRY[] sdoElements) {
+			SDO_GEOMETRY sdoCollection = new SDO_GEOMETRY();
+			if (sdoElements == null || sdoElements.length == 0) {
+				sdoCollection.setGType(new SDO_GTYPE(2, 0,
+						TypeGeometry.COLLECTION));
+			} else {
+				SDO_GEOMETRY firstElement = sdoElements[0];
+				int dim = firstElement.getGType().getDimension();
+				int lrsDim = firstElement.getGType().getLRSDimension();
+				sdoCollection.setGType(new SDO_GTYPE(dim, lrsDim,
+						TypeGeometry.COLLECTION));
+				int ordinatesOffset = 1;
+				for (int i = 0; i < sdoElements.length; i++) {
+					ELEM_INFO element = sdoElements[i].getInfo();
+					Double[] ordinates = sdoElements[i].getOrdinates()
+							.getOrdinateArray();
+					if (element != null && element.getSize() > 0) {
+						int shift = ordinatesOffset
+								- element.getOrdinatesOffset(0);
+						shiftOrdinateOffset(element, shift);
+						sdoCollection.addElement(element);
+						sdoCollection.addOrdinates(ordinates);
+						ordinatesOffset += ordinates.length;
+					}
+				}
+			}
+			return sdoCollection;
 		}
 
 		public ELEM_INFO getInfo() {
@@ -1613,6 +1533,98 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			}
 		}
 
+		/**
+		 * If this SDO_GEOMETRY is a COLLECTION, this method returns an array of
+		 * the SDO_GEOMETRIES that make up the collection. If not a Collection,
+		 * an array containing this SDO_GEOMETRY is returned.
+		 * 
+		 * @return collection elements as individual SDO_GEOMETRIES
+		 */
+		public SDO_GEOMETRY[] getElementGeometries() {
+			if (getGType().getTypeGeometry() == TypeGeometry.COLLECTION) {
+				List<SDO_GEOMETRY> elements = new ArrayList<SDO_GEOMETRY>();
+				int i = 0;
+				while (i < this.getNumElements()) {
+					ElementType et = this.getInfo().getElementType(i);
+					int next = i + 1;
+					// if the element is an exterior ring, or a compound
+					// element, then this geometry spans multiple elements.
+					if (et.isExteriorRing()) { // then next element is the
+						// first non-interior ring
+						while (next < this.getNumElements()) {
+							if (!this.getInfo().getElementType(next)
+									.isInteriorRing()) {
+								break;
+							}
+							next++;
+						}
+					} else if (et.isCompound()) {
+						next = i + this.getInfo().getNumCompounds(i) + 1;
+					}
+					SDO_GEOMETRY elemGeom = new SDO_GEOMETRY();
+					SDO_GTYPE elemGtype = deriveGTYPE(this.getInfo()
+							.getElementType(i), this);
+					elemGeom.setGType(elemGtype);
+					elemGeom.setSRID(this.getSRID());
+					ELEM_INFO elemInfo = new ELEM_INFO(this.getInfo()
+							.getElement(i));
+					shiftOrdinateOffset(elemInfo, -elemInfo
+							.getOrdinatesOffset(0) + 1);
+					elemGeom.setInfo(elemInfo);
+					int startPosition = this.getInfo().getOrdinatesOffset(i);
+					ORDINATES elemOrdinates = null;
+					if (next < this.getNumElements()) {
+						int endPosition = this.getInfo().getOrdinatesOffset(
+								next);
+						elemOrdinates = new ORDINATES(this.getOrdinates()
+								.getOrdinatesArray(startPosition, endPosition));
+					} else {
+						elemOrdinates = new ORDINATES(this.getOrdinates()
+								.getOrdinatesArray(startPosition));
+					}
+					elemGeom.setOrdinates(elemOrdinates);
+					elements.add(elemGeom);
+					i = next;
+				}
+				return elements.toArray(new SDO_GEOMETRY[elements.size()]);
+			} else {
+				return new SDO_GEOMETRY[] { this };
+			}
+		}
+
+		private static void shiftOrdinateOffset(ELEM_INFO elemInfo, int offset) {
+			for (int i = 0; i < elemInfo.getSize(); i++) {
+				int newOffset = elemInfo.getOrdinatesOffset(i) + offset;
+				elemInfo.setOrdinatesOffset(i, newOffset);
+			}
+		}
+
+	}
+
+	private static SDO_GTYPE deriveGTYPE(ElementType elementType,
+			SDO_GEOMETRY origGeom) {
+		switch (elementType) {
+		case POINT:
+		case ORIENTATION:
+			return new SDO_GTYPE(origGeom.getDimension(), origGeom
+					.getLRSDimension(), TypeGeometry.POINT);
+		case POINT_CLUSTER:
+			return new SDO_GTYPE(origGeom.getDimension(), origGeom
+					.getLRSDimension(), TypeGeometry.MULTIPOINT);
+		case LINE_ARC_SEGMENTS:
+		case LINE_STRAITH_SEGMENTS:
+		case COMPOUND_LINE:
+			return new SDO_GTYPE(origGeom.getDimension(), origGeom
+					.getLRSDimension(), TypeGeometry.LINE);
+		case COMPOUND_EXTERIOR_RING:
+		case EXTERIOR_RING_ARC_SEGMENTS:
+		case EXTERIOR_RING_CIRCLE:
+		case EXTERIOR_RING_RECT:
+		case EXTERIOR_RING_STRAIGHT_SEGMENTS:
+			return new SDO_GTYPE(origGeom.getDimension(), origGeom
+					.getLRSDimension(), TypeGeometry.POLYGON);
+		}
+		return null;
 	}
 
 }

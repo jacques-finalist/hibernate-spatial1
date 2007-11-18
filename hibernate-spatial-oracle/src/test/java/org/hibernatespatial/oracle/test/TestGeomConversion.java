@@ -316,6 +316,19 @@ public class TestGeomConversion {
 		mCoordinates[3] = MCoordinate.create2dWithMeasure(30., 30., 4);
 		geom = geomFactory.createMLineString(mCoordinates);
 		expected.put(37L, geom);
+
+		// case 38: Collection
+		Geometry[] geomCollection = new Geometry[3];
+		geomCollection[0] = geomFactory.createPoint(new Coordinate(10., 25.));
+		geomCollection[1] = geomFactory.createLineString(new Coordinate[] {
+				new Coordinate(20., 30.), new Coordinate(25., 25.) });
+		geomCollection[2] = geomFactory.createPolygon(
+				geomFactory.createLinearRing(new Coordinate[] {
+						new Coordinate(10., 105.), new Coordinate(15., 105.),
+						new Coordinate(20., 110.), new Coordinate(10., 110.),
+						new Coordinate(10., 105.) }), null);
+		geom = geomFactory.createGeometryCollection(geomCollection);
+		expected.put(38L, geom);
 	}
 
 	@BeforeClass
@@ -492,7 +505,12 @@ public class TestGeomConversion {
 		System.out
 				.println("Case 37: LRS LineString with Null internal Measures");
 		testCaseById(37L, false);
+	}
 
+	@Test
+	public void testCollection() {
+		System.out.println("Case 38: Collection with Point, Line, Polygon");
+		testCaseById(38L, false);
 	}
 
 	private Geometry testCaseById(long id, boolean isArc) {

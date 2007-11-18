@@ -319,6 +319,15 @@ VALUES (
     sdo_ordinate_array (10,25,1, 20,30,null, 25,25,null, 30,30,4))
 );
 
+INSERT INTO testgeom (i, d, g)
+VALUES (
+  38,
+  'COLLECTION feature',  
+  sdo_geometry (2004,31370,null, sdo_elem_info_array (1,1,1,3,2,1,7,1003,1),
+    sdo_ordinate_array (10,25, 20,30,25,25,	10,105,15,105,20,110,10,110,10,105))
+);
+
+
 
 CREATE TABLE linestringtest (
 	id DECIMAL(10,0),

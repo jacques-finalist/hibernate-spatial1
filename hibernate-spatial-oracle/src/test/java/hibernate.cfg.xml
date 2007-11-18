@@ -5,9 +5,9 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@//192.168.0.101/ORCL</property>
-        <property name="hibernate.connection.username">spatialtest</property>
-        <property name="hibernate.connection.password">spatialtest</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@test.geovise.com/orcl</property>
+        <property name="hibernate.connection.username">hbs</property>
+        <property name="hibernate.connection.password">hbs</property>
 
         <property name="hibernate.dialect">org.hibernatespatial.oracle.OracleSpatial10gDialect</property>
 
