@@ -470,7 +470,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private Geometry convertSDOCollection(int dim, int lrsDim,
 			SDO_GEOMETRY sdoGeom) {
-		System.out.println(sdoGeom);
 		List<Geometry> geometries = new ArrayList<Geometry>();
 		for (SDO_GEOMETRY elemGeom : sdoGeom.getElementGeometries()) {
 			geometries.add(convert2JTS(elemGeom));
