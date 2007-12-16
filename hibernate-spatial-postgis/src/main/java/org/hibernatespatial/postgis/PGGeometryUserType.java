@@ -38,6 +38,7 @@ import org.postgis.LinearRing;
 import org.postgis.MultiLineString;
 import org.postgis.MultiPoint;
 import org.postgis.MultiPolygon;
+import org.postgis.PGboxbase;
 import org.postgis.PGgeometry;
 import org.postgis.Point;
 import org.postgis.Polygon;
@@ -81,39 +82,60 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			object = new PGgeometry((org.postgis.Geometry) object);
 		}
 
-		if (!(object instanceof PGgeometry)) {
-			throw new IllegalArgumentException(
-					"Object to convert is neither PGgeometry, nor org.postgis.Geometry");
-		}
-		PGgeometry geom = (PGgeometry) object;
-		com.vividsolutions.jts.geom.Geometry out = null;
-		switch (geom.getGeoType()) {
-		case org.postgis.Geometry.POINT:
-			out = convertPoint((org.postgis.Point) geom.getGeometry());
-			break;
-		case org.postgis.Geometry.LINESTRING:
-			out = convertLineString((org.postgis.LineString) geom.getGeometry());
-			break;
-		case org.postgis.Geometry.POLYGON:
-			out = convertPolygon((org.postgis.Polygon) geom.getGeometry());
-			break;
-		case org.postgis.Geometry.MULTILINESTRING:
-			out = convertMultiLineString((org.postgis.MultiLineString) geom
-					.getGeometry());
-			break;
-		case org.postgis.Geometry.MULTIPOINT:
-			out = convertMultiPoint((org.postgis.MultiPoint) geom.getGeometry());
-			break;
-		case org.postgis.Geometry.MULTIPOLYGON:
-			out = convertMultiPolygon((org.postgis.MultiPolygon) geom
-					.getGeometry());
-			break;
-		case org.postgis.Geometry.GEOMETRYCOLLECTION:
-			out = convertGeometryCollection((org.postgis.GeometryCollection) geom
-					.getGeometry());
+		if (object instanceof PGgeometry) {
+			PGgeometry geom = (PGgeometry) object;
+			com.vividsolutions.jts.geom.Geometry out = null;
+			switch (geom.getGeoType()) {
+			case org.postgis.Geometry.POINT:
+				out = convertPoint((org.postgis.Point) geom.getGeometry());
+				break;
+			case org.postgis.Geometry.LINESTRING:
+				out = convertLineString((org.postgis.LineString) geom
+						.getGeometry());
+				break;
+			case org.postgis.Geometry.POLYGON:
+				out = convertPolygon((org.postgis.Polygon) geom.getGeometry());
+				break;
+			case org.postgis.Geometry.MULTILINESTRING:
+				out = convertMultiLineString((org.postgis.MultiLineString) geom
+						.getGeometry());
+				break;
+			case org.postgis.Geometry.MULTIPOINT:
+				out = convertMultiPoint((org.postgis.MultiPoint) geom
+						.getGeometry());
+				break;
+			case org.postgis.Geometry.MULTIPOLYGON:
+				out = convertMultiPolygon((org.postgis.MultiPolygon) geom
+						.getGeometry());
+				break;
+			case org.postgis.Geometry.GEOMETRYCOLLECTION:
+				out = convertGeometryCollection((org.postgis.GeometryCollection) geom
+						.getGeometry());
+			}
+
+			return out;
+		} else if (object instanceof org.postgis.PGboxbase) {
+			return convertBox((org.postgis.PGboxbase) object);
+		} else {
+			throw new IllegalArgumentException("Can't convert object of type "
+					+ object.getClass().getCanonicalName());
+
 		}
 
-		return out;
+	}
+
+	private Geometry convertBox(PGboxbase box) {
+		Point ll = box.getLLB();
+		Point ur = box.getURT();
+		Coordinate[] ringCoords = new Coordinate[5];
+		ringCoords[0] = new Coordinate(ll.x, ll.y);
+		ringCoords[1] = new Coordinate(ur.x, ll.y);
+		ringCoords[2] = new Coordinate(ur.x, ur.y);
+		ringCoords[3] = new Coordinate(ll.x, ur.y);
+		ringCoords[4] = new Coordinate(ll.x, ll.y);
+		com.vividsolutions.jts.geom.LinearRing shell = geomFactory
+				.createLinearRing(ringCoords);
+		return geomFactory.createPolygon(shell, null);
 	}
 
 	private Geometry convertGeometryCollection(GeometryCollection collection) {

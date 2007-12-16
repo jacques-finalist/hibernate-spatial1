@@ -20,6 +20,12 @@ CREATE TABLE public.polygontest(
 	geom geometry
 );
 
+CREATE TABLE public.pointtest(
+	id DECIMAL(10,0),
+	name VARCHAR(50),
+	geom geometry
+);
+
 
 --
 -- TODO -- create spatial index

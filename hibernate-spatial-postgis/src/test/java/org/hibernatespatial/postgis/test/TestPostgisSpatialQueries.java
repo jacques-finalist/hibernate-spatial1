@@ -122,6 +122,18 @@ public class TestPostgisSpatialQueries {
 	public void testHQLSRID() throws Exception {
 		delegate.testHQLSRID();
 	}
+	
+	@Test
+	public void testExtent() throws Exception {
+		String sql = "select area(extent(geom)) from $table$";
+		delegate.testExtent(sql);
+	}
+	
+	@Test
+	public void testHQLExtent() throws Exception {
+		String sql = "select AREA(extent(geom)) from $table$";
+		delegate.testHQLExtent(sql);
+	}
 
 	@Test
 	public void testFiltering() throws Exception {

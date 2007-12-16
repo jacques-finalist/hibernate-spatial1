@@ -33,6 +33,7 @@ import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.CustomType;
 import org.hibernate.usertype.UserType;
+import org.hibernatespatial.SpatialAggregate;
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.SpatialRelation;
 
@@ -110,6 +111,10 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
 						PGGeometryUserType.class, null)));
 		registerFunction("geomunion", new StandardSQLFunction("geomunion",
 				new CustomType(PGGeometryUserType.class, null)));
+		
+		//register Spatial Aggregate funciton
+		registerFunction("extent", new StandardSQLFunction("extent", 
+				new CustomType(PGGeometryUserType.class, null)));
 
 	}
 
@@ -172,11 +177,22 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
 		return new PGGeometryUserType();
 	}
 
-	public String getSpatialAggregateSQL(String columnName, int aggregation,
-			boolean isProjection) {
-		// todo needs implemented
-		throw new UnsupportedOperationException(
-				"This method is not yet supported in PostGis");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.hibernatespatial.SpatialDialect#getSpatialAggregateSQL(java.lang.String,
+	 *      int)
+	 */
+	public String getSpatialAggregateSQL(String columnName, int aggregation) {
+		switch (aggregation) {
+		case SpatialAggregate.EXTENT:
+			StringBuilder stbuf = new StringBuilder();
+			stbuf.append("extent(").append(columnName).append(")");
+			return stbuf.toString();
+		default:
+			throw new IllegalArgumentException("Aggregation of type "
+					+ aggregation + " are not supported by this dialect");
+		}
 	}
 
 }
