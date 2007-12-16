@@ -76,9 +76,18 @@ public interface SpatialDialect {
 	 */
 	public String getSpatialFilterExpression(String columnName);
 
+	/**
+	 * @return an instance of the Geometry Usertype that this dialect provides
+	 */
 	public UserType getGeometryUserType();
 
-	public String getSpatialAggregateSQL(String columnName, int aggregation,
-			boolean isProjection);
+	/**
+	 * @param columnName
+	 *            the name of the Geometry property
+	 * @param aggregation
+	 *            the type of <code>SpatialAggregate</code>
+	 * @return the SQL fragment for the projection
+	 */
+	public String getSpatialAggregateSQL(String columnName, int aggregation);
 
 }

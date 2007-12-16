@@ -42,6 +42,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
@@ -94,7 +95,7 @@ public class DataGenerator {
 		generateData(MultiLineStringEntity.class, factory,
 				new MultiLineStringCreator());
 		generateData(PolygonEntity.class, factory, new PolygonCreator());
-
+		generateData(PointEntity.class, factory, new PointCreator());
 		factory.close();
 
 	}
@@ -215,5 +216,14 @@ public class DataGenerator {
 	}
 
 	// TO DO -- add polygons with holes!!
+
+	private class PointCreator implements GeomCreator<Point> {
+		public static final double numPoints = 1000.;
+
+		public Point create() {
+			Coordinate c = getRandomCoordinate();
+			return geomFactory.createPoint(c);
+		}
+	}
 
 }

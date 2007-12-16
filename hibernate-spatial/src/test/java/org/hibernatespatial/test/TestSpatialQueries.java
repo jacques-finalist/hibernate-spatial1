@@ -47,10 +47,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Projections;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.Type;
 import org.hibernatespatial.GeometryUserType;
 import org.hibernatespatial.SpatialRelation;
+import org.hibernatespatial.criterion.SpatialProjections;
 import org.hibernatespatial.criterion.SpatialRestrictions;
 import org.hibernatespatial.test.model.LineStringEntity;
 import org.hibernatespatial.test.model.MultiLineStringEntity;
@@ -255,6 +257,44 @@ public class TestSpatialQueries {
 			testRelation(relation, entityClass, sql);
 		}
 	}
+	
+	
+	public void testExtent(String sqlTemplate) throws Exception {
+		for (int i = 0; i < entities.length; i++) {
+			String sql = sqlTemplate.replaceAll("\\$table\\$", tables[i]);
+			Class entityClass = Class
+					.forName(MODEL_PACKAGE + "." + entities[i]);
+			testExtent(entityClass, sql);
+		}
+	}
+
+	private void testExtent(Class entityClass, String sql) throws Exception {
+		Session session = null;
+		try {
+			// apply the filter using Hibernate
+			session = factory.openSession();
+			Criteria testCriteria = session.createCriteria(entityClass)
+							.setProjection(SpatialProjections.extent("geometry"));
+
+			List results = testCriteria.list();
+			Geometry g = (Geometry)results.get(0);
+			double area = g.getArea();
+			// get the same results using JDBC - SQL directly;
+			log.debug("Test SQL:" + sql);
+			PreparedStatement stmt = conn.prepareStatement(sql);
+		
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			double expected = rs.getDouble(1);
+			// test whether they give the same results
+			log.info("Comparing extent areas. Expected: " + expected + ", result :" + area);
+			assertEquals(expected, area, .1);
+		} finally {
+			if (session != null)
+				session.close();
+		}		
+		
+	}
 
 	public void testFiltering(String sqlTemplate) throws Exception {
 		testRelation(SpatialRelation.FILTER, sqlTemplate);
@@ -316,6 +356,7 @@ public class TestSpatialQueries {
 		}
 	}
 
+	
 	public void testHQLAsText() throws Exception {
 		for (String entity : entities) {
 			log.info("Testing AsText for " + entity);
@@ -352,6 +393,41 @@ public class TestSpatialQueries {
 			log.info("Testing AsBinary for " + entity);
 			testHQLAsBinary(entity);
 		}
+	}
+	
+
+	public void testHQLExtent(String sqlTemplate) throws Exception {
+		for (int i = 0; i < entities.length; i++) {
+			String sql = sqlTemplate.replaceAll("\\$table\\$", tables[i]);
+			Class entityClass = Class
+					.forName(MODEL_PACKAGE + "." + entities[i]);
+			testHQLExtent(entityClass, sql);
+		}
+	}
+	
+	private void testHQLExtent(Class entityClass, String sql) throws Exception{
+		Session session = null;
+		try {
+			// apply the filter using Hibernate
+			session = factory.openSession();
+			Query query = session.createQuery("select extent(geometry) from " + entityClass.getSimpleName());
+
+			Geometry g = (Geometry)query.list().get(0);
+			double area = g.getArea();
+			// get the same results using JDBC - SQL directly;
+			log.debug("Test SQL:" + sql);
+			PreparedStatement stmt = conn.prepareStatement(sql);
+		
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			double expected = rs.getDouble(1);
+			// test whether they give the same results
+			log.info("Comparing extent areas. Expected: " + expected + ", result :" + area);
+			assertEquals(expected, area, .1);
+		} finally {
+			if (session != null)
+				session.close();
+		}		
 	}
 
 	public void testHQLDimension() throws Exception {
@@ -530,8 +606,9 @@ public class TestSpatialQueries {
 				Object[] objs = (Object[]) it.next();
 				Geometry geom = (Geometry) objs[0];
 				Geometry opresult = (Geometry) objs[1];
-				opresult.normalize();
-
+				if (opresult != null){
+					opresult.normalize();
+				}				
 				Object[] jtsOperArgs = new Object[args.length];
 				for (int idx = 0; idx < args.length; idx++) {
 					jtsOperArgs[idx] = args[idx];
@@ -551,7 +628,7 @@ public class TestSpatialQueries {
 					break;
 				}
 			}
-			assertTrue(cnt == 0);
+			assertTrue( cnt + " unequal results for the operation", cnt == 0);
 			log.debug("Number of unequal results for operation " + operation
 					+ "  = " + cnt);
 		} finally {
@@ -571,7 +648,7 @@ public class TestSpatialQueries {
 	public void testHQLBuffer() throws Exception {
 		Method jtsOper = Geometry.class.getDeclaredMethod("buffer",
 				new Class[] { Double.TYPE });
-		testHQLGeomOperation("buffer", jtsOper, new Object[] { new Double(10) });
+		testHQLGeomOperation("buffer", jtsOper, new Object[] { new Double(100) });
 	}
 
 	public void testHQLConvexHull() throws Exception {
@@ -620,6 +697,11 @@ public class TestSpatialQueries {
 	 */
 	private boolean approximateCoincident(Geometry g1, Geometry g2,
 			double tolerance) {
+		if ((g1 == null && g2 != null) ||
+				(g2 == null && g1 != null)){
+			return false;
+		}
+		
 		if (g1 instanceof GeometryCollection
 				&& g2 instanceof GeometryCollection) {
 			GeometryCollection gc1 = (GeometryCollection) g1;
