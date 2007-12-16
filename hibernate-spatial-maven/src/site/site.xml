@@ -5,11 +5,13 @@
     <name>Hibernate Spatial</name>
     <href>http://www.hibernatespatial.org/</href>
   </bannerLeft>
-  
+
+<!--   
   <bannerRight>
     <name>GEOVISE</name>
     <src>http://www.geovise.com/</src>    
   </bannerRight>
+ -->
   
   <skin>
     <groupId>org.apache.maven.skins</groupId>
