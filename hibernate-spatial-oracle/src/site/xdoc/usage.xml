@@ -22,9 +22,13 @@
 		the Geometry valued properties. </p>
 		<source>
 		...
-		&lt;property name="geometry" type="org.hibernatespatial.GeometryUserType"&gt;
-				&lt;column name="geom" /&gt;
-				&lt;param name="dialect"&gt;oracle&lt;/param&gt;
+		&lt;property name="geometry"&gt;
+			&lt;column name="geom" sql-type="MDSYS.SDO_GEOMETRY"&gt;
+			&lt;type name="org.hibernatespatial.GeometryUserType"&gt;
+				&lt;param name="dialect"&gt;
+					org.hibernatespatial.oracle.OracleSpatial10gDialect
+				&lt;/param&gt;
+			&lt;/type&gt;
 		&lt;/property&gt;
 		...
 		</source>

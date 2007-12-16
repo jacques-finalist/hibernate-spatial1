@@ -143,6 +143,18 @@ public class TestOracleSpatialQueries {
 	public void testHQLSRID() throws Exception {
 		delegate.testHQLSRID();
 	}
+	
+	@Test
+	public void testExtent() throws Exception {
+		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_MBR(geom), .001) from $table$";
+		delegate.testExtent(sql);
+	}
+	
+	@Test
+	public void testHQLExtent() throws Exception {
+		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_MBR(geom), .001) from $table$";
+		delegate.testHQLExtent(sql);
+	}
 
 	@Test
 	public void testFiltering() throws Exception {

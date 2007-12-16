@@ -26,30 +26,20 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle;
+package org.hibernatespatial.oracle.criterion;
 
-/**
- * Factory class for SpationProjection functions *
- * 
- * @author Tom Acree
- */
-public final class OracleSpatialProjections {
+public enum RelationshipMask {
+	TOUCH, OVERLAPBYDISJOINT, OVERLAPBYINTERSECT, EQUAL, INSIDE, COVEREDBY, CONTAINS, COVERS, ANYINTERACT, ON;
 
-	private OracleSpatialProjections() {
-	}
-
-	public static SpatialAggregateProjection concatLrs(String propertyName) {
-		return new SpatialAggregateProjection(
-				OracleSpatialAggregation.LRS_CONCAT, propertyName, true);
-	}
-
-	public static SpatialAggregateProjection centroid(String propertyName) {
-		return new SpatialAggregateProjection(
-				OracleSpatialAggregation.CENTROID, propertyName, true);
-	}
-
-	public static SpatialAggregateProjection concat(String propertyName) {
-		return new SpatialAggregateProjection(OracleSpatialAggregation.CONCAT,
-				propertyName, true);
+	public static String booleanCombination(RelationshipMask[] masks) {
+		String strMask = null;
+		for (RelationshipMask relationshipMask : masks) {
+			if (strMask == null) {
+				strMask = relationshipMask.toString();
+			} else {
+				strMask += "+" + relationshipMask.toString();
+			}
+		}
+		return strMask;
 	}
 }

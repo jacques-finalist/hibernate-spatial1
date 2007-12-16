@@ -1,5 +1,5 @@
 /**
- * $Id$
+ * $Id: OracleSpatialAggregate.java 57 2007-11-12 22:47:41Z maesenka $
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
@@ -26,16 +26,22 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle;
+package org.hibernatespatial.oracle.criterion;
+
+import org.hibernatespatial.SpatialAggregate;
 
 /**
- * Defines types of OracleSpatialAggregation
+ * Defines types of OracleSpatialAggregate
  */
-public interface OracleSpatialAggregation {
+public interface OracleSpatialAggregate extends SpatialAggregate {
 
-	public static int LRS_CONCAT = 1;
+	public static int LRS_CONCAT = 100;
 
-	public static int CENTROID = 2;
+	public static int CENTROID = 101;
 
-	public static int CONCAT = 3;
+	public static int CONCAT_LINES = 102;
+
+	public static int UNION = 103;
+
+	public static int CONVEXHULL = 104;
 }

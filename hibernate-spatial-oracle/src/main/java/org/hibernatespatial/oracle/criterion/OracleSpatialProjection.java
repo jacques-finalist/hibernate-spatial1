@@ -1,5 +1,5 @@
 /**
- * $Id$
+ * $Id: OracleSpatialProjection.java 57 2007-11-12 22:47:41Z maesenka $
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
@@ -26,7 +26,7 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle;
+package org.hibernatespatial.oracle.criterion;
 
 import org.hibernate.criterion.SimpleProjection;
 import org.hibernate.criterion.CriteriaQuery;
@@ -39,20 +39,21 @@ import org.hibernatespatial.SpatialDialect;
 
 /**
  * Template class for Spatial Projections
+ * 
+ * @author Tom Acree
+ * 
  */
-public class SpatialAggregateProjection extends SimpleProjection {
+public class OracleSpatialProjection extends SimpleProjection {
+
+	private static final long serialVersionUID = 1L;
 
 	private final String propertyName;
 
 	private final int aggregate;
 
-	private final boolean isProjection;
-
-	public SpatialAggregateProjection(int aggregate, String propertyName,
-			boolean isProjection) {
+	public OracleSpatialProjection(int aggregate, String propertyName) {
 		this.propertyName = propertyName;
 		this.aggregate = aggregate;
-		this.isProjection = isProjection;
 	}
 
 	public String toSqlString(Criteria criteria, int position,
@@ -66,8 +67,8 @@ public class SpatialAggregateProjection extends SimpleProjection {
 			SpatialDialect seDialect = (SpatialDialect) dialect;
 
 			return new StringBuffer(seDialect.getSpatialAggregateSQL(
-					columns[0], this.aggregate, this.isProjection)).append(
-					position).append("_").toString();
+					columns[0], this.aggregate)).append(" y").append(position)
+					.append("_").toString();
 		} else {
 			throw new IllegalStateException(
 					"Dialect must be spatially enabled dialect");
