@@ -2,15 +2,10 @@
 <project name="Hibernate Spatial Postgis provider">
   
   <bannerLeft>
-    <name>Hibernate Spatial Postgis Provider</name>
+    <name>Hibernate Spatial MySQL Provider</name>
     <href>http://www.cadrie.com/projects/majas-hibernate</href>
   </bannerLeft>
-  
-  <bannerRight>
-    <name>Cadrie</name>
-    <src>http://www.cadrie.com/</src>    
-  </bannerRight>
-  
+    
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-default-skin</artifactId>
@@ -21,8 +16,8 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial-postgis/index.html"/>
-      <item name="Usage" href="hibernate-spatial-postgis/usage.html"/>
+      <item name="Introduction" href="hibernate-spatial-mysql/index.html"/>
+      <item name="Usage" href="hibernate-spatial-mysql/usage.html"/>
     </menu>
 
     

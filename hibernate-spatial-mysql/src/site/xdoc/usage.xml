@@ -5,15 +5,14 @@
 
 
 	<body>
-		<section name="Hibernate Spatial Postgis Provider Usage">
+		<section name="Hibernate Spatial MySQL Provider Usage">
 			<p>
 				To have Hibernate Spatial use this provider, simply drop
 				the jar on the class-path alongside the
 				hibernate-spatial.jar. When the Hibernate Spatial
 				library is loaded it will find the provider and use it
-				to retrieve the Hibernate dialect for Postgresql with
-				the Postgis extension. This dialect is a subclass of
-				<code>org.hibernate.dialect.PostgreSQLDialect</code>
+				to retrieve the Hibernate dialect for MySQL. This dialect is a subclass of
+				<code>org.hibernate.dialect.MySQLDialect</code>
 			</p>
 			<p>
 				With the provider installed, you can use it by setting
@@ -23,7 +22,7 @@
 			<source>
 ... 
 	&lt;property name="hibernate.dialect"&gt;
-		org.hibernatespatial.postgis.PostgisDialect
+		org.hibernatespatial.mysql.MySQLSpatialDialect
 	&lt;/property&gt; 
 ...
 			</source>
@@ -35,11 +34,14 @@
 			</p>
 			<source>
 ... 
-	&lt;property name="geometry"
-		type="org.hibernatespatial.GeometryUserType"&gt;
-		&lt;column name="geom" /&gt; 
-		&lt;param name="dialect"&gt;postgis&lt;/param&gt;
-	&lt;/property&gt; 
+		&lt;property name="geometry"&gt;
+			&lt;column name="geom" sql-type="MDSYS.SDO_GEOMETRY"&gt;
+			&lt;type name="org.hibernatespatial.GeometryUserType"&gt;
+				&lt;param name="dialect"&gt;
+					org.hibernatespatial.oracle.OracleSpatial10gDialect
+				&lt;/param&gt;
+			&lt;/type&gt;
+		&lt;/property&gt; 
 ...
 			</source>
 		</section>

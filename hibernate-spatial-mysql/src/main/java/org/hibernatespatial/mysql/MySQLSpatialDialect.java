@@ -67,12 +67,12 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 				Hibernate.STRING));
 		registerFunction("asbinary", new StandardSQLFunction("asbinary",
 				Hibernate.BINARY));
-		// registerFunction("isempty", new StandardSQLFunction("isempty",
-		// Hibernate.BOOLEAN));
-		// registerFunction("issimple", new StandardSQLFunction("issimple",
-		// Hibernate.BOOLEAN));
-		// registerFunction("boundary", new StandardSQLFunction("boundary",
-		// new CustomType(MySQLGeometryUserType.class, null)));
+//		registerFunction("isempty", new StandardSQLFunction("isempty",
+//				Hibernate.BOOLEAN));
+//		registerFunction("issimple", new StandardSQLFunction("issimple",
+//				Hibernate.BOOLEAN));
+//		registerFunction("boundary", new StandardSQLFunction("boundary",
+//		 new CustomType(MySQLGeometryUserType.class, null)));
 
 		// Register functions for spatial relation constructs
 		registerFunction("overlaps", new StandardSQLFunction("overlaps",
@@ -164,10 +164,8 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 		return new MySQLGeometryUserType();
 	}
 
-	public String getSpatialAggregateSQL(String columnName, int aggregation,
-			boolean isProjection) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getSpatialAggregateSQL(String columnName, int aggregation) {
+		throw new UnsupportedOperationException("Mysql has no spatial aggregate SQL functions.");
 	}
 
 }

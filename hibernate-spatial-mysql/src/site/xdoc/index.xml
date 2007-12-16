@@ -4,11 +4,15 @@
 	<header />
 
 	<body>
-		<section name="The Hibernate Spatial Postgis Provider">
+		<section name="The Hibernate Spatial MySQL Provider">
 			<p>
-				The Postgis Provider adds support for Postgis to
-				Hibernate Spatial. It has been tested with Postgis 1.1.6
+				The MySQL Provider adds support for MySQL to
+				Hibernate Spatial. It has been tested with MySQL 5.0
 				and should work with any version later than that.
+			</p>
+			<p>
+				Note that MySQL does not completely implement the OGC Simple Feature Specification. 
+				Some functions that work for PostGIS or Oracle may fail to work for MySQL.
 			</p>
 		</section>
 	</body>
