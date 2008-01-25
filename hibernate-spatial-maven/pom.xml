@@ -42,7 +42,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<!--  CaDriE developed plugin for managing header files -->
+			<!--  CaDriE developed plugin for managing header files 
 			<plugin>
 				<groupId>com.cadrie</groupId>
 				<artifactId>maven-header-plugin</artifactId>
@@ -51,6 +51,7 @@
 				</configuration>
 				<version>1.0</version>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 	<scm>
