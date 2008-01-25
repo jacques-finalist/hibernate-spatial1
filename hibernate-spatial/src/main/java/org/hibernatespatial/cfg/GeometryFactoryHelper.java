@@ -29,15 +29,15 @@ package org.hibernatespatial.cfg;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 public class GeometryFactoryHelper {
 
-	private static Logger logger = Logger
-			.getLogger(GeometryFactoryHelper.class);
+	private static Log logger = LogFactory.getLog(GeometryFactoryHelper.class);
 
 	public static MGeometryFactory createGeometryFactory(Map map) {
 

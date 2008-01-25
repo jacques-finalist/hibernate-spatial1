@@ -33,7 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -54,7 +55,7 @@ public class HSConfiguration extends Properties {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = Logger.getLogger(HSConfiguration.class);
+	private static Log logger = LogFactory.getLog(HSConfiguration.class);
 
 	private String source;
 
