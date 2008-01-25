@@ -46,7 +46,7 @@ public class DialectProvider implements SpatialDialectProvider {
 	 * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public SpatialDialect createSpatialDialect(String dialect, Map map) {
+	public SpatialDialect createSpatialDialect(String dialect) {
 		if (dialect.equals(PostgisDialect.class.getCanonicalName())
 				|| dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
 				|| dialect.equals("postgis"))

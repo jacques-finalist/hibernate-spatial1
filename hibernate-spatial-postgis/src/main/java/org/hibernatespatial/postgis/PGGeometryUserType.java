@@ -45,7 +45,6 @@ import org.postgis.Polygon;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Specific <code>GeometryType</code> for Postgis geometry type
@@ -56,10 +55,8 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
 	private static final int[] geometryTypes = new int[] { Types.STRUCT };
 
-	private static final GeometryFactory geomFactory = new GeometryFactory();
-
 	public int[] sqlTypes() {
-		return geometryTypes;// PostgisDialect.getGeometrySQLType()
+		return geometryTypes;
 	}
 
 	/**
@@ -111,6 +108,9 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			case org.postgis.Geometry.GEOMETRYCOLLECTION:
 				out = convertGeometryCollection((org.postgis.GeometryCollection) geom
 						.getGeometry());
+				break;
+			default:
+				throw new RuntimeException("Unknown type of PGgeometry");
 			}
 
 			return out;
@@ -133,9 +133,9 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		ringCoords[2] = new Coordinate(ur.x, ur.y);
 		ringCoords[3] = new Coordinate(ll.x, ur.y);
 		ringCoords[4] = new Coordinate(ll.x, ll.y);
-		com.vividsolutions.jts.geom.LinearRing shell = geomFactory
+		com.vividsolutions.jts.geom.LinearRing shell = getGeometryFactory()
 				.createLinearRing(ringCoords);
-		return geomFactory.createPolygon(shell, null);
+		return getGeometryFactory().createPolygon(shell, null);
 	}
 
 	private Geometry convertGeometryCollection(GeometryCollection collection) {
@@ -144,7 +144,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		for (int i = 0; i < geometries.length; i++) {
 			jtsGeometries[i] = convert2JTS(geometries[i]);
 		}
-		com.vividsolutions.jts.geom.GeometryCollection jtsGCollection = geomFactory
+		com.vividsolutions.jts.geom.GeometryCollection jtsGCollection = getGeometryFactory()
 				.createGeometryCollection(jtsGeometries);
 		return jtsGCollection;
 	}
@@ -158,7 +158,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			polygons[i] = (com.vividsolutions.jts.geom.Polygon) convertPolygon(pgPolygon);
 		}
 
-		com.vividsolutions.jts.geom.MultiPolygon out = geomFactory
+		com.vividsolutions.jts.geom.MultiPolygon out = getGeometryFactory()
 				.createMultiPolygon(polygons);
 		out.setSRID(pgMultiPolygon.srid);
 		return out;
@@ -171,7 +171,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		for (int i = 0; i < points.length; i++) {
 			points[i] = convertPoint(pgMultiPoint.getPoint(i));
 		}
-		com.vividsolutions.jts.geom.MultiPoint out = geomFactory
+		com.vividsolutions.jts.geom.MultiPoint out = getGeometryFactory()
 				.createMultiPoint(points);
 		out.setSRID(pgMultiPoint.srid);
 		return out;
@@ -184,10 +184,10 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 				.numLines()];
 
 		for (int i = 0; i < mlstr.numLines(); i++) {
-			lstrs[i] = geomFactory.createLineString(toJTSCoordinates(mlstr
+			lstrs[i] = getGeometryFactory().createLineString(toJTSCoordinates(mlstr
 					.getLine(i).getPoints()));
 		}
-		com.vividsolutions.jts.geom.MultiLineString out = geomFactory
+		com.vividsolutions.jts.geom.MultiLineString out = getGeometryFactory()
 				.createMultiLineString(lstrs);
 		out.setSRID(mlstr.srid);
 		return out;
@@ -195,7 +195,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
 	protected com.vividsolutions.jts.geom.Geometry convertPolygon(
 			Polygon polygon) {
-		com.vividsolutions.jts.geom.LinearRing shell = geomFactory
+		com.vividsolutions.jts.geom.LinearRing shell = getGeometryFactory()
 				.createLinearRing(toJTSCoordinates(polygon.getRing(0)
 						.getPoints()));
 		com.vividsolutions.jts.geom.Polygon out = null;
@@ -203,20 +203,20 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			com.vividsolutions.jts.geom.LinearRing[] rings = new com.vividsolutions.jts.geom.LinearRing[polygon
 					.numRings() - 1];
 			for (int r = 1; r < polygon.numRings(); r++) {
-				rings[r - 1] = geomFactory
+				rings[r - 1] = getGeometryFactory()
 						.createLinearRing(toJTSCoordinates(polygon.getRing(r)
 								.getPoints()));
 			}
-			out = geomFactory.createPolygon(shell, rings);
+			out = getGeometryFactory().createPolygon(shell, rings);
 		} else {
-			out = geomFactory.createPolygon(shell, null);
+			out = getGeometryFactory().createPolygon(shell, null);
 		}
 		out.setSRID(polygon.srid);
 		return out;
 	}
 
 	protected com.vividsolutions.jts.geom.Point convertPoint(Point pnt) {
-		com.vividsolutions.jts.geom.Point g = geomFactory
+		com.vividsolutions.jts.geom.Point g = getGeometryFactory()
 				.createPoint(new Coordinate(pnt.x, pnt.y));
 		g.setSRID(pnt.getSrid());
 		return g;
@@ -224,7 +224,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
 	protected com.vividsolutions.jts.geom.LineString convertLineString(
 			org.postgis.LineString lstr) {
-		com.vividsolutions.jts.geom.LineString out = geomFactory
+		com.vividsolutions.jts.geom.LineString out = getGeometryFactory()
 				.createLineString(toJTSCoordinates(lstr.getPoints()));
 		out.setSRID(lstr.getSrid());
 		return out;

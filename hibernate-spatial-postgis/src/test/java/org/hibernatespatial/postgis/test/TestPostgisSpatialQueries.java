@@ -33,6 +33,8 @@ import java.sql.DriverManager;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.hibernatespatial.HBSpatialExtension;
+import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.test.TestSpatialQueries;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -47,6 +49,11 @@ public class TestPostgisSpatialQueries {
 	private static TestSpatialQueries delegate;
 
 	static {
+		
+		HSConfiguration config = new HSConfiguration();
+		config.configure();
+		HBSpatialExtension.setConfiguration(config);
+		
 		String url = "jdbc:postgresql://localhost:5432/" + DBNAME;
 		try {
 			Class.forName("org.postgresql.Driver");
