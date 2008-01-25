@@ -91,18 +91,27 @@ public class Circle {
 	 * If this is the case, we must force the bounding rectangle to be a square.
 	 * To this end, we check the box and set the side of the box to the larger
 	 * dimension of the rectangle
+	 *
+	 * @param xLeft
+	 * @param yUpper
+	 * @param xRight
+	 * @param yLower
 	 */
 	public Circle(double xLeft, double yUpper, double xRight, double yLower) {
 		double side = Math.min(Math.abs(xRight - xLeft), Math.abs(yLower
 				- yUpper));
-		center.x = Math.min(xRight, xLeft) + side / 2;
-		center.y = Math.min(yUpper, yLower) + side / 2;
-		radius = side / 2;
+		this.center.x = Math.min(xRight, xLeft) + side / 2;
+		this.center.y = Math.min(yUpper, yLower) + side / 2;
+		this.radius = side / 2;
 	}
 
 	/**
 	 * Three point method of circle construction. All three points must be on
 	 * the circumference of the circle.
+	 *
+	 * @param point1
+	 * @param point2
+	 * @param point3
 	 */
 	public Circle(Coordinate point1, Coordinate point2, Coordinate point3) {
 		initThreePointCircle(point1, point2, point3);
@@ -111,6 +120,13 @@ public class Circle {
 	/**
 	 * Three point method of circle construction. All three points must be on
 	 * the circumference of the circle.
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param x3
+	 * @param y3
 	 */
 	public Circle(double x1, double y1, double x2, double y2, double x3,
 			double y3) {
@@ -122,16 +138,16 @@ public class Circle {
 	 * shift the center of the circle by delta X and delta Y
 	 */
 	public void shift(double deltaX, double deltaY) {
-		center.x = center.x + deltaX;
-		center.y = center.y + deltaY;
+		this.center.x = this.center.x + deltaX;
+		this.center.y = this.center.y + deltaY;
 	}
 
 	/**
 	 * Move the circle to a new center
 	 */
 	public void move(double x, double y) {
-		center.x = x;
-		center.y = y;
+		this.center.x = x;
+		this.center.y = y;
 	}
 
 	/**
@@ -151,7 +167,7 @@ public class Circle {
 			Coordinate p3) {
 		double a13, b13, c13;
 		double a23, b23, c23;
-		double x = 0, y = 0, rad = 0;
+		double x = 0., y = 0., rad = 0.;
 
 		// begin pre-calculations for linear system reduction
 		a13 = 2 * (p1.x - p3.x);
@@ -187,11 +203,11 @@ public class Circle {
 	}
 
 	public Coordinate getCenter() {
-		return center;
+		return this.center;
 	}
 
 	public double getRadius() {
-		return radius;
+		return this.radius;
 	}
 
 	/**
@@ -340,26 +356,28 @@ public class Circle {
 	}
 
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()){
 			return false;
-
+		}
 		Circle circle = (Circle) o;
 
-		if (Double.compare(circle.radius, radius) != 0)
+		if (Double.compare(circle.radius, this.radius) != 0){
 			return false;
-		if (center != null ? !center.equals2D(circle.center)
-				: circle.center != null)
+		}
+		if (this.center != null ? !this.center.equals2D(circle.center)
+				: circle.center != null) {
 			return false;
-
+		}
 		return true;
 	}
 
 	public String toString() {
-		return "Circle with Radius = " + radius
-				+ " and a center at the coordinates (" + center.x + ", "
-				+ center.y + ")";
+		return "Circle with Radius = " + this.radius
+				+ " and a center at the coordinates (" + this.center.x + ", "
+				+ this.center.y + ")";
 	}
 
 	/**
@@ -371,41 +389,44 @@ public class Circle {
 	 * @return The angle of the point from the center of the circle
 	 */
 	public double getAngle(Coordinate p) {
-		double dx = p.x - center.x;
-		double dy = p.y - center.y;
+		double dx = p.x - this.center.x;
+		double dy = p.y - this.center.y;
 		double angle;
 
 		if (dx == 0.0) {
-			if (dy == 0.0)
+			if (dy == 0.0) {
 				angle = 0.0;
-			else if (dy > 0.0)
+			} else if (dy > 0.0) {
 				angle = Math.PI / 2.0;
-			else
+			} else {
 				angle = (Math.PI * 3.0) / 2.0;
+			}
 		} else if (dy == 0.0) {
-			if (dx > 0.0)
+			if (dx > 0.0) {
 				angle = 0.0;
-			else
+			} else {
 				angle = Math.PI;
+			}
 		} else {
-			if (dx < 0.0)
+			if (dx < 0.0) {
 				angle = Math.atan(dy / dx) + Math.PI;
-			else if (dy < 0.0)
+			} else if (dy < 0.0) {
 				angle = Math.atan(dy / dx) + (2 * Math.PI);
-			else
+			} else {
 				angle = Math.atan(dy / dx);
+			}
 		}
 		return angle;
 	}
 
 	public Coordinate getPoint(final double angle) {
 		double x = Math.cos(angle) * this.radius;
-		x = x + center.x;
-		x = precisionModel.makePrecise(x);
+		x = x + this.center.x;
+		x = this.precisionModel.makePrecise(x);
 
 		double y = Math.sin(angle) * this.radius;
-		y = y + center.y;
-		y = precisionModel.makePrecise(y);
+		y = y + this.center.y;
+		y = this.precisionModel.makePrecise(y);
 		return new Coordinate(x, y);
 	}
 
@@ -453,10 +474,11 @@ public class Circle {
 	 * @return the angle between a1 and a2 in the clockwise direction
 	 */
 	public static double subtractAngles(double a1, double a2) {
-		if (a1 < a2)
+		if (a1 < a2) {
 			return a2 - a1;
-		else
+		} else {
 			return TWO_PI - Math.abs(a2 - a1);
+		}
 	}
 
 	private static final double TWO_PI = Math.PI * 2;
@@ -516,7 +538,7 @@ public class Circle {
 			double diff;
 			if (this.p1.equals2D(this.p2)) {
 				diff = TWO_PI;
-			} else if (clockwise) {
+			} else if (this.clockwise) {
 				diff = this.p1Angle - this.p2Angle;
 			} else {
 				diff = this.p2Angle - this.p1Angle;
@@ -536,15 +558,15 @@ public class Circle {
 			Coordinate chordCenterPt = this.getChordCenterPoint();
 			double dist = distanceFromCenter(chordCenterPt);
 			if (this.arcAngle > Math.PI) {
-				return radius + dist;
+				return Circle.this.radius + dist;
 			} else {
-				return radius - dist;
+				return Circle.this.radius - dist;
 			}
 		}
 
 		public Coordinate getChordCenterPoint() {
-			double centerX = p1.x + (p2.x - p1.x) / 2;
-			double centerY = p1.y + (p2.y - p1.y) / 2;
+			double centerX = this.p1.x + (this.p2.x - this.p1.x) / 2;
+			double centerY = this.p1.y + (this.p2.y - this.p1.y) / 2;
 			return new Coordinate(centerX, centerY);
 		}
 
@@ -561,35 +583,35 @@ public class Circle {
 		}
 
 		public Coordinate getP1() {
-			return p1;
+			return this.p1;
 		}
 
 		public Coordinate getP2() {
-			return p2;
+			return this.p2;
 		}
 
 		public double getArcAngle() {
-			return arcAngle;
+			return this.arcAngle;
 		}
 
 		public double getArcAngleDegrees() {
-			return Math.toDegrees(arcAngle);
+			return Math.toDegrees(this.arcAngle);
 		}
 
 		public double getP1Angle() {
-			return p1Angle;
+			return this.p1Angle;
 		}
 
 		public double getP2Angle() {
-			return p2Angle;
+			return this.p2Angle;
 		}
 
 		public boolean isClockwise() {
-			return clockwise;
+			return this.clockwise;
 		}
 
 		public String toString() {
-			return "P1: " + p1 + " P2: " + p2 + " clockwise: " + clockwise;
+			return "P1: " + this.p1 + " P2: " + this.p2 + " clockwise: " + this.clockwise;
 		}
 	}
 

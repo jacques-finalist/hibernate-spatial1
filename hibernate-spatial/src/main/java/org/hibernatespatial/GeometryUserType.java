@@ -52,26 +52,27 @@ import org.hibernate.usertype.UserType;
  */
 public class GeometryUserType implements UserType, ParameterizedType {
 
-	private Properties properties = null;
-
 	private SpatialDialect spatialDialect = null;
 
 	private UserType delegate = null;
 
 	public static String DIALECT_PARAM_NAME = "dialect";
 
-	private void configureDialect() {
+	private void configure(Properties properties) {
 		if (properties == null) {
 			spatialDialect = HBSpatialExtension.getDefaultSpatialDialect();
 		} else {
 			spatialDialect = HBSpatialExtension.createSpatialDialect(properties
-					.getProperty(DIALECT_PARAM_NAME), properties);
+					.getProperty(DIALECT_PARAM_NAME));
 		}
 		if (spatialDialect == null) {
 			throw new HibernateSpatialException(
 					"No spatial Dialect could be created");
 		}
 		delegate = spatialDialect.getGeometryUserType();
+		if (delegate instanceof ParameterizedType){
+			((ParameterizedType)delegate).setParameterValues(properties);
+		}
 	}
 
 	/**
@@ -222,8 +223,7 @@ public class GeometryUserType implements UserType, ParameterizedType {
 	}
 
 	public void setParameterValues(Properties properties) {
-		this.properties = properties;
-		configureDialect();
+		configure(properties);
 	}
 
 }

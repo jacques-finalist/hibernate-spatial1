@@ -51,12 +51,9 @@ public interface SpatialDialectProvider {
 	 * 
 	 * @param dialect
 	 *            Name of the dialect to create.
-	 * @param map
-	 *            A map of properties for use by the provider when creating the
-	 *            dialect.
 	 * @return a SpatialDialect
 	 */
-	public SpatialDialect createSpatialDialect(String dialect, Map map);
+	public SpatialDialect createSpatialDialect(String dialect);
 
 	/**
 	 * Returns the default dialect for this provider.

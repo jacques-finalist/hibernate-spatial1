@@ -38,6 +38,8 @@ import java.util.Properties;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
+import org.hibernatespatial.cfg.GeometryFactoryHelper;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -49,6 +51,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public abstract class AbstractDBGeometryType implements UserType,
 		ParameterizedType {
+	
+	private MGeometryFactory geomFactory = null;
 
 	/*
 	 * (non-Javadoc)
@@ -198,6 +202,13 @@ public abstract class AbstractDBGeometryType implements UserType,
 	 * @see org.hibernate.usertype.ParameterizedType#setParameterValues(java.util.Properties)
 	 */
 	public void setParameterValues(Properties parameters) {
+		if (parameters != null){
+			this.geomFactory = GeometryFactoryHelper.createGeometryFactory(parameters);
+		}
+	}
+	
+	public MGeometryFactory getGeometryFactory(){
+		return (this.geomFactory == null) ? HBSpatialExtension.getDefaultGeomFactory() : this.geomFactory;
 	}
 
 }

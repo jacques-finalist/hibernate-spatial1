@@ -33,12 +33,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernatespatial.cfg.GeometryFactoryHelper;
+import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.helper.PropertyFileReader;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.spi.SpatialDialectProvider;
 
 /**
@@ -64,6 +66,10 @@ public class HBSpatialExtension {
 	private static SpatialDialect defaultSpatialDialect = null;
 
 	private static final String DIALECT_PROP_NAME = "hibernate.spatial.dialect";
+	
+	private static HSConfiguration configuration = null;
+	
+	private static MGeometryFactory defaultGeomFactory = new MGeometryFactory();
 
 	static {
 
@@ -115,8 +121,7 @@ public class HBSpatialExtension {
 			search: for (SpatialDialectProvider provider : providers) {
 				for (String dialect : provider.getSupportedDialects()) {
 					if (dialect.equals(dialectProp)) {
-						defaultSpatialDialect = provider.createSpatialDialect(
-								dialectProp, null);
+						defaultSpatialDialect = provider.createSpatialDialect(dialectProp);
 						found = true;
 						break search;
 					}
@@ -142,6 +147,28 @@ public class HBSpatialExtension {
 	 */
 	private HBSpatialExtension() {
 	}
+	
+	public static void setConfiguration(HSConfiguration c){
+		configuration = c;
+		log.info("Configuring HBSpatialExtensing from " + c.getSource());
+		
+		//checking for configured dialectname
+		String dialectName = configuration.getDefaultDialect();
+		if (dialectName != null){
+			SpatialDialect dialect = createSpatialDialect(dialectName);
+			if (dialect != null){				
+				log.info("Setting Spatial Dialect to : " + dialectName);
+				setDefaultSpatialDialect(dialect);
+			}
+		}
+		//trying to create a defaultGeometryFactory
+		defaultGeomFactory = GeometryFactoryHelper.createGeometryFactory(configuration);
+		log.info("Creating default Geometry Factory");
+	}
+	
+	public static HSConfiguration getConfiguration(){
+		return configuration;
+	}
 
 	/**
 	 * @param dialect
@@ -154,11 +181,10 @@ public class HBSpatialExtension {
 		return defaultSpatialDialect;
 	}
 
-	public static SpatialDialect createSpatialDialect(String dialectName,
-			Map properties) {
+	public static SpatialDialect createSpatialDialect(String dialectName) {
 		SpatialDialect dialect = null;
 		for (SpatialDialectProvider provider : providers) {
-			dialect = provider.createSpatialDialect(dialectName, properties);
+			dialect = provider.createSpatialDialect(dialectName);
 			if (dialect != null) {
 				break;
 			}
@@ -170,6 +196,10 @@ public class HBSpatialExtension {
 		}
 		return dialect;
 	}
+	
+	public static MGeometryFactory getDefaultGeomFactory() {
+		return defaultGeomFactory;
+	}	
 
 	// Helper methods
 
