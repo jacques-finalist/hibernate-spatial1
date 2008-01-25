@@ -28,8 +28,6 @@
  */
 package org.hibernatespatial.mysql;
 
-import java.util.Map;
-
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.spi.SpatialDialectProvider;
 
@@ -46,7 +44,7 @@ public class DialectProvider implements SpatialDialectProvider {
 	 * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public SpatialDialect createSpatialDialect(String dialect, Map map) {
+	public SpatialDialect createSpatialDialect(String dialect) {
 		if (dialect.equals(MySQLSpatialDialect.class.getCanonicalName())
 				|| dialect.equals("org.hibernate.dialect.MySQLSQLDialect")
 				|| dialect.equals("mysql"))
