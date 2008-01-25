@@ -75,9 +75,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private static final int[] geometryTypes = new int[] { Types.STRUCT };
 
-	// TODO -- allow user to set a specific PrecisionModel
-	private static final MGeometryFactory geomFactory = new MGeometryFactory();
-
 	private static String SQL_TYPE_NAME = "SDO_GEOMETRY";
 
 	@Override
@@ -475,7 +472,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			geometries.add(convert2JTS(elemGeom));
 		}
 		Geometry[] geomArray = new Geometry[geometries.size()];
-		return geomFactory.createGeometryCollection(geometries
+		return getGeometryFactory().createGeometryCollection(geometries
 				.toArray(geomArray));
 	}
 
@@ -486,12 +483,12 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				ordinates = new Double[] { sdoGeom.getPoint().x,
 						sdoGeom.getPoint().y };
 			} else {
-				ordinates = new Double[] { sdoGeom.getPoint().y,
+				ordinates = new Double[] { sdoGeom.getPoint().x,
 						sdoGeom.getPoint().y, sdoGeom.getPoint().z };
 			}
 		}
 		CoordinateSequence cs = convertOrdinateArray(ordinates, sdoGeom);
-		Point point = geomFactory.createPoint(cs);
+		Point point = getGeometryFactory().createPoint(cs);
 
 		point.setSRID(sdoGeom.getSRID());
 		return point;
@@ -501,7 +498,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			SDO_GEOMETRY sdoGeom) {
 		Double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
 		CoordinateSequence cs = convertOrdinateArray(ordinates, sdoGeom);
-		MultiPoint multipoint = geomFactory.createMultiPoint(cs);
+		MultiPoint multipoint = getGeometryFactory().createMultiPoint(cs);
 		multipoint.setSRID(sdoGeom.getSRID());
 		return multipoint;
 	}
@@ -523,7 +520,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			}
 		}
 
-		LineString ls = lrs ? geomFactory.createMLineString(cs) : geomFactory
+		LineString ls = lrs ? getGeometryFactory().createMLineString(cs) : getGeometryFactory()
 				.createLineString(cs);
 		ls.setSRID(sdoGeom.getSRID());
 		return ls;
@@ -541,21 +538,21 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			if (info.getElementType(i).isCompound()) {
 				int numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
-				LineString line = lrs ? geomFactory.createMLineString(cs)
-						: geomFactory.createLineString(cs);
+				LineString line = lrs ? getGeometryFactory().createMLineString(cs)
+						: getGeometryFactory().createLineString(cs);
 				lines[i] = line;
 				i += 1 + numCompounds;
 			} else {
 				cs = add(cs, getElementCSeq(i, sdoGeom, false));
-				LineString line = lrs ? geomFactory.createMLineString(cs)
-						: geomFactory.createLineString(cs);
+				LineString line = lrs ? getGeometryFactory().createMLineString(cs)
+						: getGeometryFactory().createLineString(cs);
 				lines[i] = line;
 				i++;
 			}
 		}
 
-		MultiLineString mls = lrs ? geomFactory
-				.createMultiMLineString((MLineString[]) lines) : geomFactory
+		MultiLineString mls = lrs ? getGeometryFactory()
+				.createMultiMLineString((MLineString[]) lines) : getGeometryFactory()
 				.createMultiLineString(lines);
 		mls.setSRID(sdoGeom.getSRID());
 		return mls;
@@ -578,16 +575,16 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
-				holes[idxInteriorRings] = geomFactory.createLinearRing(cs);
+				holes[idxInteriorRings] = getGeometryFactory().createLinearRing(cs);
 				holes[idxInteriorRings].setSRID(sdoGeom.getSRID());
 				idxInteriorRings++;
 			} else {
-				shell = geomFactory.createLinearRing(cs);
+				shell = getGeometryFactory().createLinearRing(cs);
 				shell.setSRID(sdoGeom.getSRID());
 			}
 			i += 1 + numCompounds;
 		}
-		Polygon polygon = geomFactory.createPolygon(shell, holes);
+		Polygon polygon = getGeometryFactory().createPolygon(shell, holes);
 		polygon.setSRID(sdoGeom.getSRID());
 		return polygon;
 	}
@@ -609,30 +606,30 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
-				LinearRing lr = geomFactory.createLinearRing(cs);
+				LinearRing lr = getGeometryFactory().createLinearRing(cs);
 				lr.setSRID(sdoGeom.getSRID());
 				holes.add(lr);
 			} else {
 				if (shell != null) {
-					Polygon polygon = geomFactory.createPolygon(shell, holes
+					Polygon polygon = getGeometryFactory().createPolygon(shell, holes
 							.toArray(new LinearRing[holes.size()]));
 					polygon.setSRID(sdoGeom.getSRID());
 					polygons.add(polygon);
 					shell = null;
 				}
-				shell = geomFactory.createLinearRing(cs);
+				shell = getGeometryFactory().createLinearRing(cs);
 				shell.setSRID(sdoGeom.getSRID());
 				holes = new ArrayList<LinearRing>();
 			}
 			i += 1 + numCompounds;
 		}
 		if (shell != null) {
-			Polygon polygon = geomFactory.createPolygon(shell, holes
+			Polygon polygon = getGeometryFactory().createPolygon(shell, holes
 					.toArray(new LinearRing[holes.size()]));
 			polygon.setSRID(sdoGeom.getSRID());
 			polygons.add(polygon);
 		}
-		MultiPolygon multiPolygon = geomFactory.createMultiPolygon(polygons
+		MultiPolygon multiPolygon = getGeometryFactory().createMultiPolygon(polygons
 				.toArray(new Polygon[polygons.size()]));
 		multiPolygon.setSRID(sdoGeom.getSRID());
 		return multiPolygon;
@@ -660,7 +657,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				Coordinate[] newCoordinates = new Coordinate[coordinates.length - 1];
 				System.arraycopy(coordinates, 0, newCoordinates, 0,
 						coordinates.length - 1);
-				cs = geomFactory.getCoordinateSequenceFactory().create(
+				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
 						newCoordinates);
 			}
 			cs = add(cs, getElementCSeq(i, sdoGeom, (i < idxLast)));
@@ -686,7 +683,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		} else if (type.isArcSegment() || type.isCircle()) {
 			Coordinate[] linearized = linearize(elemOrdinates, sdoGeom
 					.getDimension(), sdoGeom.isLRSGeometry(), type.isCircle());
-			cs = geomFactory.getCoordinateSequenceFactory().create(linearized);
+			cs = getGeometryFactory().getCoordinateSequenceFactory().create(linearized);
 		} else if (type.isRect()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
 			Coordinate ll = cs.getCoordinate(0);
@@ -694,10 +691,10 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			Coordinate lr = new Coordinate(ur.x, ll.y);
 			Coordinate ul = new Coordinate(ll.x, ur.y);
 			if (type.isExteriorRing()) {
-				cs = geomFactory.getCoordinateSequenceFactory().create(
+				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
 						new Coordinate[] { ll, lr, ur, ul, ll });
 			} else {
-				cs = geomFactory.getCoordinateSequenceFactory().create(
+				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
 						new Coordinate[] { ll, ul, ur, lr, ll });
 			}
 		} else {
@@ -720,7 +717,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		Coordinate[] c3 = new Coordinate[c1.length + c2.length];
 		System.arraycopy(c1, 0, c3, 0, c1.length);
 		System.arraycopy(c2, 0, c3, c1.length, c2.length);
-		return geomFactory.getCoordinateSequenceFactory().create(c3);
+		return getGeometryFactory().getCoordinateSequenceFactory().create(c3);
 	}
 
 	private Double[] extractOrdinatesOfElement(int element,
@@ -773,7 +770,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 						oordinates[i * dim + lrsDim]); // M
 			}
 		}
-		return geomFactory.getCoordinateSequenceFactory().create(coordinates);
+		return getGeometryFactory().getCoordinateSequenceFactory().create(coordinates);
 	}
 
 	// reverses ordinates in a coordinate array in-place

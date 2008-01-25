@@ -28,8 +28,6 @@
  */
 package org.hibernatespatial.oracle;
 
-import java.util.Map;
-
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.spi.SpatialDialectProvider;
 
@@ -46,8 +44,7 @@ public class DialectProvider implements SpatialDialectProvider {
 	 * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public final SpatialDialect createSpatialDialect(final String dialect,
-			final Map map) {
+	public final SpatialDialect createSpatialDialect(final String dialect) {
 
 		if (dialect.equals(OracleSpatial10gDialect.class.getCanonicalName())
 				|| dialect.equals("org.hibernate.dialect.Oracle10gDialect")

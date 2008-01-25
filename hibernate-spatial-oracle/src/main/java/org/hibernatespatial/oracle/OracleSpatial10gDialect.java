@@ -67,7 +67,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	 */
 	private class AsTextFunction extends StandardSQLFunction {
 
-		public AsTextFunction() {
+		private AsTextFunction() {
 			super("astext", Hibernate.STRING);
 		}
 
@@ -92,7 +92,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	 */
 	private class DimensionFunction extends SDOObjectMethod {
 
-		public DimensionFunction() {
+		private DimensionFunction() {
 			super("Get_GType", Hibernate.INTEGER);
 		}
 
@@ -130,7 +130,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		 *            indicates which argument places are occupied by
 		 *            sdo_geometries
 		 */
-		public WrappedOGCFunction(final String name, final Type type,
+		private WrappedOGCFunction(final String name, final Type type,
 				final boolean[] geomArrays) {
 			super(name, type);
 			this.geomArrays = geomArrays;
@@ -165,7 +165,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	 */
 	private class GetGeometryTypeFunction extends SDOObjectMethod {
 
-		public GetGeometryTypeFunction() {
+		private GetGeometryTypeFunction() {
 			super("Get_GType", Hibernate.STRING);
 		}
 
@@ -196,7 +196,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	private class SpatialRelateFunction extends StandardSQLFunction {
 		private final int relation;
 
-		public SpatialRelateFunction(final String name, final int relation) {
+		private SpatialRelateFunction(final String name, final int relation) {
 			super(name, Hibernate.BOOLEAN);
 			this.relation = relation;
 		}
@@ -220,7 +220,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	private class SpatialAnalysisFunction extends StandardSQLFunction {
 		private final int analysis;
 
-		public SpatialAnalysisFunction(String name, Type returnType,
+		private SpatialAnalysisFunction(String name, Type returnType,
 				int analysis) {
 			super(name, returnType);
 			this.analysis = analysis;
@@ -238,7 +238,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		private final int aggregation;
 
 
-		public SpatialAggregationFunction(String name, Type returnType,
+		private SpatialAggregationFunction(String name, Type returnType,
 				boolean isProjection, int aggregation) {
 			super(name, returnType);
 			this.aggregation = aggregation;
@@ -261,7 +261,6 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 
 	public OracleSpatial10gDialect() {
 		super();
-
 		// initialise features to default
 		features.put(OGC_STRICT, new Boolean(true));
 
@@ -660,7 +659,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 
 		private final String SDO_AGGR = "SDO_AGGR_";
 
-		protected SpatialAggregate() {
+		private SpatialAggregate() {
 		}
 
 		private SpatialAggregate(int aggregation) {
