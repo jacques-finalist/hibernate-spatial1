@@ -269,7 +269,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		configure();
 
 		// register geometry type
-		registerColumnType(java.sql.Types.STRUCT, "geometry");
+		registerColumnType(java.sql.Types.STRUCT, "SDO_GEOMETRY");
 
 		// registering OGC functions
 		// (spec_simplefeatures_sql_99-04.pdf)
@@ -615,6 +615,11 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		log.info("Setting feature: " + name + " to " + value);
 		this.features.put(name, value);
 	}
+	
+
+	public String getDbGeometryTypeName() {
+		return "SDO_GEOMETRY";
+	}
 
 	private void configure() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -709,4 +714,9 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		}
 
 	}
+
+	public boolean isTwoPhaseFiltering() {
+		return false;
+	}
+
 }
