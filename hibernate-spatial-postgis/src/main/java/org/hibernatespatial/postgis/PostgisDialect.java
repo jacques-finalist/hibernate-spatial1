@@ -195,4 +195,12 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
 		}
 	}
 
+	public String getDbGeometryTypeName() {		
+		return "GEOMETRY";
+	}
+
+	public boolean isTwoPhaseFiltering() {
+		return true;
+	}
+
 }
