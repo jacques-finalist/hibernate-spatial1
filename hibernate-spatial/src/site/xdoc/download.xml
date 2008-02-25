@@ -4,7 +4,118 @@
 	<header />
 
 	<body>
-		<section name="Hibernate Spatial Releases">
+			<section name="Hibernate Spatial Releases">
+			<subsection name="Hibernate Spatial Core">
+				<table>
+					<tr>
+						<th>Release</th>
+						<th>Date</th>
+						<th>File name</th>
+						<th>MD5 checksum</th>
+					</tr>
+					<tr>
+						<td>1.0-M1</td>
+						<td>2008-01-25</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0-M1/hibernate-spatial-1.0-M1.jar">
+								hibernate-spatial-1.0-M1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0-M1/hibernate-spatial-1.0-M1.jar.md5">
+								hibernate-spatial-1.0-M1.jar.md5
+							</a>
+						</td>
+					</tr>
+				</table>
+			</subsection>
+
+			<subsection name="Oracle Spatial Provider">
+				<table>
+					<tr>
+						<th>Release</th>
+						<th>Date</th>
+						<th>File name</th>
+						<th>MD5 checksum</th>
+					</tr>
+					<tr>
+						<td>1.0-M1</td>
+						<td>2008-01-25</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0-M1/hibernate-spatial-oracle-1.0-M1.jar">
+								hibernate-spatial-oracle-1.0-M1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0-M1/hibernate-spatial-oracle-1.0-M1.jar.md5">
+								hibernate-spatial-oracle-1.0-M1.jar.md5
+							</a>
+						</td>
+					</tr>					
+				</table>
+			</subsection>
+
+			<subsection name="Postgis Provider">
+				<table>
+					<tr>
+						<th>Release</th>
+						<th>Date</th>
+						<th>File name</th>
+						<th>MD5 checksum</th>
+					</tr>
+					<tr>
+						<td>1.0-M1</td>
+						<td>2008-01-25</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0-M1/hibernate-spatial-postgis-1.0-M1.jar">
+								hibernate-spatial-postgis-1.0-M1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0-M1/hibernate-spatial-postgis-1.0-M1.jar.md5">
+								hibernate-spatial-postgis-1.0-M1.jar.md5
+							</a>
+						</td>
+					</tr>
+	
+				</table>
+			</subsection>
+			
+			<subsection name="MySQL Provider">
+				<table>
+					<tr>
+						<th>Release</th>
+						<th>Date</th>
+						<th>File name</th>
+						<th>MD5 checksum</th>
+					</tr>
+					<tr>
+						<td>1.0-M1</td>
+						<td>2008-01-25</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0-M1/hibernate-spatial-mysql-1.0-M1.jar">
+								hibernate-spatial-postgis-1.0-M1.jar
+							</a>
+						</td>
+						<td>
+							<a
+								href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0-M1/hibernate-spatial-mysql-1.0-M1.jar.md5">
+								hibernate-spatial-postgis-1.0-M1.jar.md5
+							</a>
+						</td>
+					</tr>
+	
+				</table>
+			</subsection>
+		</section>
+		<section name="Hibernate Spatial Snapshot Releases">
 			<subsection name="Hibernate Spatial Core">
 				<table>
 					<tr>
@@ -92,7 +203,7 @@
 				</table>
 			</subsection>
 
-			<subsection name="Hibernate Postgis Provider">
+			<subsection name="Postgis Provider">
 				<table>
 					<tr>
 						<th>Release</th>

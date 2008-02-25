@@ -86,13 +86,20 @@ public class SpatialRelateExpression implements Criterion {
 	 */
 	public TypedValue[] getTypedValues(Criteria criteria,
 			CriteriaQuery criteriaQuery) throws HibernateException {
-		if (filter != null)
+		Dialect dialect = criteriaQuery.getFactory().getDialect();
+		boolean twoPhaseFiltering = false; 
+		if (dialect instanceof SpatialDialect){
+			SpatialDialect sDialect = (SpatialDialect)dialect;
+			twoPhaseFiltering = sDialect.isTwoPhaseFiltering();
+		}
+		if (filter != null && twoPhaseFiltering)
 			return new TypedValue[] {
 					criteriaQuery.getTypedValue(criteria, propertyName, filter),
 					criteriaQuery.getTypedValue(criteria, propertyName, value) };
-		else
+		else {
 			return new TypedValue[] { criteriaQuery.getTypedValue(criteria,
 					propertyName, value) };
+		}
 	}
 
 	/*
@@ -109,7 +116,7 @@ public class SpatialRelateExpression implements Criterion {
 		Dialect dialect = factory.getDialect();
 		if (dialect instanceof SpatialDialect) {
 			SpatialDialect seDialect = (SpatialDialect) dialect;
-			if (filter != null) {
+			if (filter != null && seDialect.isTwoPhaseFiltering()) {
 				return seDialect.getSpatialRelateSQL(columns[0],
 						spatialRelation, true);
 			} else {

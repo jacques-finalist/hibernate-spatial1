@@ -500,6 +500,7 @@ events=# select title, astext(loc) from events;
         }else if (args[0].equals("find")){
             List events = mgr.find(args[1]);
             for (int i = 0; i < events.size(); i++ ){
+	            Event event = (Event)events.get(i);
                 System.out.println("Event: " + event.getTitle() +
                                 ", Time: " + event.getDate() +
                                 ", Location: " + event.getLocation());
@@ -537,7 +538,7 @@ import org.hibernatespatial.criterion.SpatialRestrictions;
         session.beginTransaction();
         System.out.println("Filter is : " + filter);
         Criteria testCriteria = session.createCriteria(Event.class);
-        testCriteria.add(SpatialRestrictions.within("location", filter, filter));
+        testCriteria.add(SpatialRestrictions.within("location", null, filter));
         List results = testCriteria.list();
         session.getTransaction().commit();
         return results;

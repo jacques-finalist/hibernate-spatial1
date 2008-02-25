@@ -224,7 +224,7 @@ public class TestSpatialQueries {
 			Criteria testCriteria = session.createCriteria(entityClass);
 
 			testCriteria.add(SpatialRestrictions.spatialRestriction(relation,
-					"geometry", null, jtsFilter));
+					"geometry", jtsFilter));
 
 			List results = testCriteria.list();
 

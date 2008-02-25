@@ -38,7 +38,8 @@
     </menu>
     <menu name="Providers" inherit="top">
     	<item name="Oracle10g" href="hibernate-spatial-oracle/index.html"/>
-    	<item name="Postgresql" href="hibernate-spatial-postgis/index.html"/>    	
+    	<item name="Postgresql" href="hibernate-spatial-postgis/index.html"/>    
+    	<item name="MySQL" href="hibernate-spatial-mysql/index.html"/>	
     </menu>
     
   </body>

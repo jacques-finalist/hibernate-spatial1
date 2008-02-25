@@ -11,7 +11,7 @@
       Hibernate Spatial allows you to deal with geographic data in a standardized way. It abstracts away from the specific way your database supports geographic data, and provides 
       a  standardized, cross-database interface to geographic data storage and query functions. 
       </p>
-      <p>Hibernate Spatial supports most of the functions of the OGC Simple Feature Specification. Supported databases are: Oracle 10g/11g and Postgresql/Postgis.
+      <p>Hibernate Spatial supports most of the functions of the OGC Simple Feature Specification. Supported databases are: Oracle 10g/11g, Postgresql/Postgis, and MySQL.
       </p>
       <p>There is a similar project for NHibernate: <a href="http://www.codeplex.com/NHibernateSpatial">NHibernate.Spatial</a>.
       </p>

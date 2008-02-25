@@ -28,6 +28,8 @@
  */
 package org.hibernatespatial;
 
+import org.hibernate.criterion.CriteriaQuery;
+import org.hibernate.engine.TypedValue;
 import org.hibernate.usertype.UserType;
 
 /**
@@ -62,7 +64,7 @@ public interface SpatialDialect {
 	 */
 	public String getSpatialRelateSQL(String columnName, int spatialRelation,
 			boolean useFilter);
-
+	
 	/**
 	 * Returns the SQL fragment for the SQL WHERE-expression when parsing
 	 * <code>org.walkonweb.spatial.criterion.SpatialFilterExpression</code>s
@@ -90,4 +92,25 @@ public interface SpatialDialect {
 	 */
 	public String getSpatialAggregateSQL(String columnName, int aggregation);
 
+	/**
+	 * Returns the name of the native database type for storing geometries.
+	 * 
+	 * @return type name
+	 */
+	public String getDbGeometryTypeName();
+
+	/**
+	 * Does this dialect support explicit two-phase filtering when 
+	 * filtering on spatial relations?
+	 * 
+	 * In two-phase filtering you can form a SQL WHERE-expression
+	 * that searches for matching objects in two phases. A first phase
+	 * performs a quick bounding box search for neighbouring objects. The
+	 * second phase calculates the precise spatial relation between the test 
+	 * object and the results of the first phase. 
+	 * 
+	 * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL don't. 
+	 * @return
+	 */
+	public boolean isTwoPhaseFiltering();
 }
