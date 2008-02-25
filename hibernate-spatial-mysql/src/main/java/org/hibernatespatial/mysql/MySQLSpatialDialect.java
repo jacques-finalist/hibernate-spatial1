@@ -29,8 +29,10 @@
 package org.hibernatespatial.mysql;
 
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.CriteriaQuery;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.engine.TypedValue;
 import org.hibernate.type.CustomType;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
@@ -46,7 +48,7 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
 	public MySQLSpatialDialect() {
 		super();
-		registerColumnType(java.sql.Types.BINARY, "geometry");
+		registerColumnType(java.sql.Types.ARRAY, "GEOMETRY");
 
 		// registering OGC functions
 		// (spec_simplefeatures_sql_99-04.pdf)
@@ -166,6 +168,15 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
 	public String getSpatialAggregateSQL(String columnName, int aggregation) {
 		throw new UnsupportedOperationException("Mysql has no spatial aggregate SQL functions.");
+	}
+
+	public String getDbGeometryTypeName() {
+		return "GEOMETRY";
+	}
+
+
+	public boolean isTwoPhaseFiltering() {
+		return false;
 	}
 
 }

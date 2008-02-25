@@ -35,7 +35,7 @@
 			<source>
 ... 
 		&lt;property name="geometry"&gt;
-			&lt;column name="geom" sql-type="MDSYS.SDO_GEOMETRY"&gt;
+			&lt;column name="geom" sql-type="GEOMETRY"&gt;
 			&lt;type name="org.hibernatespatial.GeometryUserType"&gt;
 				&lt;param name="dialect"&gt;
 					org.hibernatespatial.oracle.OracleSpatial10gDialect
