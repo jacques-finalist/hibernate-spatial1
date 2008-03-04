@@ -22,6 +22,12 @@
 		<module>../hibernate-spatial-oracle</module>
 	 	<module>../hibernate-spatial-mysql</module>
 	</modules>
+	<repositories>
+		<repository>
+		<id>GeoTools repo</id>
+		<url>http://maven.geotools.fr/repository</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
