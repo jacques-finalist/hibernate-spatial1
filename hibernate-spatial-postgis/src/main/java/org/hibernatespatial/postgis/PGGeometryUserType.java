@@ -128,11 +128,19 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		Point ll = box.getLLB();
 		Point ur = box.getURT();
 		Coordinate[] ringCoords = new Coordinate[5];
-		ringCoords[0] = new Coordinate(ll.x, ll.y);
-		ringCoords[1] = new Coordinate(ur.x, ll.y);
-		ringCoords[2] = new Coordinate(ur.x, ur.y);
-		ringCoords[3] = new Coordinate(ll.x, ur.y);
-		ringCoords[4] = new Coordinate(ll.x, ll.y);
+		if (box instanceof org.postgis.PGbox2d){
+			ringCoords[0] = new Coordinate(ll.x, ll.y);
+			ringCoords[1] = new Coordinate(ur.x, ll.y);
+			ringCoords[2] = new Coordinate(ur.x, ur.y);
+			ringCoords[3] = new Coordinate(ll.x, ur.y);
+			ringCoords[4] = new Coordinate(ll.x, ll.y);			
+		} else {
+			ringCoords[0] = new Coordinate(ll.x, ll.y, ll.z);
+			ringCoords[1] = new Coordinate(ur.x, ll.y, ll.z);
+			ringCoords[2] = new Coordinate(ur.x, ur.y, ur.z);
+			ringCoords[3] = new Coordinate(ll.x, ur.y, ur.z);
+			ringCoords[4] = new Coordinate(ll.x, ll.y, ll.z);						
+		}
 		com.vividsolutions.jts.geom.LinearRing shell = getGeometryFactory()
 				.createLinearRing(ringCoords);
 		return getGeometryFactory().createPolygon(shell, null);
@@ -216,8 +224,12 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 	}
 
 	protected com.vividsolutions.jts.geom.Point convertPoint(Point pnt) {
-		com.vividsolutions.jts.geom.Point g = getGeometryFactory()
-				.createPoint(new Coordinate(pnt.x, pnt.y));
+		     	com.vividsolutions.jts.geom.Point g;
+		     	if(new Double(pnt.z).isNaN()) {
+		     		g = getGeometryFactory().createPoint(new Coordinate(pnt.x, pnt.y));
+		     	}else {
+		     		g = getGeometryFactory().createPoint(new Coordinate(pnt.x, pnt.y,pnt.z));
+		     	}
 		g.setSRID(pnt.getSrid());
 		return g;
 	}
@@ -234,7 +246,11 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			Point[] points) {
 		Coordinate[] coordinates = new Coordinate[points.length];
 		for (int i = 0; i < points.length; i++) {
-			coordinates[i] = new Coordinate(points[i].x, points[i].y);
+	    	if(new Double(points[i].z).isNaN()) {
+	    		coordinates[i] = new Coordinate(points[i].x, points[i].y);
+	    	}else {
+	    		coordinates[i] = new Coordinate(points[i].x, points[i].y,points[i].z);
+	    	}
 		}
 		return coordinates;
 	}
@@ -242,7 +258,11 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 	private Point[] toPoints(Coordinate[] coordinates) {
 		Point[] points = new Point[coordinates.length];
 		for (int i = 0; i < coordinates.length; i++) {
-			points[i] = new Point(coordinates[i].x, coordinates[i].y);
+			if(new Double(coordinates[i].z).isNaN()) {
+				points[i] = new Point(coordinates[i].x, coordinates[i].y);
+			}else {
+				points[i] = new Point(coordinates[i].x, coordinates[i].y,coordinates[i].z);
+			}
 		}
 		return points;
 	}
@@ -353,8 +373,13 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		pgPoint.srid = point.getSRID();
 		pgPoint.x = point.getX();
 		pgPoint.y = point.getY();
+		if(new Double(point.getCoordinate().z).isNaN()) {
+			pgPoint.dimension = 2;
+		}else {
+			pgPoint.z = point.getCoordinate().z;
+			pgPoint.dimension = 3;
+		}
 		pgPoint.haveMeasure = false;
-		pgPoint.dimension = 2;
 		return pgPoint;
 	}
 
