@@ -75,7 +75,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private static final int[] geometryTypes = new int[] { Types.STRUCT };
 
-	private static String SQL_TYPE_NAME = "SDO_GEOMETRY";
+	private static String SQL_TYPE_NAME = "MDSYS.SDO_GEOMETRY";
 
 	@Override
 	public void nullSafeSet(PreparedStatement st, Object value, int index)
@@ -1232,7 +1232,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return ea;
 		}
 
-		public ARRAY toOracleArray(OracleConnection conn) throws SQLException {
+		public ARRAY toOracleArray(Connection conn) throws SQLException {
 
 			if (arrayDescriptor == null) {
 				arrayDescriptor = ArrayDescriptor.createDescriptor(TYPE_NAME,
@@ -1304,7 +1304,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			this.ordinates = newOrdinates;
 		}
 
-		public ARRAY toOracleArray(OracleConnection conn) throws SQLException {
+		public ARRAY toOracleArray(Connection conn) throws SQLException {
 			if (arrayDescriptor == null) {
 				arrayDescriptor = ArrayDescriptor.createDescriptor(TYPE_NAME,
 						conn);
@@ -1433,7 +1433,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			return geom;
 		}
 
-		public static STRUCT store(SDO_GEOMETRY geom, OracleConnection conn)
+		public static STRUCT store(SDO_GEOMETRY geom, Connection conn)
 				throws SQLException {
 
 			if (structDescriptor == null) {

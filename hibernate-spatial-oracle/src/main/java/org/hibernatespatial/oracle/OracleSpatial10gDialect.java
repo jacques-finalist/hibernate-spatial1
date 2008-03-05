@@ -269,7 +269,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		configure();
 
 		// register geometry type
-		registerColumnType(java.sql.Types.STRUCT, "SDO_GEOMETRY");
+		registerColumnType(java.sql.Types.STRUCT, "MDSYS.SDO_GEOMETRY");
 
 		// registering OGC functions
 		// (spec_simplefeatures_sql_99-04.pdf)
