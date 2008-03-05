@@ -38,6 +38,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernatespatial.test.model.LineStringEntity;
 import org.hibernatespatial.test.model.MultiLineStringEntity;
+import org.hibernatespatial.test.model.PointEntity;
 import org.hibernatespatial.test.model.PolygonEntity;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -69,6 +70,7 @@ public class TestCRUD extends TestCase {
 		config.addClass(LineStringEntity.class);
 		config.addClass(PolygonEntity.class);
 		config.addClass(MultiLineStringEntity.class);
+		config.addClass(PointEntity.class);
 
 		// build the session factory
 		// Settings settings = config.buildSettings();
@@ -91,9 +93,13 @@ public class TestCRUD extends TestCase {
 			tx = session.beginTransaction();
 			session.save(obj);
 
-			if (obj instanceof LineStringEntity)
+			if (obj instanceof LineStringEntity){
 				id = ((LineStringEntity) obj).getId();
-
+			} else if (obj instanceof PointEntity){
+				id = ((PointEntity)obj).getId();
+			} else {
+				throw new RuntimeException("can't save object of this type");
+			}
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
@@ -112,14 +118,26 @@ public class TestCRUD extends TestCase {
 	}
 
 	public void testSaveLineStringEntity() throws Exception {
+		testSaveLineStringEntity(2);
+	}
+	
+	public void testSaveLineStringEntity(int dim) throws Exception{
+		
 		LineStringEntity line = new LineStringEntity();
 		Coordinate[] coordinates = new Coordinate[COORDARRAY_LENGTH];
 
 		double startx = 4319.0;
 		double starty = 53255.0;
+		double startz = 125.0;
 
 		for (int i = 0; i < COORDARRAY_LENGTH; i++) {
-			coordinates[i] = new Coordinate(startx + i, starty + i);
+			if (dim == 2){
+				coordinates[i] = new Coordinate(startx + i, starty + i);
+			} else if(dim == 3) {
+				coordinates[i] = new Coordinate(startx + i, starty + i, startz + i);
+			} else {
+				throw new RuntimeException("Dimension not supported.");
+			}
 		}
 
 		Geometry geom = geomFactory.createLineString(coordinates);
@@ -156,5 +174,43 @@ public class TestCRUD extends TestCase {
 		assertNull(retrieved.getGeometry());
 
 	}
+	
+	
+	public void testSavePoint(int dim) throws Exception{
+		
+		double x = 4319.0;
+		double y = 53255.0;
+		double z = 125.0;
+		Coordinate c = null;
+		switch (dim){
+		case 2:
+			c = new Coordinate(x,y);
+			break;
+		case 3:
+			c = new Coordinate(x,y,z);
+			break;
+		default:
+			throw new RuntimeException("Dimension not supported.");
+		}
+			
+		PointEntity pt = new PointEntity();
+		Geometry geom = geomFactory.createPoint(c);
+		geom.setSRID(31370);		
+		pt.setGeometry(geom);
+		pt.setName("Added by TestCRUD");
+		long id = saveObject(pt);
+		PointEntity retrieved = (PointEntity) retrieveObject(
+				PointEntity.class, id);
+		// check if we retrieve all the same stuff
+		assertTrue(pt.getGeometry().equals(retrieved.getGeometry()));
+		// assertEquals(line.getGeometry(),
+		// retrieved.getGeometry()); DOES NOT WORK:
+		// AssertEquals doesn' t work because in JTS 1.7 Geometry has a
+		// method with signature boolean equals(Geometry) which does NOT
+		// override
+		// equals(Object). This last method is called from assertEquals.
 
+		assertEquals(pt.getId(), retrieved.getId());
+		assertEquals(pt.getName(), retrieved.getName());
+	}
 }
