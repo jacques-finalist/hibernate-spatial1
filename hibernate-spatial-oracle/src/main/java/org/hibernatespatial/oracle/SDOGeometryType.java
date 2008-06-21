@@ -50,7 +50,6 @@ import org.hibernatespatial.AbstractDBGeometryType;
 import org.hibernatespatial.Circle;
 import org.hibernatespatial.HibernateSpatialException;
 import org.hibernatespatial.mgeom.MCoordinate;
-import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.mgeom.MLineString;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
@@ -109,20 +108,19 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private SDO_GEOMETRY convertJTSGeometry(Geometry jtsGeom) {
 		SDO_GEOMETRY geom = null;
-		if (jtsGeom.getClass() == Point.class) {
+		if (jtsGeom instanceof Point) {
 			geom = convertJTSPoint((Point) jtsGeom);
-		} else if (jtsGeom.getClass() == LineString.class
-				|| jtsGeom.getClass() == MLineString.class) {
+		} else if (jtsGeom instanceof LineString) {
 			geom = convertJTSLineString((LineString) jtsGeom);
-		} else if (jtsGeom.getClass() == Polygon.class) {
+		} else if (jtsGeom instanceof Polygon) {
 			geom = convertJTSPolygon((Polygon) jtsGeom);
-		} else if (jtsGeom.getClass() == MultiPoint.class) {
+		} else if (jtsGeom instanceof MultiPoint) {
 			geom = convertJTSMultiPoint((MultiPoint) jtsGeom);
-		} else if (jtsGeom.getClass() == MultiLineString.class) {
+		} else if (jtsGeom instanceof MultiLineString) {
 			geom = convertJTSMultiLineString((MultiLineString) jtsGeom);
-		} else if (jtsGeom.getClass() == MultiPolygon.class) {
+		} else if (jtsGeom instanceof MultiPolygon) {
 			geom = convertJTSMultiPolygon((MultiPolygon) jtsGeom);
-		} else if (jtsGeom.getClass() == GeometryCollection.class) {
+		} else if (jtsGeom instanceof GeometryCollection) {
 			geom = convertJTSGeometryCollection((GeometryCollection) jtsGeom);
 		}
 		return geom;
