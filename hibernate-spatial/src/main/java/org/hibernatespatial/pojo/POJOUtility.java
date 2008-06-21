@@ -1,3 +1,27 @@
+/**
+ * $Id$
+ *
+ * This file is part of Hibernate Spatial, an extension to the 
+ * hibernate ORM solution for geographic data. 
+ *  
+ * Copyright © 2008 Geovise BVBA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * For more information, visit: http://www.hibernatespatial.org/
+ */
 package org.hibernatespatial.pojo;
 
 import java.sql.Connection;
@@ -34,8 +58,9 @@ public class POJOUtility {
 		this.mappingGenerator = new MappingsGenerator(packageName);
 	}
 
-	//TODO simplify the checked exceptions
-	public Document map(Collection<String> tableNames) throws SQLException, TableNotFoundException, CannotCompileException, NotFoundException {
+	// TODO simplify the checked exceptions
+	public Document map(Collection<String> tableNames) throws SQLException,
+			TableNotFoundException, CannotCompileException, NotFoundException {
 		List<TableMetaData> tmds = new ArrayList<TableMetaData>();
 		DatabaseMetaData dmd = conn.getMetaData();
 		for (String tableName : tableNames) {
@@ -44,9 +69,9 @@ public class POJOUtility {
 				continue;
 			}
 			TableMetaData tmd = TableMetaData.load(tableName, dmd);
-			
+
 			tmds.add(tmd);
-		
+
 			pojoInfo = this.pojoGenerator.createClassInfo(tmd);
 			classInfoMap.add(tmd.getName(), pojoInfo);
 		}
@@ -62,7 +87,7 @@ public class POJOUtility {
 		return this.classInfoMap;
 	}
 
-	//TODO -- change this so as to test if the input string is a
+	// TODO -- change this so as to test if the input string is a
 	// valid packagename
 	private boolean isJavaIdentifier(String in) {
 		int n = in.length();

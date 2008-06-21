@@ -1,3 +1,27 @@
+/**
+ * $Id$
+ *
+ * This file is part of Hibernate Spatial, an extension to the 
+ * hibernate ORM solution for geographic data. 
+ *  
+ * Copyright © 2008 Geovise BVBA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * For more information, visit: http://www.hibernatespatial.org/
+ */
 package org.hibernatespatial.pojo;
 
 import java.sql.Types;
@@ -11,162 +35,131 @@ import javassist.CtClass;
 import org.hibernatespatial.GeometryUserType;
 
 /**
- * The <code>TypeMapper</code> maps a pair consisting of java.sql.Type, and a database type name 
- * to a CtClass (a representation of a java type used by the javassist class building tools)
- * and to a Hibernate type (used when creating a mapping file).
+ * The <code>TypeMapper</code> maps a pair consisting of java.sql.Type, and a
+ * database type name to a CtClass (a representation of a java type used by the
+ * javassist class building tools) and to a Hibernate type (used when creating a
+ * mapping file).
  * 
  * @author Karel Maesen, Geovise BVBA (http://www.geovise.com/)
  */
 public class TypeMapper {
-	
-	private final static String GEOMETRY_USER_TYPE = GeometryUserType.class.getCanonicalName();
-	
-	private  List<TMEntry> entries = new ArrayList<TMEntry>();
+
+	private final static String GEOMETRY_USER_TYPE = GeometryUserType.class
+			.getCanonicalName();
+
+	private List<TMEntry> entries = new ArrayList<TMEntry>();
+
 	private String dbGeomType = "";
+
 	private CtClass ctGeom;
-	
-	//TODO -- create entires for all constants defined in java.sql.Types
-	public TypeMapper (String dbGeomType) {
-		
-		//first set the type to use for the geometry
+
+	// TODO -- create entires for all constants defined in java.sql.Types
+	public TypeMapper(String dbGeomType) {
+
+		// first set the type to use for the geometry
 		this.dbGeomType = dbGeomType;
-		
-		ClassPool pool  = ClassPool.getDefault();
-		//ensure that we can load the JTS classes.
-		pool.insertClassPath(new ClassClassPath(this.getClass()));	
-		
+
+		ClassPool pool = ClassPool.getDefault();
+		// ensure that we can load the JTS classes.
+		pool.insertClassPath(new ClassClassPath(this.getClass()));
+
 		CtClass ctString = null;
-		CtClass ctDate = null;		
-		try{
+		CtClass ctDate = null;
+		try {
 			ctString = pool.get("java.lang.String");
 			ctDate = pool.get("java.util.Date");
 			ctGeom = pool.get("com.vividsolutions.jts.geom.Geometry");
-		} catch(Exception e){
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
-		
-		entries.add(new TMEntry(
-					Types.BIGINT,
-					"integer",
-					CtClass.longType));
-		
-		entries.add(new TMEntry(
-				Types.SMALLINT,
-				"integer",
-				CtClass.intType));		
-		
-		entries.add(new TMEntry(
-				Types.BOOLEAN,
-				"boolean",
-				CtClass.booleanType));		
-		
-		entries.add(new TMEntry(
-				Types.CHAR,
-				"string",
-				ctString));
-		
-		entries.add(new TMEntry(
-				Types.DATE,
-				"date",
-				ctDate));
-		
-		entries.add(new TMEntry(
-				Types.DECIMAL,
-				"double",
-				CtClass.doubleType));
-		
-		entries.add(new TMEntry(
-				Types.DOUBLE,
-				"double",
-				CtClass.doubleType));
-		
-		entries.add(new TMEntry(
-				Types.NUMERIC,
-				"double",
-				CtClass.doubleType));
+		entries.add(new TMEntry(Types.BIGINT, "integer", CtClass.longType));
 
-		entries.add(new TMEntry(
-				Types.FLOAT,
-				"double",
-				CtClass.doubleType));
+		entries.add(new TMEntry(Types.SMALLINT, "integer", CtClass.intType));
 
-		entries.add(new TMEntry(
-				Types.INTEGER,
-				"long",
-				CtClass.longType));
+		entries.add(new TMEntry(Types.BOOLEAN, "boolean", CtClass.booleanType));
 
-		entries.add(new TMEntry(
-				Types.VARCHAR,
-				"string",
-				ctString));
+		entries.add(new TMEntry(Types.CHAR, "string", ctString));
+
+		entries.add(new TMEntry(Types.DATE, "date", ctDate));
+
+		entries.add(new TMEntry(Types.DECIMAL, "double", CtClass.doubleType));
+
+		entries.add(new TMEntry(Types.DOUBLE, "double", CtClass.doubleType));
+
+		entries.add(new TMEntry(Types.NUMERIC, "double", CtClass.doubleType));
+
+		entries.add(new TMEntry(Types.FLOAT, "double", CtClass.doubleType));
+
+		entries.add(new TMEntry(Types.INTEGER, "long", CtClass.longType));
+
+		entries.add(new TMEntry(Types.VARCHAR, "string", ctString));
 	}
-	
-	public CtClass getCtClass(String dbType, int sqlType){
-		if (dbType.equalsIgnoreCase(this.dbGeomType)){
+
+	public CtClass getCtClass(String dbType, int sqlType) {
+		if (dbType.equalsIgnoreCase(this.dbGeomType)) {
 			return this.ctGeom;
 		}
-		for (TMEntry entry : entries){
-			if (entry.javaType == sqlType){
+		for (TMEntry entry : entries) {
+			if (entry.javaType == sqlType) {
 				return entry.ctClass;
 			}
 		}
 		return null;
 	}
-	
-	public String getHibernateType(String dbType, int sqlType){
-		if (dbType.equalsIgnoreCase(this.dbGeomType)){
+
+	public String getHibernateType(String dbType, int sqlType) {
+		if (dbType.equalsIgnoreCase(this.dbGeomType)) {
 			return GEOMETRY_USER_TYPE;
 		}
-		for (TMEntry entry : entries){
-			if (entry.javaType == sqlType){
+		for (TMEntry entry : entries) {
+			if (entry.javaType == sqlType) {
 				return entry.hibernateTypeName;
 			}
 		}
 		return null;
-		
+
 	}
-	
-	public int[] getMappedSQLTypes(){
+
+	public int[] getMappedSQLTypes() {
 		int l = this.entries.size();
 		int[] types = new int[l];
-		for(int i = 0; i < this.entries.size(); i++){
+		for (int i = 0; i < this.entries.size(); i++) {
 			types[i] = this.entries.get(i).javaType;
 		}
 		return types;
 	}
-	
-	public void addTypeMapping(int sqlType, String hibernateType, CtClass ctClass){
+
+	public void addTypeMapping(int sqlType, String hibernateType,
+			CtClass ctClass) {
 		this.entries.add(new TMEntry(sqlType, hibernateType, ctClass));
 	}
-	
-	public void removeTypeMapping(int sqlType){
+
+	public void removeTypeMapping(int sqlType) {
 		TMEntry tm = null;
-		for (TMEntry t : this.entries){
-			if (t.javaType == sqlType){
+		for (TMEntry t : this.entries) {
+			if (t.javaType == sqlType) {
 				tm = t;
 				break;
 			}
 		}
-		if (tm != null){
+		if (tm != null) {
 			this.entries.remove(tm);
 		}
 	}
-	
-	private static class TMEntry{
+
+	private static class TMEntry {
 		protected int javaType = 0;
+
 		protected String hibernateTypeName = "";
+
 		protected CtClass ctClass;
-		
-		protected TMEntry(int jt, String ht, CtClass jc){
+
+		protected TMEntry(int jt, String ht, CtClass jc) {
 			this.javaType = jt;
 			this.hibernateTypeName = ht;
 			this.ctClass = jc;
 		}
 	}
-	
-	
-	
-	
 
 }
