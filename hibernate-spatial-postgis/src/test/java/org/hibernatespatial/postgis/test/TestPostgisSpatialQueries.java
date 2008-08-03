@@ -49,11 +49,11 @@ public class TestPostgisSpatialQueries {
 	private static TestSpatialQueries delegate;
 
 	static {
-		
+
 		HSConfiguration config = new HSConfiguration();
 		config.configure();
 		HBSpatialExtension.setConfiguration(config);
-		
+
 		String url = "jdbc:postgresql://localhost:5432/" + DBNAME;
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -129,13 +129,13 @@ public class TestPostgisSpatialQueries {
 	public void testHQLSRID() throws Exception {
 		delegate.testHQLSRID();
 	}
-	
+
 	@Test
 	public void testExtent() throws Exception {
 		String sql = "select area(extent(geom)) from $table$";
 		delegate.testExtent(sql);
 	}
-	
+
 	@Test
 	public void testHQLExtent() throws Exception {
 		String sql = "select AREA(extent(geom)) from $table$";
