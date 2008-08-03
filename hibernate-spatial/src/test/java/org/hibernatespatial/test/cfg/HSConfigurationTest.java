@@ -12,11 +12,9 @@ import org.junit.Test;
 
 public class HSConfigurationTest {
 
-	private static final String hibernate_config_location 
-		= "/Users/maesenka/workspaces/hibernate-spatial/hibernate-spatial-mysql/src/test/java/hibernate.cfg.xml";
+	private static final String hibernate_config_location = "/Users/maesenka/workspaces/hibernate-spatial/hibernate-spatial-mysql/src/test/java/hibernate.cfg.xml";
 
-	private static final String hs_config_location 
-		= "/Users/maesenka/workspaces/hibernate-spatial/hibernate-spatial/src/test/java/hibernate-spatial.cfg.xml";
+	private static final String hs_config_location = "/Users/maesenka/workspaces/hibernate-spatial/hibernate-spatial/src/test/java/hibernate-spatial.cfg.xml";
 
 	@Test
 	public void testConfigure() {
@@ -25,7 +23,7 @@ public class HSConfigurationTest {
 		hibConfig.configure(new File(hibernate_config_location));
 		config.configure(hibConfig);
 		assertEquals("org.hibernatespatial.mysql.MySQLSpatialDialect", config
-				.getProperty(HSProperty.DEFAULT_DIALECT));
+				.getDefaultDialect());
 
 		config.configure();
 		testResults(config);
@@ -54,8 +52,8 @@ public class HSConfigurationTest {
 
 	private void testResults(HSConfiguration config) {
 		assertEquals("org.hibernatespatial.postgis.PostgisDialect", config
-				.getProperty(HSProperty.DEFAULT_DIALECT));
-		assertEquals("FIXED", config.getProperty(HSProperty.PRECISION_MODEL));
-		assertEquals("5", config.getProperty(HSProperty.PRECISION_MODEL_SCALE));
+				.getDefaultDialect());
+		assertEquals("FIXED", config.getPrecisionModel());
+		assertEquals("5", config.getPrecisionModelScale());
 	}
 }

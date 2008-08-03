@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -81,37 +82,65 @@ public class HSConfiguration extends Properties {
 		setProperty(HSProperty.PRECISION_MODEL, precisionModel);
 	}
 
-	public String getProperty(HSProperty property) {
+	public String getPrecisionModelScale() {
+		return getProperty(HSProperty.PRECISION_MODEL_SCALE.toString());
+	}
+
+	public void setPrecisionModelScale(String scale) {
+		setProperty(HSProperty.PRECISION_MODEL_SCALE, scale);
+	}
+
+	protected String getProperty(HSProperty property) {
 		return getProperty(property.toString());
 	}
 
-	public void setProperty(HSProperty property, String value) {
+	protected void setProperty(HSProperty property, String value) {
 		setProperty(property.toString(), value);
 	}
 
-	public HSConfiguration configure(Configuration hibernateConfig) {
+	/**
+	 * Derives the configuration from the Hibernate Configuration object.
+	 * 
+	 * @param hibernateConfig
+	 *            Hibernate Configuration object
+	 * @return true, if the configuration is successfull.
+	 */
+	public boolean configure(Configuration hibernateConfig) {
 		String dialect = hibernateConfig.getProperty("hibernate.dialect");
 		setProperty(HSProperty.DEFAULT_DIALECT, dialect);
-		return this;
+		return true;
 	}
 
-	public HSConfiguration configure() {
+	/**
+	 * Gets the configuriation from the hibernate-spatail.cfg.xml file on the
+	 * classpath.
+	 * 
+	 * @return true if the configuration is successfull;
+	 */
+	public boolean configure() {
 		return configure("hibernate-spatial.cfg.xml");
 	}
 
-	public HSConfiguration configure(File resource) {
-		this.source = resource.getName();
-		logger.info("configuring from file: " + resource.getName());
+	/**
+	 * Gets the configuriation from the specified file.
+	 * 
+	 * @param resource
+	 *            the configuration file
+	 * @return true if the configuration is successfull;
+	 */
+	public boolean configure(File resource) {
+		logger.info("Attempting to configuring from file: "
+				+ resource.getName());
 		try {
+			this.source = resource.getAbsolutePath();
 			return doConfigure(new FileInputStream(resource));
 		} catch (FileNotFoundException e) {
-			logger.warn("could not find file: " + resource + ".\nCause:"
-					+ e.getMessage());
+			logger.warn("could not find file: " + resource + ".");
 		} catch (DocumentException e) {
-			logger.warn("Failed to load configuration file :" + resource
+			logger.warn("Failed to load configuration file: " + resource
 					+ ".\nCause:" + e.getMessage());
 		}
-		return null;
+		return false;
 	}
 
 	/**
@@ -123,23 +152,34 @@ public class HSConfiguration extends Properties {
 		return this.source;
 	}
 
-	public HSConfiguration configure(String resource) {
-		logger.info("configuring from resource: " + resource);
-		this.source = resource;
+	/**
+	 * Gets the configuriation from the specified file on the class path.
+	 * 
+	 * @param resource
+	 *            the configuration file
+	 * @return true if the configuration is successfull;
+	 */
+	public boolean configure(String resource) {
+		logger.info("Attempting to configuring from file: " + resource);
 		ClassLoader classLoader = Thread.currentThread()
 				.getContextClassLoader();
-		InputStream stream = null;
 		try {
-			stream = classLoader.getResourceAsStream(resource);
-			return doConfigure(stream);
+			URL url = classLoader.getResource(resource);
+			if (url == null) {
+				logger.warn("No configuration file " + resource
+						+ " on the classpath.");
+				return false;
+			}
+			this.source = url.getFile();
+			return doConfigure(url.openStream());
 		} catch (Exception e) {
-			logger.warn("Failed to load configuration file :" + resource);
+			logger.warn("Failed to load configuration file: " + resource
+					+ ".\nCause:" + e.getMessage());
 		}
-		return null;
+		return false;
 	}
 
-	private HSConfiguration doConfigure(InputStream stream)
-			throws DocumentException {
+	private boolean doConfigure(InputStream stream) throws DocumentException {
 		try {
 			SAXReader reader = new SAXReader();
 			Document configDoc = reader.read(stream);
@@ -150,13 +190,13 @@ public class HSConfiguration extends Properties {
 					setProperty(hsprop, propEl.getText());
 				}
 			}
+			return true;
 		} finally {
 			try {
 				stream.close();
 			} catch (Exception e) {
 			} // Can't do anything about this.
 		}
-		return this;
 	}
 
 }
