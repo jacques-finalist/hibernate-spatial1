@@ -73,6 +73,16 @@ public class TestPostgisCRUD {
 		delegate.testSaveLineStringEntity(3);
 	}
 
+	@Test
+	public void testSaveMLineStringEntity() throws Exception {
+		delegate.testSaveMLineStringEntity();
+	}
+
+	@Test
+	public void testSaveMultiMLineStringEntity() throws Exception {
+		delegate.testSaveMultiMLineStringEntity();
+	}
+
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(TestPostgisCRUD.class);
 	}

@@ -32,6 +32,9 @@ import java.sql.Connection;
 import java.sql.Types;
 
 import org.hibernatespatial.AbstractDBGeometryType;
+import org.hibernatespatial.mgeom.MCoordinate;
+import org.hibernatespatial.mgeom.MGeometry;
+import org.hibernatespatial.mgeom.MLineString;
 import org.postgis.GeometryCollection;
 import org.postgis.LineString;
 import org.postgis.LinearRing;
@@ -187,16 +190,24 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
 	private com.vividsolutions.jts.geom.Geometry convertMultiLineString(
 			MultiLineString mlstr) {
-
-		com.vividsolutions.jts.geom.LineString[] lstrs = new com.vividsolutions.jts.geom.LineString[mlstr
-				.numLines()];
-
-		for (int i = 0; i < mlstr.numLines(); i++) {
-			lstrs[i] = getGeometryFactory().createLineString(
-					toJTSCoordinates(mlstr.getLine(i).getPoints()));
+		com.vividsolutions.jts.geom.MultiLineString out;
+		if (mlstr.haveMeasure) {
+			MLineString[] lstrs = new MLineString[mlstr.numLines()];
+			for (int i = 0; i < mlstr.numLines(); i++) {
+				MCoordinate[] coordinates = toJTSCoordinates(mlstr.getLine(i)
+						.getPoints());
+				lstrs[i] = getGeometryFactory().createMLineString(coordinates);
+			}
+			out = getGeometryFactory().createMultiMLineString(lstrs);
+		} else {
+			com.vividsolutions.jts.geom.LineString[] lstrs = new com.vividsolutions.jts.geom.LineString[mlstr
+					.numLines()];
+			for (int i = 0; i < mlstr.numLines(); i++) {
+				lstrs[i] = getGeometryFactory().createLineString(
+						toJTSCoordinates(mlstr.getLine(i).getPoints()));
+			}
+			out = getGeometryFactory().createMultiLineString(lstrs);
 		}
-		com.vividsolutions.jts.geom.MultiLineString out = getGeometryFactory()
-				.createMultiLineString(lstrs);
 		out.setSRID(mlstr.srid);
 		return out;
 	}
@@ -223,49 +234,61 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 	}
 
 	protected com.vividsolutions.jts.geom.Point convertPoint(Point pnt) {
-		com.vividsolutions.jts.geom.Point g;
-		if (new Double(pnt.z).isNaN()) {
-			g = getGeometryFactory().createPoint(new Coordinate(pnt.x, pnt.y));
-		} else {
-			g = getGeometryFactory().createPoint(
-					new Coordinate(pnt.x, pnt.y, pnt.z));
-		}
+		com.vividsolutions.jts.geom.Point g = getGeometryFactory().createPoint(
+				this.toJTSCoordinate(pnt));
 		g.setSRID(pnt.getSrid());
 		return g;
 	}
 
 	protected com.vividsolutions.jts.geom.LineString convertLineString(
 			org.postgis.LineString lstr) {
-		com.vividsolutions.jts.geom.LineString out = getGeometryFactory()
-				.createLineString(toJTSCoordinates(lstr.getPoints()));
+		com.vividsolutions.jts.geom.LineString out = lstr.haveMeasure ? getGeometryFactory()
+				.createMLineString(toJTSCoordinates(lstr.getPoints()))
+				: getGeometryFactory().createLineString(
+						toJTSCoordinates(lstr.getPoints()));
 		out.setSRID(lstr.getSrid());
 		return out;
 	}
 
-	private com.vividsolutions.jts.geom.Coordinate[] toJTSCoordinates(
-			Point[] points) {
-		Coordinate[] coordinates = new Coordinate[points.length];
+	private MCoordinate[] toJTSCoordinates(Point[] points) {
+		MCoordinate[] coordinates = new MCoordinate[points.length];
 		for (int i = 0; i < points.length; i++) {
-			if (new Double(points[i].z).isNaN()) {
-				coordinates[i] = new Coordinate(points[i].x, points[i].y);
-			} else {
-				coordinates[i] = new Coordinate(points[i].x, points[i].y,
-						points[i].z);
-			}
+			coordinates[i] = this.toJTSCoordinate(points[i]);
 		}
 		return coordinates;
+	}
+
+	private MCoordinate toJTSCoordinate(Point pt) {
+		MCoordinate mc;
+		if (pt.dimension == 2) {
+			mc = pt.haveMeasure ? MCoordinate.create2dWithMeasure(pt.getX(), pt
+					.getY(), pt.getM()) : MCoordinate.create2d(pt.getX(), pt
+					.getY());
+		} else {
+			mc = pt.haveMeasure ? MCoordinate.create3dWithMeasure(pt.getX(), pt
+					.getY(), pt.getZ(), pt.getM()) : MCoordinate.create3d(pt
+					.getX(), pt.getY(), pt.getZ());
+		}
+		return mc;
 	}
 
 	private Point[] toPoints(Coordinate[] coordinates) {
 		Point[] points = new Point[coordinates.length];
 		for (int i = 0; i < coordinates.length; i++) {
-			if (new Double(coordinates[i].z).isNaN()) {
-				points[i] = new Point(coordinates[i].x, coordinates[i].y);
+			Coordinate c = coordinates[i];
+			Point pt;
+			if (Double.isNaN(c.z)) {
+				pt = new Point(c.x, c.y);
 			} else {
-				points[i] = new Point(coordinates[i].x, coordinates[i].y,
-						coordinates[i].z);
+				pt = new Point(c.x, c.y, c.z);
 			}
-			Point pt = new Point();
+			if (c instanceof MCoordinate) {
+				MCoordinate mc = (MCoordinate) c;
+				if (!Double.isNaN(mc.m)) {
+					pt.setM(mc.m);
+				}
+			}
+			points[i] = pt;
 		}
 		return points;
 	}
@@ -286,7 +309,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 		} else if (jtsGeom instanceof com.vividsolutions.jts.geom.LineString) {
 			geom = convertJTSLineString((com.vividsolutions.jts.geom.LineString) jtsGeom);
 		} else if (jtsGeom instanceof com.vividsolutions.jts.geom.MultiLineString) {
-			geom = convertJTSMultiLineSTring((com.vividsolutions.jts.geom.MultiLineString) jtsGeom);
+			geom = convertJTSMultiLineString((com.vividsolutions.jts.geom.MultiLineString) jtsGeom);
 		} else if (jtsGeom instanceof com.vividsolutions.jts.geom.Polygon) {
 			geom = convertJTSPolygon((com.vividsolutions.jts.geom.Polygon) jtsGeom);
 		} else if (jtsGeom instanceof com.vividsolutions.jts.geom.MultiPoint) {
@@ -356,11 +379,14 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			com.vividsolutions.jts.geom.LineString string) {
 		LineString ls = new org.postgis.LineString(toPoints(string
 				.getCoordinates()));
+		if (string instanceof MGeometry) {
+			ls.haveMeasure = true;
+		}
 		ls.setSrid(string.getSRID());
 		return ls;
 	}
 
-	private MultiLineString convertJTSMultiLineSTring(
+	private MultiLineString convertJTSMultiLineString(
 			com.vividsolutions.jts.geom.MultiLineString string) {
 		org.postgis.LineString[] lines = new org.postgis.LineString[string
 				.getNumGeometries()];
@@ -369,6 +395,9 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 					i).getCoordinates()));
 		}
 		MultiLineString mls = new MultiLineString(lines);
+		if (string instanceof MGeometry) {
+			mls.haveMeasure = true;
+		}
 		mls.setSrid(string.getSRID());
 		return mls;
 	}
@@ -400,7 +429,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 			} else if (currentGeom.getClass() == com.vividsolutions.jts.geom.LinearRing.class) {
 				pgCollections[i] = convertJTSLineStringToLinearRing((com.vividsolutions.jts.geom.LinearRing) currentGeom);
 			} else if (currentGeom.getClass() == com.vividsolutions.jts.geom.MultiLineString.class) {
-				pgCollections[i] = convertJTSMultiLineSTring((com.vividsolutions.jts.geom.MultiLineString) currentGeom);
+				pgCollections[i] = convertJTSMultiLineString((com.vividsolutions.jts.geom.MultiLineString) currentGeom);
 			} else if (currentGeom.getClass() == com.vividsolutions.jts.geom.MultiPoint.class) {
 				pgCollections[i] = convertJTSMultiPoint((com.vividsolutions.jts.geom.MultiPoint) currentGeom);
 			} else if (currentGeom.getClass() == com.vividsolutions.jts.geom.MultiPolygon.class) {

@@ -26,6 +26,19 @@ CREATE TABLE public.pointtest(
 	geom geometry
 );
 
+CREATE TABLE public.mlinestringtest(
+	id DECIMAL(10,0) primary key,
+	name VARCHAR(50),
+	geom geometry
+);
+
+CREATE TABLE public.multimlinestringtest(
+id DECIMAL(10,0) primary key,
+	name VARCHAR(50),
+	geom geometry
+);
+	
+
 
 --
 -- TODO -- create spatial index
