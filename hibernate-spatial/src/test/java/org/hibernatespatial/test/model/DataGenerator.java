@@ -35,10 +35,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Settings;
+import org.hibernatespatial.mgeom.MCoordinate;
+import org.hibernatespatial.mgeom.MGeometryFactory;
+import org.hibernatespatial.mgeom.MLineString;
+import org.hibernatespatial.mgeom.MultiMLineString;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -67,7 +70,7 @@ public class DataGenerator {
 
 	// create the geometryfactory, with floating-point precision model, and
 	// Belgian lambert
-	static final private GeometryFactory geomFactory = new GeometryFactory(
+	static final private MGeometryFactory geomFactory = new MGeometryFactory(
 			new PrecisionModel(), 31370);
 
 	public void generate() {
@@ -80,6 +83,8 @@ public class DataGenerator {
 		config.addClass(PointEntity.class);
 		config.addClass(MultiPointEntity.class);
 		config.addClass(MultiPolygonEntity.class);
+		config.addClass(MLineStringEntity.class);
+		config.addClass(MultiMLineStringEntity.class);
 
 		Settings settings = config.buildSettings();
 		System.out.println("Generating Data for Dialect: "
@@ -96,7 +101,10 @@ public class DataGenerator {
 				new MultiLineStringCreator());
 		generateData(PolygonEntity.class, factory, new PolygonCreator());
 		generateData(PointEntity.class, factory, new PointCreator());
+		generateData(MLineStringEntity.class, factory, new MLineStringCreator());
+		generateData(MultiMLineStringEntity.class, factory, new MultiMLineStringCreator());
 		factory.close();
+		
 
 	}
 
@@ -170,6 +178,24 @@ public class DataGenerator {
 		}
 	}
 
+	private class MLineStringCreator implements GeomCreator<MLineString>{
+		public MLineString create(){
+			int numCoords = getRandomNumCoords(2);
+			MCoordinate[] coordinates = new MCoordinate[numCoords];
+			double mValue = 0.0d;
+			for (int i = 0; i < numCoords; i++){
+				Coordinate rc = getRandomCoordinate();
+				MCoordinate mrc = new MCoordinate(rc);
+				if ( i > 0){
+					mValue += coordinates[i-1].distance(rc);
+				}
+				mrc.m = mValue;
+				coordinates[i] = mrc;
+			}
+			return geomFactory.createMLineString(coordinates);			
+		}
+	}
+	
 	private class MultiLineStringCreator implements
 			GeomCreator<MultiLineString> {
 		public MultiLineString create() {
@@ -183,6 +209,18 @@ public class DataGenerator {
 				lines[i] = lsc.create();
 			}
 			return geomFactory.createMultiLineString(lines);
+		}
+	}
+	
+	private class MultiMLineStringCreator implements GeomCreator<MultiMLineString> {
+		public MultiMLineString create(){
+			int numGeoms = 1 + getRandomNumGeoms();
+			MLineStringCreator mlsc = new MLineStringCreator();
+			MLineString[] mlines = new MLineString[numGeoms];
+			for (int i = 0; i < numGeoms; i++){
+				mlines[i] = mlsc.create();
+			}
+			return geomFactory.createMultiMLineString(mlines);
 		}
 	}
 

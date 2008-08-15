@@ -41,12 +41,15 @@ import org.hibernatespatial.mgeom.MLineString;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 /**
  * @author Karel Maesen
  */
 public class MLineStringTest extends TestCase {
 
+	private PrecisionModel prec = new PrecisionModel(PrecisionModel.FIXED);
+	
 	private MGeometryFactory mgeomFactory = new MGeometryFactory(
 			MCoordinateSequenceFactory.instance());
 
@@ -218,8 +221,9 @@ public class MLineStringTest extends TestCase {
 					0.0);
 			mctest = arbitraryLine.getClosestPoint(mcexp, d);
 			mcexp.m = mco1.m + offset * (mco2.m - mco1.m);
-			assertEquals(mcexp, mctest);
-
+			assertEquals(mcexp.x, mctest.x, 0.00000000000000001);
+			assertEquals(mcexp.y, mctest.y, 0.00000000000000001);
+			assertEquals(mcexp.z, mctest.z, 0.00000000000000001);
 			double delta = Math.random();
 
 			MCoordinate mcin = MCoordinate.create2dWithMeasure(mco1.x + offset

@@ -58,7 +58,7 @@ public class HSConfiguration extends Properties {
 
 	private static Log logger = LogFactory.getLog(HSConfiguration.class);
 
-	private String source;
+	private String source = "runtime configuration object";
 
 	private HSProperty[] HSProperties;
 
@@ -160,7 +160,7 @@ public class HSConfiguration extends Properties {
 	 * @return true if the configuration is successfull;
 	 */
 	public boolean configure(String resource) {
-		logger.info("Attempting to configuring from file: " + resource);
+		logger.info("Attempting to load configuration from file: " + resource);
 		ClassLoader classLoader = Thread.currentThread()
 				.getContextClassLoader();
 		try {

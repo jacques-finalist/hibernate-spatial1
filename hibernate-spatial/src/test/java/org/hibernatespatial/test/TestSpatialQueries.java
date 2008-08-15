@@ -83,10 +83,10 @@ public class TestSpatialQueries {
 	// "MultiPolygonEntity", "PointEntity", "MultiLineStringEntity"
 	// The entities and tables arrays must correspond.
 	private static final String[] entities = new String[] { "LineStringEntity",
-			"PolygonEntity" };
+			"PolygonEntity", "MLineStringEntity" };
 
 	private static final String[] tables = new String[] { "linestringtest",
-			"polygontest" };
+			"polygontest", "mlinestringtest" };
 
 	// The unit tests for Spatial queries should
 	// exercise the spatial relation expression in both select-

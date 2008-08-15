@@ -28,8 +28,6 @@
  */
 package org.hibernatespatial.spi;
 
-import java.util.Map;
-
 import org.hibernatespatial.SpatialDialect;
 
 /**

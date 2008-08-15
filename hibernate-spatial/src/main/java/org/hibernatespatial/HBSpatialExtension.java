@@ -31,8 +31,10 @@ package org.hibernatespatial;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -59,7 +61,7 @@ import org.hibernatespatial.spi.SpatialDialectProvider;
  */
 public class HBSpatialExtension {
 
-	protected static Set<SpatialDialectProvider> providers = new HashSet<SpatialDialectProvider>();
+	protected static List<SpatialDialectProvider> providers = new ArrayList<SpatialDialectProvider>();
 
 	private static final Log log = LogFactory.getLog(HBSpatialExtension.class);
 
@@ -70,6 +72,8 @@ public class HBSpatialExtension {
 	private static HSConfiguration configuration = null;
 
 	private static MGeometryFactory defaultGeomFactory = new MGeometryFactory();
+
+	private static boolean configured = false;
 
 	static {
 
@@ -96,10 +100,6 @@ public class HBSpatialExtension {
 							+ s);
 					SpatialDialectProvider provider = (SpatialDialectProvider) loader
 							.loadClass(s).newInstance();
-					// we set the defaultSpatialDialect to the one provided
-					// by the first loaded provider.
-					if (defaultSpatialDialect == null)
-						setDefaultSpatialDialect(provider.getDefaultDialect());
 					providers.add(provider);
 				} catch (Exception e) {
 					throw new HibernateSpatialException(
@@ -116,39 +116,18 @@ public class HBSpatialExtension {
 		// configuration - check if there is a system property
 		String dialectProp = System.getProperty(DIALECT_PROP_NAME);
 		if (dialectProp != null) {
-			log.info("Spatial Dialect configured as system property: "
-					+ dialectProp);
-			boolean found = false;
-			search: for (SpatialDialectProvider provider : providers) {
-				for (String dialect : provider.getSupportedDialects()) {
-					if (dialect.equals(dialectProp)) {
-						defaultSpatialDialect = provider
-								.createSpatialDialect(dialectProp);
-						found = true;
-						break search;
-					}
-				}
-			}
-			if (!found)
-				log
-						.warn("Spatial dialect "
-								+ dialectProp
-								+ " configured as sytem property, but dialect not found");
+			HSConfiguration hsConfig = new HSConfiguration();
+			hsConfig.setDefaultDialect(dialectProp);
+			setConfiguration(hsConfig);
 		}
 
 		// configuration - load the config file
-		log.info("Looking for configuration file.");
+		log.info("Checking configuration file.");
 		HSConfiguration hsConfig = new HSConfiguration();
 		if (hsConfig.configure()) {
 			setConfiguration(hsConfig);
 		}
 
-		if (defaultSpatialDialect == null) {
-			log.warn("Hibernate Spatial Configured but no spatial dialect");
-		} else {
-			log.info("Hibernate Spatial configured. Using dialect: "
-					+ defaultSpatialDialect.getClass().getCanonicalName());
-		}
 	}
 
 	/**
@@ -159,21 +138,46 @@ public class HBSpatialExtension {
 
 	public static void setConfiguration(HSConfiguration c) {
 		configuration = c;
-		log.info("Configuring HBSpatialExtension from " + c.getSource());
+	}
 
-		// checking for configured dialectname
-		String dialectName = configuration.getDefaultDialect();
-		if (dialectName != null) {
-			SpatialDialect dialect = createSpatialDialect(dialectName);
-			if (dialect != null) {
-				log.info("Setting Spatial Dialect to : " + dialectName);
-				setDefaultSpatialDialect(dialect);
-			}
+	private static synchronized void configure() {
+		// do nothing if already configured
+		if (configured) {
+			return;
 		}
-		// trying to create a defaultGeometryFactory
-		defaultGeomFactory = GeometryFactoryHelper
-				.createGeometryFactory(configuration);
-		log.info("Creating default Geometry Factory");
+
+		// if no configuration object, take the first dialect that is available.
+		if (configuration == null) {
+			setDefaultSpatialDialect(providers.get(0).getDefaultDialect());
+			return;
+		} else {
+			log.info("Configuring HBSpatialExtension from "
+					+ configuration.getSource());
+			String dialectName = configuration.getDefaultDialect();
+			if (dialectName != null) {
+				SpatialDialect dialect = createSpatialDialect(dialectName);
+				if (dialect != null) {
+					log.info("Setting Spatial Dialect to : " + dialectName);
+					setDefaultSpatialDialect(dialect);
+				}
+			}
+
+			// trying to create a defaultGeometryFactory
+			log.info("Creating default Geometry Factory");
+			defaultGeomFactory = GeometryFactoryHelper
+					.createGeometryFactory(configuration);
+
+		}
+
+		if (defaultSpatialDialect == null) {
+			log.warn("Hibernate Spatial Configured but no spatial dialect");
+		} else {
+			log.info("Hibernate Spatial configured. Using dialect: "
+					+ defaultSpatialDialect.getClass().getCanonicalName());
+		}
+
+		configured = true;
+
 	}
 
 	public static HSConfiguration getConfiguration() {
@@ -183,11 +187,12 @@ public class HBSpatialExtension {
 	/**
 	 * @param dialect
 	 */
-	public static void setDefaultSpatialDialect(SpatialDialect dialect) {
+	private static void setDefaultSpatialDialect(SpatialDialect dialect) {
 		defaultSpatialDialect = dialect;
 	}
 
 	public static SpatialDialect getDefaultSpatialDialect() {
+		configure();
 		return defaultSpatialDialect;
 	}
 
@@ -208,6 +213,7 @@ public class HBSpatialExtension {
 	}
 
 	public static MGeometryFactory getDefaultGeomFactory() {
+		configure();
 		return defaultGeomFactory;
 	}
 
