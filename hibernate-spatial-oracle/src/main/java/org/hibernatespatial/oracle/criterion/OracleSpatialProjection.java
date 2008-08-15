@@ -1,5 +1,5 @@
 /**
- * $Id: OracleSpatialProjection.java 57 2007-11-12 22:47:41Z maesenka $
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 

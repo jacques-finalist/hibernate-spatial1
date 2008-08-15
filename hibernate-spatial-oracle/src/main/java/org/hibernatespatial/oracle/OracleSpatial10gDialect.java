@@ -233,10 +233,9 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 
 	}
 
-	 private class SpatialAggregationFunction extends StandardSQLFunction {
+	private class SpatialAggregationFunction extends StandardSQLFunction {
 
 		private final int aggregation;
-
 
 		private SpatialAggregationFunction(String name, Type returnType,
 				boolean isProjection, int aggregation) {
@@ -251,6 +250,8 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	}
 
 	public final static String SHORT_NAME = "oraclespatial";
+
+	private final static String CONNECTION_FINDER_PROPERTY = "CONNECTION-FINDER";
 
 	private final static Log log = LogFactory
 			.getLog(OracleSpatial10gDialect.class);
@@ -343,29 +344,28 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		// keyword. (See also postgis documentation).
 
 		// portable spatial aggregate functions
-		registerFunction("extent", new SpatialAggregationFunction(
-				"extent", new CustomType(SDOGeometryType.class, null),false,
+		registerFunction("extent", new SpatialAggregationFunction("extent",
+				new CustomType(SDOGeometryType.class, null), false,
 				OracleSpatialAggregate.EXTENT));
-		
+
 		// Oracle specific Aggregate functions
-		registerFunction("centroid", new SpatialAggregationFunction(
-				"extent", new CustomType(SDOGeometryType.class, null),false,
+		registerFunction("centroid", new SpatialAggregationFunction("extent",
+				new CustomType(SDOGeometryType.class, null), false,
 				OracleSpatialAggregate.CENTROID));
-		
+
 		registerFunction("concat_lines", new SpatialAggregationFunction(
-				"extent", new CustomType(SDOGeometryType.class, null),false,
+				"extent", new CustomType(SDOGeometryType.class, null), false,
 				OracleSpatialAggregate.CONCAT_LINES));
-		
+
 		registerFunction("aggr_convexhull", new SpatialAggregationFunction(
-				"extent", new CustomType(SDOGeometryType.class, null),false,
+				"extent", new CustomType(SDOGeometryType.class, null), false,
 				OracleSpatialAggregate.CONVEXHULL));
-		
-		registerFunction("aggr_union", new SpatialAggregationFunction(
-				"extent", new CustomType(SDOGeometryType.class, null),false,
+
+		registerFunction("aggr_union", new SpatialAggregationFunction("extent",
+				new CustomType(SDOGeometryType.class, null), false,
 				OracleSpatialAggregate.UNION));
-		
-		
-		 registerFunction("lrs_concat", new SpatialAggregationFunction(
+
+		registerFunction("lrs_concat", new SpatialAggregationFunction(
 				"lrsconcat", new CustomType(SDOGeometryType.class, null),
 				false, OracleSpatialAggregate.LRS_CONCAT));
 	}
@@ -482,7 +482,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 			aggregateFunction.append("SDOAGGRTYPE(");
 		}
 		aggregateFunction.append(arg1);
-		//TODO tolerance must by configurable
+		// TODO tolerance must by configurable
 		if (sa.isAggregateType()) {
 			aggregateFunction.append(", ").append(.001).append(")");
 		}
@@ -615,7 +615,6 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		log.info("Setting feature: " + name + " to " + value);
 		this.features.put(name, value);
 	}
-	
 
 	public String getDbGeometryTypeName() {
 		return "SDO_GEOMETRY";
@@ -633,13 +632,36 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 				is = propfile.openStream();
 				PropertyFileReader reader = new PropertyFileReader(is);
 				Properties props = reader.getProperties();
-
+				// reading features
 				for (String feature : getFeatures()) {
 					String newVal = props.getProperty(feature);
 					if (newVal != null) {
 						setFeature(feature, Boolean.parseBoolean(newVal));
 					}
 
+				}
+				// checking for connectionfinder
+				String ccn = props.getProperty(CONNECTION_FINDER_PROPERTY);
+				if (ccn != null) {
+					try {
+						Class clazz = Thread.currentThread()
+								.getContextClassLoader().loadClass(ccn);
+						ConnectionFinder cf = (ConnectionFinder) clazz
+								.newInstance();
+						SDOGeometryType.setConnectionFinder(cf);
+						log.info("Setting ConnectionFinder to " + ccn);
+					} catch (ClassNotFoundException e) {
+						log.warn("Tried to set ConnectionFinder to " + ccn
+								+ ", but class not found.");
+					} catch (InstantiationException e) {
+						log.warn("Tried to set ConnectionFinder to " + ccn
+								+ ", but couldn't instantiate.");
+					} catch (IllegalAccessException e) {
+						log
+								.warn("Tried to set ConnectionFinder to "
+										+ ccn
+										+ ", but got IllegalAcessException on instantiation.");
+					}
 				}
 
 			} catch (IOException e) {
@@ -695,7 +717,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 			case OracleSpatialAggregate.CONVEXHULL:
 				specificAggrSyntax = "CONVEXHULL";
 				_aggregateType = true;
-				break;				
+				break;
 			default:
 				specificAggrSyntax = null;
 				break;

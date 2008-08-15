@@ -59,6 +59,16 @@ public class TestOracleCRUD {
 	}
 
 	@Test
+	public void testSaveMLineStringEntity() throws Exception {
+		delegate.testSaveMLineStringEntity();
+	}
+
+	@Test
+	public void testSaveMultiMLineStringEntity() throws Exception {
+		delegate.testSaveMultiMLineStringEntity();
+	}
+
+	@Test
 	public void testSaveNullLineStringEntity() throws Exception {
 		delegate.testSaveNullLineStringEntity();
 	}

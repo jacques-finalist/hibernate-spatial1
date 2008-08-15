@@ -25,7 +25,7 @@
         <property name="show_sql">true</property>
 
         <!-- Add HBM files -->
-        <!--<mapping resource="org/hibernatespatial/oracle/test/model/Lrs2d.hbm.xml"/>-->
+        <mapping resource="org/hibernatespatial/oracle/test/model/Lrs2d.hbm.xml"/>
         <!--<mapping resource="org/hibernatespatial/oracle/test/model/Lrs2dm.hbm.xml"/>-->
         <!--<mapping resource="org/hibernatespatial/oracle/test/model/Lrs3d.hbm.xml"/>-->
         <!--<mapping resource="org/hibernatespatial/oracle/test/model/Lrs3dm.hbm.xml"/>-->

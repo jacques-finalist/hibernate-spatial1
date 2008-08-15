@@ -435,5 +435,64 @@ CREATE INDEX point_idx
    INDEXTYPE IS MDSYS.SPATIAL_INDEX;
 
 
+CREATE TABLE mlinestringtest(
+	id DECIMAL(10,0),
+	name VARCHAR(50),
+	geom sdo_geometry
+);
+
+
+INSERT INTO user_sdo_geom_metadata
+    (TABLE_NAME,
+     COLUMN_NAME,
+     DIMINFO,
+     SRID)
+  VALUES (
+  'mlinestringtest',
+  'geom',
+  SDO_DIM_ARRAY(
+    SDO_DIM_ELEMENT('X', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('Y', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('Z', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('M', 0, 100000, 0.001)
+     ),
+  31370
+);
+
+CREATE INDEX mlinestring_idx
+   ON mlinestringtest(geom)
+   INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+
+
+CREATE TABLE multimlinestringtest(
+	id DECIMAL(10,0),
+	name VARCHAR(50),
+	geom sdo_geometry
+);
+
+
+INSERT INTO user_sdo_geom_metadata
+    (TABLE_NAME,
+     COLUMN_NAME,
+     DIMINFO,
+     SRID)
+  VALUES (
+  'multimlinestringtest',
+  'geom',
+  SDO_DIM_ARRAY(
+    SDO_DIM_ELEMENT('X', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('Y', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('Z', 0, 100000, 0.001),
+    SDO_DIM_ELEMENT('M', 0, 100000, 0.001)
+     ),
+  31370
+);
+
+CREATE INDEX multimlinestring_idx
+   ON nultimlinestringtest(geom)
+   INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+
+
+
 COMMIT;
 

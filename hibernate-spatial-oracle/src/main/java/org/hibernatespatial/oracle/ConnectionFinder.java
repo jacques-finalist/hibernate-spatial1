@@ -26,22 +26,30 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle.criterion;
+package org.hibernatespatial.oracle;
 
-import org.hibernatespatial.SpatialAggregate;
+import java.sql.Connection;
+
+import oracle.jdbc.driver.OracleConnection;
+
+import org.hibernatespatial.helper.FinderStrategy;
 
 /**
- * Defines types of OracleSpatialAggregate
+ * The <code>ConnectionFinder</code> returns an OracleConnection when given a
+ * <code>Connection</code> object.
+ * <p>
+ * The SDOGeometryType requires access to an <code>OracleConnection</code>
+ * object when converting a geometry to <code>SDO_GEOMETRY</code>, prior to
+ * setting the geometry attribute in prepared statements. In some environments
+ * the prepared statements do not return an <code>OracleConnection</code> but
+ * a wrapper. Implementations of this interface attempt to retrieve the
+ * <code>OracleConnection</code> from the wrapper in such cases.
+ * </p>
+ * 
+ * @author Karel Maesen
+ * 
  */
-public interface OracleSpatialAggregate extends SpatialAggregate {
+public interface ConnectionFinder extends
+		FinderStrategy<OracleConnection, Connection> {
 
-	public static int LRS_CONCAT = 100;
-
-	public static int CENTROID = 101;
-
-	public static int CONCAT_LINES = 102;
-
-	public static int UNION = 103;
-
-	public static int CONVEXHULL = 104;
 }

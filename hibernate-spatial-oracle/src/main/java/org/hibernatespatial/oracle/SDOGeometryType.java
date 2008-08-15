@@ -29,7 +29,6 @@
 package org.hibernatespatial.oracle;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,6 +48,7 @@ import org.hibernate.HibernateException;
 import org.hibernatespatial.AbstractDBGeometryType;
 import org.hibernatespatial.Circle;
 import org.hibernatespatial.HibernateSpatialException;
+import org.hibernatespatial.helper.FinderException;
 import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MLineString;
 
@@ -76,6 +76,24 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	private static String SQL_TYPE_NAME = "MDSYS.SDO_GEOMETRY";
 
+	private static ConnectionFinder connectionFinder = new DefaultConnectionFinder();
+
+	static ConnectionFinder getConnectionFinder() {
+		return connectionFinder;
+	}
+
+	static void setConnectionFinder(ConnectionFinder finder) {
+		connectionFinder = finder;
+	}
+
+	static void setSQLTypeName(String typeName) {
+		SQL_TYPE_NAME = typeName;
+	}
+
+	static String getSQLTypeName() {
+		return SQL_TYPE_NAME;
+	}
+
 	@Override
 	public void nullSafeSet(PreparedStatement st, Object value, int index)
 			throws HibernateException, SQLException {
@@ -83,9 +101,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			st.setNull(index, sqlTypes()[0], SQL_TYPE_NAME);
 		} else {
 			Geometry jtsGeom = (Geometry) value;
-			Object dbGeom = conv2DBGeometry(jtsGeom, findOracleConnection(st
-					.getConnection()));
-			st.setObject(index, dbGeom);
+			try {
+				Object dbGeom = conv2DBGeometry(jtsGeom, getConnectionFinder()
+						.find(st.getConnection()));
+				st.setObject(index, dbGeom);
+			} catch (FinderException e) {
+				throw new HibernateException(e);
+			}
 		}
 	}
 
@@ -135,46 +157,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			sdoElements[i] = convertJTSGeometry(geom);
 		}
 		return SDO_GEOMETRY.join(sdoElements);
-	}
-
-	/**
-	 * 
-	 * This method is necessary because in some environments, the
-	 * OracleConnection is wrapped into some other Connection object (e.g. in
-	 * the JBoss Application Server).
-	 * 
-	 * Thanks to Martin Steinweder for bringing this to my attention.
-	 * 
-	 * TODO : make this configurable, in the sense that a
-	 * OracleConnectionResolver object could be passed that determines the
-	 * OracleConnection based on the environment.
-	 * 
-	 * @param con
-	 * @return
-	 */
-	private OracleConnection findOracleConnection(Connection con) {
-		if (con == null) {
-			return null;
-		}
-		if (con instanceof OracleConnection) {
-			return (OracleConnection) con;
-		}
-		// try to find the Oracleconnection recursively
-
-		for (Method method : con.getClass().getMethods()) {
-			if (method.getReturnType().isAssignableFrom(
-					java.sql.Connection.class)
-					&& method.getParameterTypes().length == 0) {
-				try {
-					return findOracleConnection((java.sql.Connection) (method
-							.invoke(con, new Object[] {})));
-				} catch (Exception e) {
-					// Shouldm't ever happen.
-				}
-			}
-		}
-		throw new HibernateSpatialException(
-				"Couldn't get at the OracleSpatial Connection object from the PreparedStatement.");
 	}
 
 	private SDO_GEOMETRY convertJTSMultiPolygon(MultiPolygon multiPolygon) {
@@ -470,8 +452,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			geometries.add(convert2JTS(elemGeom));
 		}
 		Geometry[] geomArray = new Geometry[geometries.size()];
-		return getGeometryFactory().createGeometryCollection(geometries
-				.toArray(geomArray));
+		return getGeometryFactory().createGeometryCollection(
+				geometries.toArray(geomArray));
 	}
 
 	private Point convertSDOPoint(SDO_GEOMETRY sdoGeom) {
@@ -518,8 +500,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			}
 		}
 
-		LineString ls = lrs ? getGeometryFactory().createMLineString(cs) : getGeometryFactory()
-				.createLineString(cs);
+		LineString ls = lrs ? getGeometryFactory().createMLineString(cs)
+				: getGeometryFactory().createLineString(cs);
 		ls.setSRID(sdoGeom.getSRID());
 		return ls;
 	}
@@ -536,22 +518,22 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			if (info.getElementType(i).isCompound()) {
 				int numCompounds = info.getNumCompounds(i);
 				cs = add(cs, getCompoundCSeq(i + 1, i + numCompounds, sdoGeom));
-				LineString line = lrs ? getGeometryFactory().createMLineString(cs)
-						: getGeometryFactory().createLineString(cs);
+				LineString line = lrs ? getGeometryFactory().createMLineString(
+						cs) : getGeometryFactory().createLineString(cs);
 				lines[i] = line;
 				i += 1 + numCompounds;
 			} else {
 				cs = add(cs, getElementCSeq(i, sdoGeom, false));
-				LineString line = lrs ? getGeometryFactory().createMLineString(cs)
-						: getGeometryFactory().createLineString(cs);
+				LineString line = lrs ? getGeometryFactory().createMLineString(
+						cs) : getGeometryFactory().createLineString(cs);
 				lines[i] = line;
 				i++;
 			}
 		}
 
 		MultiLineString mls = lrs ? getGeometryFactory()
-				.createMultiMLineString((MLineString[]) lines) : getGeometryFactory()
-				.createMultiLineString(lines);
+				.createMultiMLineString((MLineString[]) lines)
+				: getGeometryFactory().createMultiLineString(lines);
 		mls.setSRID(sdoGeom.getSRID());
 		return mls;
 
@@ -573,7 +555,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				cs = add(cs, getElementCSeq(i, sdoGeom, false));
 			}
 			if (info.getElementType(i).isInteriorRing()) {
-				holes[idxInteriorRings] = getGeometryFactory().createLinearRing(cs);
+				holes[idxInteriorRings] = getGeometryFactory()
+						.createLinearRing(cs);
 				holes[idxInteriorRings].setSRID(sdoGeom.getSRID());
 				idxInteriorRings++;
 			} else {
@@ -609,8 +592,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				holes.add(lr);
 			} else {
 				if (shell != null) {
-					Polygon polygon = getGeometryFactory().createPolygon(shell, holes
-							.toArray(new LinearRing[holes.size()]));
+					Polygon polygon = getGeometryFactory().createPolygon(shell,
+							holes.toArray(new LinearRing[holes.size()]));
 					polygon.setSRID(sdoGeom.getSRID());
 					polygons.add(polygon);
 					shell = null;
@@ -622,13 +605,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			i += 1 + numCompounds;
 		}
 		if (shell != null) {
-			Polygon polygon = getGeometryFactory().createPolygon(shell, holes
-					.toArray(new LinearRing[holes.size()]));
+			Polygon polygon = getGeometryFactory().createPolygon(shell,
+					holes.toArray(new LinearRing[holes.size()]));
 			polygon.setSRID(sdoGeom.getSRID());
 			polygons.add(polygon);
 		}
-		MultiPolygon multiPolygon = getGeometryFactory().createMultiPolygon(polygons
-				.toArray(new Polygon[polygons.size()]));
+		MultiPolygon multiPolygon = getGeometryFactory().createMultiPolygon(
+				polygons.toArray(new Polygon[polygons.size()]));
 		multiPolygon.setSRID(sdoGeom.getSRID());
 		return multiPolygon;
 	}
@@ -655,8 +638,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				Coordinate[] newCoordinates = new Coordinate[coordinates.length - 1];
 				System.arraycopy(coordinates, 0, newCoordinates, 0,
 						coordinates.length - 1);
-				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
-						newCoordinates);
+				cs = getGeometryFactory().getCoordinateSequenceFactory()
+						.create(newCoordinates);
 			}
 			cs = add(cs, getElementCSeq(i, sdoGeom, (i < idxLast)));
 		}
@@ -681,7 +664,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		} else if (type.isArcSegment() || type.isCircle()) {
 			Coordinate[] linearized = linearize(elemOrdinates, sdoGeom
 					.getDimension(), sdoGeom.isLRSGeometry(), type.isCircle());
-			cs = getGeometryFactory().getCoordinateSequenceFactory().create(linearized);
+			cs = getGeometryFactory().getCoordinateSequenceFactory().create(
+					linearized);
 		} else if (type.isRect()) {
 			cs = convertOrdinateArray(elemOrdinates, sdoGeom);
 			Coordinate ll = cs.getCoordinate(0);
@@ -689,11 +673,11 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			Coordinate lr = new Coordinate(ur.x, ll.y);
 			Coordinate ul = new Coordinate(ll.x, ur.y);
 			if (type.isExteriorRing()) {
-				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
-						new Coordinate[] { ll, lr, ur, ul, ll });
+				cs = getGeometryFactory().getCoordinateSequenceFactory()
+						.create(new Coordinate[] { ll, lr, ur, ul, ll });
 			} else {
-				cs = getGeometryFactory().getCoordinateSequenceFactory().create(
-						new Coordinate[] { ll, ul, ur, lr, ll });
+				cs = getGeometryFactory().getCoordinateSequenceFactory()
+						.create(new Coordinate[] { ll, ul, ur, lr, ll });
 			}
 		} else {
 			throw new RuntimeException("Unexpected Element type in compound: "
@@ -768,7 +752,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 						oordinates[i * dim + lrsDim]); // M
 			}
 		}
-		return getGeometryFactory().getCoordinateSequenceFactory().create(coordinates);
+		return getGeometryFactory().getCoordinateSequenceFactory().create(
+				coordinates);
 	}
 
 	// reverses ordinates in a coordinate array in-place
