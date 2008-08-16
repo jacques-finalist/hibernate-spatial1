@@ -48,16 +48,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<!--  CaDriE developed plugin for managing header files 
-			<plugin>
-				<groupId>com.cadrie</groupId>
-				<artifactId>maven-header-plugin</artifactId>
-				<configuration>
-					<headerFile>header.txt</headerFile>
-				</configuration>
-				<version>1.0</version>
-			</plugin>
-			-->
 		</plugins>
 	</build>
 	<scm>
@@ -71,6 +61,12 @@
 			<![CDATA[ http://www.hibernatespatial.org/websvn/listing.php?repname=hibernate-spatial&path=/trunk/${project.artifactId}/rev=0&sc=0]]>
 		</url>
 	</scm>
+	
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://www.hibernatespatial.org/jira/browse/HIBSPA</url>
+	</issueManagement>
+	
 	<mailingLists>
 
 		<mailingList>
