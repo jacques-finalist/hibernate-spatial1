@@ -17,8 +17,8 @@
   <body>
   
   	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
+      <item name="Introduction" href="hibernate-spatial-postgis/index.html"/>
+      <item name="Usage" href="hibernate-spatial-postgis/usage.html"/>
     </menu>
 
     
