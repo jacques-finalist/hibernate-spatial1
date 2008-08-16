@@ -39,7 +39,7 @@ import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
 /**
- * This class ensures that Hibernate on top of PostgreSQL/PostGIS can work with
+ * This class ensures that Hibernate can work with
  * the JTS <code>Geometry</code> type.
  * 
  * To properly convert <code>Geometry</code> objects to database specific

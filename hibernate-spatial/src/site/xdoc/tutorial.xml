@@ -7,6 +7,7 @@
 	</properties> 
 
 	<body>
+
 		<section name="Introduction">
 			<p>
 				This tutorial gives a quick overview of how to get
@@ -63,8 +64,9 @@
 				Simple Feature Specification of the OpenGIS Consortium.
 			</p>
 			<p>
-				Make sure that you use recent versions (Hibernate v.3.2
-				or higher, and JTS v.1.8 or higher). Also remember that
+				Make sure that you use Hibernate v.3.2 and JTS v.1.8+ (support for Hibernate v3.3 is
+				forthcoming). 
+				Also remember that
 				Hibernate Spatial requires a java 1.5+ runtime. We will
 				also assume that you have a working Postgis database
 				ready.
@@ -103,8 +105,8 @@
 			antlr-2.7.6.jar
 			...
 			hibernate3.jar
-			hibernate-spatial-postgis-1.0-20070920.111959-1.jar 
-			hibernate-spatial-1.0-20070920.111959-1.jar
+			hibernate-spatial-postgis-1.0-M2.jar 
+			hibernate-spatial-1.0-M2.jar
 		</source>
 		</p>
 		<p>
@@ -616,8 +618,8 @@ $ ant run -Daction=find -Dgeom="POLYGON((1 1,20 1,20 20, 1 20, 1 1))"
 		<ol>
 			<li>Replace the <code>hibernate-spatial-postgis-*.jar</code> provider with the
 			<code>hibernate-spatial-oracle-*.jar</code> provider.</li>
-			<li>Replace the Postgresql Driver and the postgis.jar with the Oracle JDBC Driver
-			and the sdoapi.jar (to be found in the java lib directory of your Oracle Database).</li>
+			<li>Replace the Postgresql Driver with the Oracle JDBC Driver.</li>
+			<li>Remove the <code>postgis.jar</code></li>
 			<li>Modify the <code>hibernate.cfg.xml</code> configuration file so that it 
 			points to a suitable Oracle database, uses the Oracle JDBC driver, and has 
 			<code>OracleSpatial10gDialect</code> as dialect.</li>
@@ -625,6 +627,149 @@ $ ant run -Daction=find -Dgeom="POLYGON((1 1,20 1,20 20, 1 20, 1 1))"
 		... and your done!
 		</p>
 		</section>
+		
+		<section name=".. and what about MySQL">
+		<p>Recent versions of MySQL have (limited) support for spatial types. To get 
+		Hibernate Spatial to work with MySQL, change the following items.</p>
+		<ol>
+			<li>Replace the <code>hibernate-spatial-postgis-*.jar</code> provider with the
+			<code>hibernate-spatial-mysql-*.jar</code> provider.</li>
+			<li>Replace the Postgresql Driver with the MySQL JDBC Driver.</li>
+			<li>Remove the <code>postgis.jar</code></li>
+			<li>Modify the <code>hibernate.cfg.xml</code> configuration file so that it 
+			points to a suitable MySQL database, uses the MySQL JDBC driver, and has 
+			<code>MySQLSpatialDialect</code> as dialect.</li>		
+		</ol> 
+		<p>Please note that MySQL's implementation of the spatial types is incomplete at this time. Certain
+		functions of Hibernate Spatial will fail at this time.</p>
+		<p>The MySQLSpatialDialect extends the vanilla MySQLDialect and therefore only supports the MyISAM tables.
+		</p>
+		</section>
+		<section name="Can I Use JPA Annotations with Hibernate Spatial?">
+		<p>
+		In stead of using <code>*.hbm.xml</code> mapping files, you can also use 
+		JPA annotations. Well almost: JPA doesn't support spatial objects, and doesn't 
+		have an extension mechanism to add new types. So using only JPA annotations won't work. 
+		Fortunately, the Hibernate Annotations implementation of JPA does have a means for mapping
+		<code>UserType</code>s. </p>
+		<p>Let's modify the code to use annotations. First, we need to add the Hibernate Annotations implementation to our lib. We download the Hibernate Annotations package
+		and put the <code>ejb3-persistence.jar</code>, <code>hibernate-annotations.jar</code> and <code>hibernate-commons-annotations.jar</code> in the lib directory. 
+		So that it becomes:</p>
+		
+		<source>
+		.
+		+lib
+			antlr-2.7.6.jar
+			commons-collections-2.1.1.jar
+			jta.jar
+			asm-attrs.jar
+			commons-logging-1.0.4.jar
+			jts-1.8.jar
+			asm.jar
+			dom4j-1.6.1.jar
+			ejb3-persistence.jar
+			log4j-1.2.11.jar
+			cglib-2.1.3.jar
+			hibernate3.jar
+			hibernate-commons-annotations.jar
+			hibernate-annotations.jar
+			hibernate-spatial-postgis-1.0-M2.jar 
+			hibernate-spatial-1.0-M2.jar
+		</source>
+		
+		
+		<p>We now change the source code of the Events class so that it looks like this</p>
+		<source>
+package events;
+
+import java.util.Date;
+
+import javax.persistence.*;
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.Point;
+
+@Entity
+@Table(name="EVENTS")
+public class Event {
 	
+	@Id @GeneratedValue
+	@Column(name="EVENT_ID")
+    private Long id;
+	
+    @Column(name="TITLE")
+	private String title;
+    
+    @Column(name="EVENT_DATE")
+    private Date date;
+    
+
+    @Column(name="LOC")
+     @Type(type="org.hibernatespatial.GeometryUserType")
+	private Point location;
+
+    public Event() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+	
+	public Point getLocation(){
+		return this.location;
+	}
+	
+	public void setLocation(Point location){
+		this.location = location;
+	}
+}
+		</source>
+<p>Note that for the Geometry field we needed 
+to use the Hibernate-specific <code>@Type</code> annotation.</p>
+
+<p> Next, we replace the mapping resource by replacing 
+the following line from the <code>hibernate.cfg.xml</code></p>
+
+<source>
+&lt;mapping resource="events/Event.hbm.xml"/&gt;
+		</source>
+<p> with a declaration of mapped classes.</p>
+<source>
+&lt;mapping class="events.Event"&gt;
+</source>
+<p>Finally, we change the <code>HibernateUtil</code> so it uses 
+an AnnotationConfiguration object. Change the line:</p>
+<source>
+...
+sessionFactory = new Configuration().configure().buildSessionFactory();
+...
+</source>
+<p>needs to change to </p>
+<source>
+...
+sessionFactory = new AnnotationConfiguration().configure().buildSessionFactory();
+...
+</source>
+<p>Now the operations should work as before.</p>
+</section>
 	</body>
 </document>

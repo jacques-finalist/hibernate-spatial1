@@ -7,7 +7,7 @@
 		<section name="Spatial Dialect Providers">
 		<p>
 		Hibernate Spatial requires Spatial Dialect Providers to supply the database specific support for geographic data. 
-		Currently providers exist for Postgresql (PostGis spatial Extension) and for Oracle 10g (Standard Locator).
+		Currently providers exist for Postgresql (PostGis spatial Extension), MySQL and for Oracle 10g (Standard Locator).
       	</p>
       	<p>
       	If you use only one database in you application, you just need to put the appropriate spatial dialect provider

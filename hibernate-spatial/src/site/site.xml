@@ -5,16 +5,7 @@
     <name>Hibernate Spatial</name>
     <href>http://www.hibernatespatial.org/</href>
   </bannerLeft>
-  
- <!--   
- 
- This creates an empty image and generates a hit on the Geovise Website
-  <bannerRight>
-    <name>GEOVISE</name>
-    <src>http://www.geovise.com/</src>    
-  </bannerRight>
-  
-    -->
+
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-default-skin</artifactId>
@@ -27,19 +18,28 @@
   	<menu name="Overview" inherit="top">
       <item name="Introduction" href="index.html"/>
       <item name="Usage" href="usage.html"/>
+      <item name="Road Map" href="roadmap.html"/>
     </menu>
-    <menu name="Downloads" inherit="top">
+    <menu name="Getting Hibernate Spatial" inherit="top">
     	<item name="Releases" href="download.html"/>
+    	<item name="Sources" href="source-repository.html"/>
+    	<item name="License" href="license.html"/>
+    	<item name="Source code insight" 
+    		href="insight.html"/>
     </menu>
 	<menu name="Documentation" inherit="top">
 	  <item name="Tutorial" href="tutorial.html"/>
-      <item name="Configuring providers" href="providers.html"/> 
+  	  <item name="Maven Quick Start" href="mavenquick.html"/>
+      <item name="Configuring providers" href="providers.html"/>
+      <item name="Getting Help" href="gettinghelp.html"/> 
       <item name="JavaDocs" href="apidocs/index.html"/>     
     </menu>
+    
+
     <menu name="Providers" inherit="top">
-    	<item name="Oracle10g" href="hibernate-spatial-oracle/index.html"/>
-    	<item name="Postgresql" href="hibernate-spatial-postgis/index.html"/>    
-    	<item name="MySQL" href="hibernate-spatial-mysql/index.html"/>	
+    	<item name="Oracle10g" href="hibernate-spatial-oracle"/>
+    	<item name="Postgresql" href="hibernate-spatial-postgis"/>    
+    	<item name="MySQL" href="hibernate-spatial-mysql"/>	
     </menu>
     
   </body>

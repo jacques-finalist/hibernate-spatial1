@@ -50,7 +50,7 @@ import org.hibernatespatial.spi.SpatialDialectProvider;
  * <code>SpatialDialect</code>.
  * 
  * It also provides a default <code>SpatialDialect</code>.
- * <code>GeometryUserTypes</code>s that do not have a <code>dialect</code>
+ * <code>GeometryUserType</code>s that do not have a <code>dialect</code>
  * parameter use this default.
  * 
  * The default <code>SpatialDialect</code> will be the first one that is

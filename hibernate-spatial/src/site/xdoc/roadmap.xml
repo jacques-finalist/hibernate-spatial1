@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Karel Maesen</author>
+		<title>Road Map</title>
+	</properties>
+
+	<body>
+	<iframe
+		style="width: 100%; height: 800px" 
+		src="http://www.hibernatespatial.org/jira/browse/HIBSPA?report=com.atlassian.jira.plugin.system.project:roadmap-panel">
+	</iframe>
+	</body>
+</document>

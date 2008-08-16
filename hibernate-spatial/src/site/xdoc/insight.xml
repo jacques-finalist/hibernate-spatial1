@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Karel Maesen</author>
+		<title>Fisheye</title>
+	</properties>
+
+	<body>
+	
+	<iframe 
+		style="width: 100%; height: 800px;"
+		src="http://www.hibernatespatial.org/fisheye/browse/HibernateSpatial">
+	
+	</iframe>
+	</body>
+</document>
