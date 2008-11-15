@@ -21,7 +21,7 @@
 		</subsection>
 		<subsection name="Oracle Specific Configuration">
 		<p>You can configure the Oracle provider by creating a properties file
-		with the name <code>org.hibernatespatial.oracle.OracleSpatial10gDialect.java</code> and
+		with the name <code>org.hibernatespatial.oracle.OracleSpatial10gDialect.properties</code> and
 		putting it on the classpath.</p>
 		<h4>The ConnectionFinder Interface</h4>
 		<p> The SDOGeometryType requires access to an <code>OracleConnection</code>
