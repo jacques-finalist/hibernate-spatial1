@@ -24,6 +24,8 @@
  */
 package org.hibernatespatial.pojo;
 
+import javassist.CtClass;
+
 import org.hibernatespatial.GeometryUserType;
 
 /**
@@ -38,12 +40,48 @@ public class AttributeInfo {
 	private String fieldName;
 
 	private String hibernateType;
+	
+	private CtClass ctClass;
 
 	private boolean isIdentifier;
 
 	public boolean isGeometry() {
 		return this.hibernateType.equalsIgnoreCase(GeometryUserType.class
 				.getCanonicalName());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((columnName == null) ? 0 : columnName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AttributeInfo other = (AttributeInfo) obj;
+		if (columnName == null) {
+			if (other.columnName != null)
+				return false;
+		} else if (!columnName.equals(other.columnName))
+			return false;
+		return true;
+	}
+
+	public CtClass getCtClass() {
+		return ctClass;
+	}
+
+	public void setCtClass(CtClass ctType) {
+		this.ctClass = ctType;
 	}
 
 	public String getColumnName() {
@@ -78,47 +116,6 @@ public class AttributeInfo {
 		this.isIdentifier = isIdentifier;
 	}
 
-	@Override
-	public int hashCode() {
-		final int PRIME = 31;
-		int result = 1;
-		result = PRIME * result
-				+ ((columnName == null) ? 0 : columnName.hashCode());
-		result = PRIME * result
-				+ ((fieldName == null) ? 0 : fieldName.hashCode());
-		result = PRIME * result
-				+ ((hibernateType == null) ? 0 : hibernateType.hashCode());
-		result = PRIME * result + (isIdentifier ? 1231 : 1237);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final AttributeInfo other = (AttributeInfo) obj;
-		if (columnName == null) {
-			if (other.columnName != null)
-				return false;
-		} else if (!columnName.equals(other.columnName))
-			return false;
-		if (fieldName == null) {
-			if (other.fieldName != null)
-				return false;
-		} else if (!fieldName.equals(other.fieldName))
-			return false;
-		if (hibernateType == null) {
-			if (other.hibernateType != null)
-				return false;
-		} else if (!hibernateType.equals(other.hibernateType))
-			return false;
-		if (isIdentifier != other.isIdentifier)
-			return false;
-		return true;
-	}
+	
 
 }

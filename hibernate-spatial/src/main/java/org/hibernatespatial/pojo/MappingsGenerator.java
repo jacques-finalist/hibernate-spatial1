@@ -26,7 +26,7 @@ package org.hibernatespatial.pojo;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
+import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -60,7 +60,7 @@ public class MappingsGenerator {
 		return this.mappingDoc;
 	}
 
-	public void load(Collection<TableMetaData> tables, ClassInfoMap classInfoMap)
+	public void load(List<ClassInfo> mappedClasses)
 			throws PKeyNotFoundException {
 
 		this.mappingDoc = DocumentHelper.createDocument();
@@ -69,15 +69,15 @@ public class MappingsGenerator {
 				"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd");
 		Element root = this.mappingDoc.addElement("hibernate-mapping")
 				.addAttribute("package", this.packageName);
-		for (TableMetaData tmd : tables) {
-			addTableElement(root, classInfoMap.getClassInfo(tmd.getName()));
+		for (ClassInfo classInfo: mappedClasses) {
+			addTableElement(root, classInfo);
 		}
 	}
 
 	private void addTableElement(Element root, ClassInfo classInfo)
 			throws PKeyNotFoundException {
 		Element tableEl = root.addElement("class");
-		tableEl.addAttribute("name", classInfo.getPOJOClass().getSimpleName());
+		tableEl.addAttribute("name", classInfo.getClassName());
 		tableEl.addAttribute("table", classInfo.getTableName());
 		AttributeInfo idAttr = classInfo.getIdAttribute();
 		addColElement(tableEl, idAttr);

@@ -22,22 +22,23 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.pojo.reader;
+package org.hibernatespatial.readers;
 
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Interface to iterate over <code>Feature</code>s 
- * in a database through Hibernate Spatial.
- * 
+ * A minimal interface for features, understood as being objects having minimally
+ * geometry and identifier properties.
+ *  
  * @author Karel Maesen
  *
  */
-public interface FeatureReader {
+public interface Feature {
+
+	public Object getId();
 	
-	public boolean hasNext();
-		
-	public Feature next();
-
-	public void close();
-
+	public Geometry getGeometry();
+	
+	public Object getAttribute(String name);
+	
 }

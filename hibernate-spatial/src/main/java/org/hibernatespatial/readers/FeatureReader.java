@@ -22,27 +22,23 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.pojo;
+package org.hibernatespatial.readers;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
- * The <code>ClassInfoMap</code> maps tableNames to <code>ClassInfo</code>
- * instances.
+ * Interface to iterate over <code>Feature</code>s 
+ * in a database through Hibernate Spatial.
  * 
- * @author Karel Maesen, Geovise BVBA.
+ * @author Karel Maesen
+ *
  */
-public class ClassInfoMap {
+public interface FeatureReader {
+	
+	public boolean hasNext();
+		
+	public Feature next();
 
-	private final Map<String, ClassInfo> map = new HashMap<String, ClassInfo>();
-
-	public void add(String tableName, ClassInfo cinfo) {
-		map.put(tableName.toLowerCase(), cinfo);
-	}
-
-	public ClassInfo getClassInfo(String tableName) {
-		return map.get(tableName.toLowerCase());
-	}
+	public void close();
 
 }

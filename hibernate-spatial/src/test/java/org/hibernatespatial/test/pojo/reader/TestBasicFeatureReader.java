@@ -13,31 +13,27 @@ import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.helper.FinderException;
-import org.hibernatespatial.pojo.POJOUtility;
+import org.hibernatespatial.pojo.AutoMapper;
 import org.hibernatespatial.pojo.TypeMapper;
-import org.hibernatespatial.pojo.reader.BasicFeatureReader;
-import org.hibernatespatial.pojo.reader.Feature;
-import org.hibernatespatial.pojo.reader.FeatureReader;
+import org.hibernatespatial.readers.BasicFeatureReader;
+import org.hibernatespatial.readers.Feature;
+import org.hibernatespatial.readers.FeatureReader;
 
 public class TestBasicFeatureReader {
 	
 	private  SessionFactory sessionFactory;
-	private POJOUtility pojoUtil;
+	private AutoMapper pojoUtil;
 	
 	public void setUpBeforeClass(HSConfiguration hsconfig, Connection conn) throws SQLException {
+		
 		HBSpatialExtension.setConfiguration(hsconfig);
-		SpatialDialect dialect = HBSpatialExtension.getDefaultSpatialDialect();
-		
-		
-		TypeMapper typeMapper = new TypeMapper(dialect.getDbGeometryTypeName());
-		this.pojoUtil = new POJOUtility(conn, "test.model", typeMapper);
 		List<String> tables = new ArrayList<String>();
 		tables.add("linestringtest");
 		tables.add("multilinestringtest");
 		tables.add("polygontest");
 		Document mappingdocument;
 		try {
-			mappingdocument = pojoUtil.map(tables);
+			mappingdocument = AutoMapper.map(conn, null, null, tables);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -49,7 +45,7 @@ public class TestBasicFeatureReader {
 	}
 	
 	public void testReaderNoFilters(int expected) throws FinderException {
-		Class clazz = this.pojoUtil.getClassInfoMap().getClassInfo("linestringtest").getPOJOClass();
+		Class<?> clazz = AutoMapper.getClass(null, null, "linestringtest");
 		FeatureReader reader = new BasicFeatureReader(clazz, this.sessionFactory,null, null);
 		int count = 0;
 		while(reader.hasNext()){

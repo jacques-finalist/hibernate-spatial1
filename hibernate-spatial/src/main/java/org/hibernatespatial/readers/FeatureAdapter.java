@@ -22,7 +22,7 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.pojo.reader;
+package org.hibernatespatial.readers;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,7 +30,10 @@ import java.lang.reflect.Proxy;
 
 import org.hibernate.EntityMode;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernatespatial.helper.HSClassMetadata;
+import org.hibernate.property.Getter;
+import org.hibernate.util.ReflectHelper;
+import org.hibernatespatial.helper.FinderException;
+import org.hibernatespatial.helper.GeometryPropertyFinder;
 
 /**
  * Adapts arbitrary objects to the {@link Feature} interface using dynamic proxying.
@@ -49,7 +52,7 @@ public class FeatureAdapter {
 	
 	static private class FeatureInvocationHandler implements InvocationHandler {
 		private final Object target;
-		private final HSClassMetadata metadata;
+		private final ClassMetadata metadata;
 		private Method targetGeomGetter;
 		private Method targetIdGetter;
 
@@ -57,6 +60,8 @@ public class FeatureAdapter {
 		private static final Method geomGetter;
 		private static final Method idGetter;
 		private static final Method attrGetter;
+		
+		private static GeometryPropertyFinder geomPropertyFinder = new GeometryPropertyFinder();
 		
 		static {
 			Class featureIntf = Feature.class;
@@ -75,7 +80,7 @@ public class FeatureAdapter {
 				throw new RuntimeException("Metadata and POJO class do not cohere");
 			}
 			this.target = o;
-			this.metadata = new HSClassMetadata(meta);
+			this.metadata = meta;
 		}
 
 		public Object invoke(Object proxy, Method method, Object[] args)
@@ -93,17 +98,17 @@ public class FeatureAdapter {
 			try{
 				if (invokedMethod.equals(geomGetter)){
 					if (this.targetGeomGetter == null){
-						this.targetGeomGetter = this.metadata.getGeomGetter();								
+						this.targetGeomGetter = getGeomGetter();								
 					}
 					return this.targetGeomGetter;
 				} else if (invokedMethod.equals(idGetter)){
 					if (this.targetIdGetter == null){						
-						this.targetIdGetter = this.metadata.getIdGetter();
+						this.targetIdGetter = getIdGetter();
 					}
 					return this.targetIdGetter;
 				} else if (invokedMethod.equals(attrGetter)){
 					String property = (String)args[0];					
-					return this.metadata.getGetterFor(property);					
+					return getGetterFor(property);					
 				} else {
 					return null; 
 				}
@@ -112,6 +117,32 @@ public class FeatureAdapter {
 			}			
 					
 		}
+		private Method getGetterFor(String property) {
+			Class cl = this.metadata.getMappedClass(EntityMode.POJO);
+			Getter getter = ReflectHelper.getGetter(cl, property);
+			return getter.getMethod();
+		}
+		
+		private Method getGeomGetter() {
+			try {
+				String prop = getGeometryPropertyName();
+				return getGetterFor(prop);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+		public String getGeometryPropertyName() throws FinderException {
+			return this.geomPropertyFinder.find(this.metadata);
+		}
+
+		public Method getIdGetter() {
+			String prop =  this.metadata.getIdentifierPropertyName();
+			return getGetterFor(prop);
+		}
+		
 	}
+	
+
 }
 

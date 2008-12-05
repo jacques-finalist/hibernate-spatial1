@@ -33,8 +33,6 @@ public class ClassInfo {
 
 	private final String tableName;
 
-	private Class pojoClass;
-
 	private final List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();
 
 	public ClassInfo(String tableName, String className) {
@@ -70,14 +68,6 @@ public class ClassInfo {
 
 	public String getTableName() {
 		return tableName;
-	}
-
-	public Class getPOJOClass() {
-		return this.pojoClass;
-	}
-
-	public void setPOJOClass(Class clazz) {
-		this.pojoClass = clazz;
 	}
 
 	public void addAttribute(AttributeInfo ai) {

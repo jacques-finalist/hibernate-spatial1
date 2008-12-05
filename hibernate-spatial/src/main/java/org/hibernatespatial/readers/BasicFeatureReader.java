@@ -22,7 +22,7 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.pojo.reader;
+package org.hibernatespatial.readers;
 
 import org.hibernate.Criteria;
 import org.hibernate.ScrollMode;
@@ -30,10 +30,11 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.metadata.ClassMetadata;
 import org.hibernatespatial.criterion.SpatialFilter;
 import org.hibernatespatial.criterion.SpatialRestrictions;
 import org.hibernatespatial.helper.FinderException;
-import org.hibernatespatial.helper.HSClassMetadata;
+import org.hibernatespatial.helper.GeometryPropertyFinder;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -48,13 +49,14 @@ public class BasicFeatureReader implements FeatureReader {
 	
 	private Session session = null;
 	private ScrollableResults results = null; 
-	private final HSClassMetadata metadata;
+	private final ClassMetadata metadata;
 	
 	public BasicFeatureReader(Class entityClass, SessionFactory sf, Geometry filterGeom, String attributeFilter) throws FinderException {
 		this.session = sf.openSession();		
-		this.metadata = new HSClassMetadata(sf.getClassMetadata(entityClass));
+		this.metadata = sf.getClassMetadata(entityClass);
 		String geomProp;
-		geomProp = this.metadata.getGeometryPropertyName();
+		GeometryPropertyFinder gp = new GeometryPropertyFinder();
+		geomProp = gp.find(this.metadata);
 		Criteria crit = this.session.createCriteria(entityClass);
 		if (filterGeom != null) {
 			SpatialFilter filter = SpatialRestrictions.filter(geomProp,

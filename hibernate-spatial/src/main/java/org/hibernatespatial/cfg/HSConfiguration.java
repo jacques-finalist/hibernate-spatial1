@@ -198,5 +198,9 @@ public class HSConfiguration extends Properties {
 			} // Can't do anything about this.
 		}
 	}
+	
+	public String toString(){
+		return this.source;
+	}
 
 }

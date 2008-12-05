@@ -122,10 +122,10 @@ public class HBSpatialExtension {
 		}
 
 		// configuration - load the config file
-		log.info("Checking configuration file.");
+		log.info("Checking for default configuration file.");
 		HSConfiguration hsConfig = new HSConfiguration();
 		if (hsConfig.configure()) {
-			setConfiguration(hsConfig);
+			configuration = hsConfig;
 		}
 
 	}
@@ -137,11 +137,12 @@ public class HBSpatialExtension {
 	}
 
 	public static void setConfiguration(HSConfiguration c) {
+		log.info("Setting configuration object:"  + c);
 		configuration = c;
 	}
 
 	private static synchronized void configure() {
-		// do nothing if already configured
+//		// do nothing if already configured
 		if (configured) {
 			return;
 		}
