@@ -246,10 +246,11 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	private void addPolygon(SDO_GEOMETRY geom, Polygon polygon) {
 		int numInteriorRings = polygon.getNumInteriorRing();
 		ELEM_INFO info = new ELEM_INFO(numInteriorRings + 1);
-		int ordinatesOffset = 1;
+		int ordinatesPreviousOffset = 0;
 		if (geom.getOrdinates() != null) {
-			ordinatesOffset = geom.getOrdinates().getOrdinateArray().length + 1;
+			ordinatesPreviousOffset = geom.getOrdinates().getOrdinateArray().length;
 		}
+		int ordinatesOffset = ordinatesPreviousOffset + 1;
 		Double[] ordinates = new Double[] {};
 		for (int i = 0; i < info.getSize(); i++) {
 			ElementType et;
@@ -270,7 +271,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			info.setElement(i, ordinatesOffset, et, 0);
 			ordinates = convertAddCoordinates(ordinates, coords, geom
 					.getDimension(), geom.isLRSGeometry());
-			ordinatesOffset = ordinates.length + 1;
+			ordinatesOffset = ordinatesPreviousOffset + ordinates.length + 1;
 		}
 		geom.addElement(info);
 		geom.addOrdinates(ordinates);
