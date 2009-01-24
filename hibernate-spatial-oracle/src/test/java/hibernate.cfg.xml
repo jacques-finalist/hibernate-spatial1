@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@test.geovise.com/orcl</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost/xe</property>
         <property name="hibernate.connection.username">hbs</property>
         <property name="hibernate.connection.password">hbs</property>
 
