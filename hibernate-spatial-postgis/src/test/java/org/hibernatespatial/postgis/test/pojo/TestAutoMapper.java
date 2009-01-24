@@ -3,7 +3,7 @@
  */
 package org.hibernatespatial.postgis.test.pojo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,9 +12,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernatespatial.cfg.HSConfiguration;
-import org.hibernatespatial.pojo.ClassInfo;
-import org.hibernatespatial.pojo.ClassInfoMap;
-import org.hibernatespatial.pojo.POJOUtility;
+import org.hibernatespatial.pojo.AutoMapper;
 import org.hibernatespatial.test.pojo.TestPojoUtility;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,7 +21,7 @@ import org.junit.Test;
  * @author Karel Maesen
  * 
  */
-public class TestPostgisPojoUtility {
+public class TestAutoMapper {
 
 	private static TestPojoUtility delegate;
 
@@ -58,33 +56,17 @@ public class TestPostgisPojoUtility {
 		delegate.setUpBeforeClass(config, conn);
 	}
 
-	/**
-	 * Do we find the classes?
-	 */
-	@Test
-	public void testTables() {
-		POJOUtility pojoUtil = delegate.getPOJOUtility();
-		ClassInfoMap cim = pojoUtil.getClassInfoMap();
-		for (int i = 0; i < tableNames.length; i++) {
-			ClassInfo csi = cim.getClassInfo(tableNames[i]);
-			assertNotNull(csi);
-			assertNotNull(csi.getPOJOClass());
-		}
-	}
 
 	@Test
 	public void testList() {
 
-		POJOUtility pojoUtil = delegate.getPOJOUtility();
-		ClassInfoMap cim = pojoUtil.getClassInfoMap();
-
 		Session session = delegate.getSessionFactory().openSession();
-
 		try {
 
-			for (int i = 0; i < tableNames.length; i++) {
-				ClassInfo csi = cim.getClassInfo(tableNames[i]);
-				Class entityClass = csi.getPOJOClass();
+			List<String[]> tables = AutoMapper.getMappedTables();
+			
+			for (String[] tncomp : tables) {
+				Class entityClass = AutoMapper.getClass(tncomp[0], tncomp[1], tncomp[2]);
 				Criteria c = session.createCriteria(entityClass);
 				List results = c.list();
 				assertTrue(results.size() > 1);
