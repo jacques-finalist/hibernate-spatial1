@@ -36,7 +36,7 @@ public class TestOracleSpatialRestrictions {
 	
 	private final static Logger logger = Logger.getLogger(TestOracleSpatialRestrictions.class);
 
-	private final static String DBURL = "jdbc:oracle:thin:@test.geovise.com/orcl";
+	private final static String DBURL = "jdbc:oracle:thin:@localhost/xe";
 
 	private final static String DBNAME = "hbs";
 
@@ -51,9 +51,10 @@ public class TestOracleSpatialRestrictions {
 	static {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection(DBURL, DBNAME, DBPASSWD);			
+			conn = DriverManager.getConnection(DBURL, DBNAME, DBPASSWD);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new InstantiationError();
 		}
 
 	}

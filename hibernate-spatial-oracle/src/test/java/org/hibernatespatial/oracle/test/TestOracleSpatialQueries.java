@@ -56,7 +56,7 @@ import org.junit.Test;
  */
 public class TestOracleSpatialQueries {
 
-	private final static String DBURL = "jdbc:oracle:thin:@test.geovise.com/orcl";
+	private final static String DBURL = "jdbc:oracle:thin:@localhost/xe";
 
 	private final static String DBNAME = "hbs";
 
@@ -73,6 +73,7 @@ public class TestOracleSpatialQueries {
 			delegate = new TestSpatialQueries();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new InstantiationError();
 		}
 		// create the delegate
 

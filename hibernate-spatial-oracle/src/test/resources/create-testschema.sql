@@ -453,7 +453,6 @@ INSERT INTO user_sdo_geom_metadata
   SDO_DIM_ARRAY(
     SDO_DIM_ELEMENT('X', 0, 100000, 0.001),
     SDO_DIM_ELEMENT('Y', 0, 100000, 0.001),
-    SDO_DIM_ELEMENT('Z', 0, 100000, 0.001),
     SDO_DIM_ELEMENT('M', 0, 100000, 0.001)
      ),
   31370
@@ -482,14 +481,13 @@ INSERT INTO user_sdo_geom_metadata
   SDO_DIM_ARRAY(
     SDO_DIM_ELEMENT('X', 0, 100000, 0.001),
     SDO_DIM_ELEMENT('Y', 0, 100000, 0.001),
-    SDO_DIM_ELEMENT('Z', 0, 100000, 0.001),
     SDO_DIM_ELEMENT('M', 0, 100000, 0.001)
      ),
   31370
 );
 
 CREATE INDEX multimlinestring_idx
-   ON nultimlinestringtest(geom)
+   ON multimlinestringtest(geom)
    INDEXTYPE IS MDSYS.SPATIAL_INDEX;
 
 
