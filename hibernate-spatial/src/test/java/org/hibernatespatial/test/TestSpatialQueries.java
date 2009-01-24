@@ -47,7 +47,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Projections;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.Type;
 import org.hibernatespatial.GeometryUserType;
@@ -55,6 +54,7 @@ import org.hibernatespatial.SpatialRelation;
 import org.hibernatespatial.criterion.SpatialProjections;
 import org.hibernatespatial.criterion.SpatialRestrictions;
 import org.hibernatespatial.test.model.LineStringEntity;
+import org.hibernatespatial.test.model.MLineStringEntity;
 import org.hibernatespatial.test.model.MultiLineStringEntity;
 import org.hibernatespatial.test.model.PolygonEntity;
 
@@ -124,6 +124,7 @@ public class TestSpatialQueries {
 		config.addClass(LineStringEntity.class);
 		config.addClass(PolygonEntity.class);
 		config.addClass(MultiLineStringEntity.class);
+		config.addClass(MLineStringEntity.class);
 
 		// build the session factory
 		factory = config.buildSessionFactory();

@@ -194,6 +194,19 @@ public class TestCRUD extends TestCase {
 		return geom;
 	}
 	
+	private MLineString createMLineString2D(double startx, double starty, double startm){
+		
+		MCoordinate[] coordinates = new MCoordinate[COORDARRAY_LENGTH];
+
+
+		for (int i = 0; i < COORDARRAY_LENGTH; i++) {
+				coordinates[i] = new MCoordinate(startx + i, starty + i);
+				coordinates[i].m =  startm +i;
+		}
+
+		MLineString geom = geomFactory.createMLineString(coordinates);
+		return geom;
+	}
 	
 	
 	private void assertEquality(Geometry expected, Geometry retrieved){
@@ -217,6 +230,24 @@ public class TestCRUD extends TestCase {
 		double startz = 125.0;
 		double startm = 0.0;
 		MLineString geom = createMLineString(startx, starty, startz, startm);
+		mline.setGeometry(geom);
+		mline.setName("Added by TestCRUD");
+		long id = saveObject(mline);
+		MLineStringEntity retrieved = (MLineStringEntity) retrieveObject(
+				MLineStringEntity.class, id);
+		// check if we retrieve all the same stuff
+		assertEquality(geom, retrieved.getGeometry());
+		assertEquals(mline.getId(), retrieved.getId());
+		assertEquals(mline.getName(), retrieved.getName());
+	}
+	
+	public void testSaveMLineStringEntity2D() throws Exception{
+		MLineStringEntity mline = new MLineStringEntity();
+
+		double startx = 4319.0;
+		double starty = 53255.0;
+		double startm = 0.0;
+		MLineString geom = createMLineString2D(startx, starty, startm);
 		mline.setGeometry(geom);
 		mline.setName("Added by TestCRUD");
 		long id = saveObject(mline);
@@ -255,6 +286,30 @@ public class TestCRUD extends TestCase {
 		assertEquals(entity.getName(), retrievedEntity.getName());
 	}
 	
+	public void testSaveMultiMLineStringEntity2D() throws Exception {
+		MultiMLineStringEntity entity = new MultiMLineStringEntity();
+		double startx = 4000.0;
+		double starty = 4000.0;
+		double startm = 0.0;
+		MLineString[] mlines = new MLineString[5];
+		for (int i = 0; i < 5; i++){
+			startx += i * COORDARRAY_LENGTH + 10.0;
+			starty += i * COORDARRAY_LENGTH + 10.0;
+			startm += i * COORDARRAY_LENGTH;
+			mlines[i] = createMLineString2D(startx, starty, startm);			
+		}
+		MultiMLineString multiMLine = geomFactory.createMultiMLineString(mlines);
+		entity.setGeometry(multiMLine);
+		entity.setName("Added by TestCRUD");
+		long id = saveObject(entity);
+		MultiMLineStringEntity retrievedEntity = (MultiMLineStringEntity)retrieveObject( MultiMLineStringEntity.class, id);
+		MultiMLineString retrievedGeom = (MultiMLineString)retrievedEntity.getGeometry();
+		for (int i = 0; i < retrievedGeom.getNumGeometries(); i++){
+			assertEquality(multiMLine.getGeometryN(i), retrievedGeom.getGeometryN(i));
+		}
+		assertEquals(entity.getId(), retrievedEntity.getId());
+		assertEquals(entity.getName(), retrievedEntity.getName());
+	}
 
 	public void testSaveNullLineStringEntity() throws Exception {
 		LineStringEntity line = new LineStringEntity();
