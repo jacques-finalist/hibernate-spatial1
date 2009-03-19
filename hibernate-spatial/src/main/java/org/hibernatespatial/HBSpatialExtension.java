@@ -146,7 +146,7 @@ public class HBSpatialExtension {
 		if (configured) {
 			return;
 		}
-
+		configured = true;
 		// if no configuration object, take the first dialect that is available.
 		if (configuration == null) {
 			setDefaultSpatialDialect(providers.get(0).getDefaultDialect());
@@ -176,8 +176,6 @@ public class HBSpatialExtension {
 			log.info("Hibernate Spatial configured. Using dialect: "
 					+ defaultSpatialDialect.getClass().getCanonicalName());
 		}
-
-		configured = true;
 
 	}
 
