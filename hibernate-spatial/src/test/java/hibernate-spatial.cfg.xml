@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--  this is a test configuration for the config unit tests. -->
-
-<hibernate-spatial>
-	<default_dialect>org.hibernatespatial.postgis.PostgisDialect</default_dialect>
-	<precision_model>FIXED</precision_model>
-	<precision_model_scale>5</precision_model_scale>
-</hibernate-spatial>

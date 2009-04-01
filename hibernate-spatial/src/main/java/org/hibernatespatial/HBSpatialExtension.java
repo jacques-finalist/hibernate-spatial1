@@ -37,8 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernatespatial.cfg.GeometryFactoryHelper;
 import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.helper.PropertyFileReader;
@@ -63,7 +63,7 @@ public class HBSpatialExtension {
 
 	protected static List<SpatialDialectProvider> providers = new ArrayList<SpatialDialectProvider>();
 
-	private static final Log log = LogFactory.getLog(HBSpatialExtension.class);
+	private static final Logger log = LoggerFactory.getLogger(HBSpatialExtension.class);
 
 	private static SpatialDialect defaultSpatialDialect = null;
 
