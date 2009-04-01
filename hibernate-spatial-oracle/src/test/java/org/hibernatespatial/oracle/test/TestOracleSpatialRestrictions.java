@@ -16,6 +16,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 import org.hibernatespatial.oracle.criterion.OracleSpatialAggregate;
 import org.hibernatespatial.oracle.criterion.OracleSpatialProjections;
 import org.hibernatespatial.oracle.criterion.OracleSpatialRestrictions;
@@ -36,7 +37,7 @@ public class TestOracleSpatialRestrictions {
 	
 	private final static Logger logger = Logger.getLogger(TestOracleSpatialRestrictions.class);
 
-	private final static String DBURL = "jdbc:oracle:thin:@localhost/xe";
+	private final static String DBURL = "jdbc:oracle:thin:@oracle.geovise.com/ORCL";
 
 	private final static String DBNAME = "hbs";
 
@@ -47,6 +48,8 @@ public class TestOracleSpatialRestrictions {
 	private static SessionFactory sessionFactory=null;
 	
 	private static Geometry geom2;
+	
+	private static Long maxId = 10L;
 
 	static {
 		try {
@@ -143,6 +146,7 @@ public class TestOracleSpatialRestrictions {
 			// apply the projection using Hibernate Criteria
 			session = sessionFactory.openSession();
 			Criteria testCriteria = session.createCriteria(entityClass);
+			testCriteria.add(Restrictions.lt("id", maxId));
 			testCriteria.setProjection(OracleSpatialProjections.projection(projection, "geometry"));
 
 			List results = testCriteria.list();
@@ -171,7 +175,7 @@ public class TestOracleSpatialRestrictions {
 					hql += "aggr_union";
 					break;
 			}
-			hql += "(geometry) from " + entityClass.getSimpleName();
+			hql += "(geometry) from " + entityClass.getSimpleName() + " where id < " + maxId;
 			logger.debug("HQL is:" + hql);
 			Query q = session.createQuery(hql);
 			Geometry g2 = (Geometry)q.list().get(0);
@@ -196,25 +200,26 @@ public class TestOracleSpatialRestrictions {
 	
 	@Test
 	public void testCentroid() throws Exception{
-		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_CENTROID(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest";
+		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_CENTROID(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest where id < " + maxId;
 		testProjection(PolygonEntity.class, OracleSpatialAggregate.CENTROID, sql);
 	}
 	
 	@Test
 	public void testUnion() throws Exception {
-		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_UNION(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest";
+		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_UNION(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest where id < " + maxId;
 		testProjection(PolygonEntity.class, OracleSpatialAggregate.UNION, sql);
 	}
-	
+
+	//TODO -- Equality can't be computed on the size of these geometries.
 	@Test
 	public void testConcatlines() throws Exception {
-		String sql = "select SDO_GEOM.SDO_LENGTH(SDO_AGGR_CONCAT_LINES(geom), 0.001) from linestringtest";
+		String sql = "select SDO_GEOM.SDO_LENGTH(SDO_AGGR_CONCAT_LINES(geom), 0.001) from linestringtest where id < " + maxId;
 		testProjection(LineStringEntity.class, OracleSpatialAggregate.CONCAT_LINES, sql);
 	}
 	
 	@Test
 	public void testConvexHull() throws Exception {
-		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_CONVEXHULL(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest";
+		String sql = "select SDO_GEOM.SDO_AREA(SDO_AGGR_CONVEXHULL(SDOAGGRTYPE(geom, 0.005)), .001) from polygontest where id < " + maxId;
 		testProjection(PolygonEntity.class, OracleSpatialAggregate.CONVEXHULL, sql);
 	}
 	

@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
  *  
- * Copyright © 2007 Geovise BVBA
+ * Copyright © 2007 - 2009 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
  * This work was partially supported by the European Commission, 
@@ -31,6 +31,10 @@ package org.hibernatespatial.oracle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +44,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.QueryException;
+import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.type.BooleanType;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
@@ -61,7 +67,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		SpatialDialect {
-
+	
 	/**
 	 * Implementation of the OGC astext function for HQL.
 	 */
@@ -197,7 +203,8 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		private final int relation;
 
 		private SpatialRelateFunction(final String name, final int relation) {
-			super(name, Hibernate.BOOLEAN);
+			super(name, isOGCStrict() ? Hibernate.BOOLEAN
+					: new SDOBooleanType());
 			this.relation = relation;
 		}
 
@@ -209,10 +216,12 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 						"Spatial relate functions require at least two arguments");
 			}
 
-			return isOGCStrict() ? getOGCSpatialRelateSQL((String) args.get(0),
-					(String) args.get(1), this.relation)
-					: getNativeSpatialRelateSQL((String) args.get(0),
-							(String) args.get(1), this.relation);
+			String srf;
+			return isOGCStrict() ?
+					getOGCSpatialRelateSQL((String) args.get(0),
+					(String) args.get(1), this.relation) :
+						getNativeSpatialRelateSQL((String) args.get(0),
+							(String) args.get(1), this.relation);					
 		}
 
 	}
@@ -284,7 +293,7 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 				new StandardSQLFunction("SDO_GEOM.SDO_MBR", new CustomType(
 						SDOGeometryType.class, null)));
 		registerFunction("astext", new AsTextFunction());
-		// Can't get the AsBinary function to work on XE
+		
 		registerFunction("asbinary", new StandardSQLFunction(
 				"SDO_UTIL.TO_WKBGEOMETRY", Hibernate.BINARY));
 		registerFunction("isempty", new WrappedOGCFunction("OGC_ISEMPTY",
@@ -409,16 +418,18 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 					"undefined SpatialRelation passed (" + spatialRelation
 							+ ")");
 		}
-		// The case formulation is necessary
-		// to ensure that the expression can be used in the select and where
-		// clauses.
-		StringBuffer buffer = new StringBuffer("CASE SDO_RELATE(");
-		buffer.append(arg1);
-		buffer.append(",").append(arg2).append(",'mask=" + mask + "')");
-		if (!negate) {
-			buffer.append(" WHEN 'TRUE' THEN 1 ELSE 0 END");
+		StringBuffer buffer;
+		if (negate){
+			buffer = new StringBuffer("CASE WHEN SDO_RELATE(");	
 		} else {
-			buffer.append(" WHEN 'TRUE' THEN 0 ELSE 1 END");
+			buffer = new StringBuffer("SDO_RELATE(");
+		}
+		
+		
+		buffer.append(arg1);
+		buffer.append(",").append(arg2).append(",'mask=" + mask + "') ");
+		if (negate){
+			buffer.append( " = 'TRUE' THEN 'FALSE' ELSE 'TRUE' END");
 		}
 		return buffer.toString();
 	}
@@ -509,10 +520,10 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 	public String getSpatialRelateSQL(String columnName, int spatialRelation,
 			boolean useFilter) {
 
-		String sql = (isOGCStrict() ? getOGCSpatialRelateSQL(columnName, "?",
-				spatialRelation) : getNativeSpatialRelateSQL(columnName, "?",
-				spatialRelation));
-		sql += " = 1 and " + columnName + " is not null";
+		String sql = (isOGCStrict() ? (getOGCSpatialRelateSQL(columnName, "?",
+				spatialRelation) + " = 1") : (getNativeSpatialRelateSQL(
+				columnName, "?", spatialRelation) + "= 'TRUE'"));
+		sql += " and " + columnName + " is not null";
 		return sql;
 	}
 
@@ -741,4 +752,49 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 		return false;
 	}
 
+	private static class SDOBooleanType extends BooleanType {
+
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * <p/>
+		 * This type's name is <tt>sdo_boolean</tt>
+		 */
+		public String getName() {
+			return "sdo_boolean";
+		}
+
+		public Object get(ResultSet rs, String name) throws SQLException {
+			String value = rs.getString(name);
+			if (rs.wasNull()) {
+				return getDefaultValue();
+			} else if ("TRUE".equalsIgnoreCase(value)) {
+				return Boolean.TRUE;
+			} else {
+				return Boolean.FALSE;
+			}
+		}
+
+		public void set(PreparedStatement st, Object value, int index)
+				throws SQLException {
+			
+			if (value == null) {
+				st.setNull(index, Types.VARCHAR);
+			} else {
+				boolean bool = ((Boolean) value).booleanValue();
+				st.setString(index, bool ? "TRUE" : "FALSE");
+			}
+		}
+
+		public String objectToSQLString(Object value, Dialect dialect)
+				throws Exception {
+			return ((Boolean) value).booleanValue() ? "'TRUE'" : "'FALSE'";
+		}
+
+		public int sqlType() {
+			return Types.VARCHAR;
+		}
+
+	}
+	
 }
