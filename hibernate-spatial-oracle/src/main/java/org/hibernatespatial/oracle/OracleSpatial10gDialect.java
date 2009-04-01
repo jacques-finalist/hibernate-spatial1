@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.QueryException;
 import org.hibernate.dialect.Dialect;
@@ -262,8 +262,8 @@ public class OracleSpatial10gDialect extends Oracle9Dialect implements
 
 	private final static String CONNECTION_FINDER_PROPERTY = "CONNECTION-FINDER";
 
-	private final static Log log = LogFactory
-			.getLog(OracleSpatial10gDialect.class);
+	private final static Logger log = LoggerFactory
+			.getLogger(OracleSpatial10gDialect.class);
 
 	private String OGC_STRICT = "OGC_STRICT";
 
