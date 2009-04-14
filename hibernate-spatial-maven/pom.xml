@@ -19,7 +19,7 @@
 	<modules>
 		<module>../hibernate-spatial</module>
 		<module>../hibernate-spatial-postgis</module>
-		<module>../hibernate-spatial-oracle</module>
+    		<module>../hibernate-spatial-oracle</module>
 	 	<module>../hibernate-spatial-mysql</module>
 	</modules>
 	<repositories>
@@ -125,8 +125,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>3.2.2.ga</version>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.3.1.GA</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
@@ -143,11 +143,18 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.6.ga</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.4.2</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
