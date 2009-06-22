@@ -119,7 +119,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 				return SDO_GEOMETRY.store(geom, (OracleConnection) connection);
 			} catch (SQLException e) {
 				throw new HibernateSpatialException(
-						"Problem during conversion from JTS to JGeometry", e);
+						"Problem during conversion from JTS to SDO_GEOMETRY", e);
 			}
 		else {
 			throw new UnsupportedOperationException("Conversion of "
@@ -156,7 +156,9 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			Geometry geom = collection.getGeometryN(i);
 			sdoElements[i] = convertJTSGeometry(geom);
 		}
-		return SDO_GEOMETRY.join(sdoElements);
+		SDO_GEOMETRY ccollect = SDO_GEOMETRY.join(sdoElements);
+		ccollect.setSRID(collection.getSRID());
+		return ccollect;
 	}
 
 	private SDO_GEOMETRY convertJTSMultiPolygon(MultiPolygon multiPolygon) {
