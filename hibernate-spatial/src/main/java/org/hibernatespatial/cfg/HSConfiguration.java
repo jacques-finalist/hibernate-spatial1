@@ -160,13 +160,13 @@ public class HSConfiguration extends Properties {
 	 * @return true if the configuration is successfull;
 	 */
 	public boolean configure(String resource) {
-		logger.info("Attempting to load configuration from file: " + resource);
+		logger.debug("Attempting to load configuration from file: " + resource);
 		ClassLoader classLoader = Thread.currentThread()
 				.getContextClassLoader();
 		try {
 			URL url = classLoader.getResource(resource);
 			if (url == null) {
-				logger.warn("No configuration file " + resource
+				logger.info("No configuration file " + resource
 						+ " on the classpath.");
 				return false;
 			}
