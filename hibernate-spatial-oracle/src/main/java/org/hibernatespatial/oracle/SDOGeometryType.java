@@ -1116,9 +1116,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	public static class ELEM_INFO {
 
-		private static final String TYPE_NAME = "MDSYS.SDO_ELEM_INFO_ARRAY";
-
-		private static ArrayDescriptor arrayDescriptor = null;
+		private static final String TYPE_NAME = "MDSYS.SDO_ELEM_INFO_ARRAY";		
 
 		private int[] triplets;
 
@@ -1219,14 +1217,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 		}
 
 		public ARRAY toOracleArray(Connection conn) throws SQLException {
-
-			if (arrayDescriptor == null) {
-				arrayDescriptor = ArrayDescriptor.createDescriptor(TYPE_NAME,
-						conn);
-			} else {
-				arrayDescriptor.setConnection(conn);
-			}
-
+			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor(
+					TYPE_NAME, conn);
 			return new ARRAY(arrayDescriptor, conn, this.triplets);
 		}
 	}
@@ -1234,8 +1226,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 	public static class ORDINATES {
 
 		private static final String TYPE_NAME = "MDSYS.SDO_ORDINATE_ARRAY";
-
-		private static ArrayDescriptor arrayDescriptor = null;
 
 		private Double[] ordinates;
 
@@ -1290,13 +1280,9 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 			this.ordinates = newOrdinates;
 		}
 
-		public ARRAY toOracleArray(Connection conn) throws SQLException {
-			if (arrayDescriptor == null) {
-				arrayDescriptor = ArrayDescriptor.createDescriptor(TYPE_NAME,
-						conn);
-			} else {
-				arrayDescriptor.setConnection(conn);
-			}
+		public ARRAY toOracleArray(Connection conn) throws SQLException {			
+			ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor(
+					TYPE_NAME, conn);
 			return new ARRAY(arrayDescriptor, conn, this.ordinates);
 		}
 
@@ -1304,9 +1290,7 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 	public static class SDO_GEOMETRY {
 
-		private static final String TYPE_NAME = "MDSYS.SDO_GEOMETRY";
-
-		private static StructDescriptor structDescriptor = null;
+		private static final String TYPE_NAME = "MDSYS.SDO_GEOMETRY";		
 
 		private SDO_GTYPE gtype;
 
@@ -1421,13 +1405,8 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
 		public static STRUCT store(SDO_GEOMETRY geom, Connection conn)
 				throws SQLException {
-
-			if (structDescriptor == null) {
-				structDescriptor = StructDescriptor.createDescriptor(TYPE_NAME,
-						conn);
-			} else {
-				structDescriptor.setConnection(conn);
-			}
+			StructDescriptor structDescriptor = StructDescriptor
+					.createDescriptor(TYPE_NAME, conn);
 			Datum[] attributes = new Datum[5];
 			attributes[0] = new NUMBER(geom.getGType().intValue());
 			if (geom.getSRID() > 0) {
