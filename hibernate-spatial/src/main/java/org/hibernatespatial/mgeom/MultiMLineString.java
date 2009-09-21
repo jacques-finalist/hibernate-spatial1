@@ -42,10 +42,6 @@ public class MultiMLineString extends MultiLineString implements MGeometry {
 
 	private final double mGap; // difference in m between end of one part and
 
-	// the beginning of the consecutive
-
-	// path
-
 	private boolean monotone = false;
 
 	private boolean strictMonotone = false;
@@ -212,7 +208,8 @@ public class MultiMLineString extends MultiLineString implements MGeometry {
 
 		if (!this.isMonotone(false)) {
 			throw new MGeometryException(
-					MGeometryException.OPERATION_REQUIRES_MONOTONE);
+					MGeometryException.OPERATION_REQUIRES_MONOTONE,
+                    "Operation requires geometry with monotonic measures");
 		}
 
 		if (this.isEmpty())
@@ -223,10 +220,12 @@ public class MultiMLineString extends MultiLineString implements MGeometry {
 		for (int i = 0; i < this.getNumGeometries(); i++) {
 			MLineString ml = (MLineString) this.getGeometryN(i);
 			for (CoordinateSequence cs : ml.getCoordinatesBetween(begin, end)) {
-				ar.add(cs);
+                if (cs.size() > 0) {
+				    ar.add(cs);
+                }
 			}
 		}
-		return ar.toArray(new CoordinateSequence[0]);
+		return ar.toArray(new CoordinateSequence[ar.size()]);
 	}
 
 	/*

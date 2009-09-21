@@ -66,9 +66,6 @@ public class MLineString extends LineString implements MGeometry {
 	 * and strict monotone. The strict parameter indicates whether the
 	 * determination should apply the definition of "strict monotonicity" or
 	 * non-strict.
-	 * 
-	 * @see #isMonotone()
-	 * @see #isStrictMonotone()
 	 */
 	private void determineMonotone() {
 		this.monotone = true;
@@ -255,99 +252,148 @@ public class MLineString extends LineString implements MGeometry {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.mgeom.MGeometry#getCoordinatesBetween(double,double)
-	 */
-	public CoordinateSequence[] getCoordinatesBetween(double fromM, double toM)
-			throws MGeometryException {
 
-		if (!this.isMonotone(false)) {
-			throw new MGeometryException(
-					MGeometryException.OPERATION_REQUIRES_MONOTONE);
+    /**
+     * Copies the coordinates of the specified array that fall between fromM and toM to a CoordinateSubSequence.
+     *
+     * The CoordinateSubSequence also contains the array indices of the first and last coordinate in firstIndex, resp.
+     * lastIndex. If there are no coordinates between fromM and toM, then firstIndex will contain -1, and lastIndex
+     * will point to the coordinate that is close to fromM or toM.
+     *
+     * This function expects that fromM is less than or equal to toM, and that the coordinates in the array are
+     * sorted monotonic w.r.t. to their m-values.
+     *
+     * @param mcoordinates
+     * @param fromM
+     * @param toM
+     * @param direction INCREASING or DECREASING
+     * @return a CoordinateSubSequence containing the coordinates between fromM and toM
+     */
+    private CoordinateSubSequence copyCoordinatesBetween(MCoordinate[] mcoordinates, double fromM, double toM, int direction){
+            CoordinateSubSequence sseq = new CoordinateSubSequence();            
+            sseq.firstIndex = -1;
+            sseq.lastIndex = -1;
+            for (int i = 0; i < mcoordinates.length; i++){
+                double m = mcoordinates[i].m;
+
+                if (m >= fromM && m <= toM){
+                    sseq.vertices.add(mcoordinates[i]);
+                    if (sseq.firstIndex == -1 ) {
+                        sseq.firstIndex = i;
+                    }
+                }
+                if (direction == MGeometry.INCREASING) {
+                    if (m > toM) break;
+                    sseq.lastIndex = i;
+                } else {
+                    if (m < fromM) break;
+                    sseq.lastIndex = i;
+                }
+
+            }
+            return sseq;
+    }
+
+    /**
+     * Interpolates a coordinate between mco1, mco2, based on the measured value m
+     */
+    private MCoordinate interpolate(MCoordinate mco1, MCoordinate mco2, double m) {
+        if (mco1.m > mco2.m){
+            MCoordinate h = mco1;
+            mco1 = mco2;
+            mco2 = h;
+        }
+
+        if (m < mco1.m || m > mco2.m) throw new IllegalArgumentException("Internal Error: m-value not in interval mco1.m/mco2.m");
+        
+        double r = (m - mco1.m) / (mco2.m - mco1.m);
+        MCoordinate interpolated = new MCoordinate(
+                mco1.x + r*(mco2.x - mco1.x),
+                mco1.y + r*(mco2.y - mco1.y),
+                mco1.z + r*(mco2.z - mco1.z),
+                m);
+        this.getPrecisionModel().makePrecise(interpolated);
+        return interpolated;
+    }
+
+
+    public CoordinateSequence[] getCoordinatesBetween(double fromM, double toM) throws MGeometryException {
+        if (!this.isMonotone(false)){
+            throw new MGeometryException(
+					MGeometryException.OPERATION_REQUIRES_MONOTONE,
+                    "Operation requires geometry with monotonic measures");
 		}
 
-		if (this.isEmpty() || !this.isMonotone(false)) {
-			return new MCoordinateSequence[0];
-		} else {
-			double[] mval = this.getMeasures();
+        if (fromM > toM){
+            return getCoordinatesBetween(toM, fromM);
+        }
 
-			// determin upper and lower boundaries for the MLineString Measures
-			double lb = Math.min(mval[0], mval[mval.length - 1]);
-			double up = Math.max(mval[0], mval[mval.length - 1]);
+        MCoordinateSequence mc;
+        if (!isOverlapping(fromM, toM)){
+            mc = new MCoordinateSequence(new MCoordinate[]{}); 
+        }  else {
+            MCoordinate[] mcoordinates = (MCoordinate[])this.getCoordinates();
+            CoordinateSubSequence subsequence = copyCoordinatesBetween(mcoordinates, fromM, toM, this.getMeasureDirection());
+            addInterpolatedEndPoints(fromM, toM, mcoordinates, subsequence);
+            MCoordinate[] ra = subsequence.vertices.toArray(new MCoordinate[subsequence.vertices.size()]);
+            mc = new MCoordinateSequence(ra);
+        }
+		return new MCoordinateSequence[] { mc };
+    }
 
-			// set fromM and toM to maximal/minimal values when they exceed
-			// lowerbound-upperbound
-			fromM = Math.max(lb, Math.min(fromM, up));
-			toM = Math.max(lb, Math.min(toM, up));
+    private boolean isOverlapping(double fromM, double toM) {
+        //WARNING: this assumes a monotonic increasing or decreasing measures
+        MCoordinate beginCo = (MCoordinate)this.getCoordinateN(0);
+        MCoordinate endCo = (MCoordinate)this.getCoordinateN(this.getNumPoints()-1);
+        return !(Math.min(fromM, toM) > Math.max(beginCo.m, endCo.m) ||
+                Math.max(fromM, toM) < Math.min(beginCo.m, endCo.m));
+    }
 
-			// if at this point the fromM and toM are equal, then return an
-			// empty MCoordinateSequence
-			if (DoubleComparator.equals(fromM, toM)) {
-				return new MCoordinateSequence[0];
-			}
-			MCoordinate[] mcoords = (MCoordinate[]) this.getCoordinates();
-			// ensure that we traverse the coordinate array in ascending M-order
-			if (getMeasureDirection() == MGeometry.DECREASING) {
-				CoordinateArrays.reverse(mcoords);
-			}
+    private void addInterpolatedEndPoints(double fromM, double toM, MCoordinate[] mcoordinates, CoordinateSubSequence subsequence) {
 
-			double minM = Math.min(fromM, toM);
-			double maxM = Math.max(fromM, toM);
-			ArrayList<MCoordinate> mcolist = new ArrayList<MCoordinate>();
-			for (int i = 0; i < mcoords.length; i++) {
-				if (mcolist.isEmpty() && mcoords[i].m >= minM) {
-					MCoordinate mco2 = mcoords[i];
-					if (DoubleComparator.equals(mcoords[i].m, minM)) {
-						mcolist.add(mco2);
-					} else {
-						MCoordinate mco1 = mcoords[i - 1];
-						double r = (minM - mco1.m) / (mco2.m - mco1.m);
-						assert (DoubleComparator.equals(mco1.m + r
-								* (mco2.m - mco1.m), minM)) : "Error on assumption on r";
-						MCoordinate mc = new MCoordinate(mco1.x + r
-								* (mco2.x - mco1.x), mco1.y + r
-								* (mco2.y - mco1.y), mco1.z + r
-								* (mco2.z - mco1.z), minM);
-						mcolist.add(mc);
-					}
-				} else if (mcoords[i].m >= minM && mcoords[i].m <= maxM) {
-					mcolist.add(mcoords[i]);
-					if (DoubleComparator.equals(mcoords[i].m, maxM)) {
-						break;
-					}
-				} else if (mcoords[i].m > maxM) {
-					// mcoords[i] > Math.max(fromM, toM
-					assert (i > 0) : "mistaken assumption";
-					MCoordinate mco2 = mcoords[i];
-					MCoordinate mco1 = mcoords[i - 1];
-					double r = (maxM - mco1.m) / (mco2.m - mco1.m);
-					MCoordinate mc = new MCoordinate(mco1.x + r
-							* (mco2.x - mco1.x),
-							mco1.y + r * (mco2.y - mco1.y), mco1.z + r
-									* (mco2.z - mco1.z), maxM);
-					mcolist.add(mc);
-					break;
-				}
-			}
-			// copy over, but only to the length of numPnts
-			MCoordinate[] h = new MCoordinate[mcolist.size()];
-			for (int i = 0; i < mcolist.size(); i++) {
-				h[i] = (MCoordinate) mcolist.get(i);
-			}
+        boolean increasing = this.getMeasureDirection() == MGeometry.INCREASING;
+        double fM , lM;
+        if (increasing) {
+            fM =fromM; lM = toM;
+        } else {
+            fM = toM; lM = fromM;
+        }
 
-			if (!DoubleComparator.equals(minM, fromM)) {
-				CoordinateArrays.reverse(h);
-			}
+        if (subsequence.firstIndex == -1) {
+            MCoordinate fi = interpolate(mcoordinates[subsequence.lastIndex], mcoordinates[subsequence.lastIndex+1],fM);
+            subsequence.vertices.add(fi);
+            MCoordinate li = interpolate(mcoordinates[subsequence.lastIndex], mcoordinates[subsequence.lastIndex+1], lM);
+            subsequence.vertices.add(li);
+        }  else {
+            //interpolate a first vertex if necessary
+            if ( subsequence.firstIndex > 0 && (
+                    increasing && mcoordinates[subsequence.firstIndex].m > fromM ||
+                    !increasing && mcoordinates[subsequence.firstIndex].m < toM
+                    )){
+                MCoordinate fi = interpolate(mcoordinates[subsequence.firstIndex-1], mcoordinates[subsequence.firstIndex],fM);
+                subsequence.vertices.add(0,fi);
+            }
+            //interpolate a last vertex if necessary
+            if (subsequence.lastIndex < (mcoordinates.length - 1) && (
+                    increasing && mcoordinates[subsequence.lastIndex].m < toM ||
+                    !increasing && mcoordinates[subsequence.lastIndex].m > fromM)){
+                MCoordinate li = interpolate(mcoordinates[subsequence.lastIndex], mcoordinates[subsequence.lastIndex+1], lM);
+                subsequence.vertices.add(li);
+            }
+        }
+    }
 
-			MCoordinateSequence mc = new MCoordinateSequence(h);
-			return new MCoordinateSequence[] { mc };
-		}
-	}
+    private MCoordinate[] inverse(MCoordinate[] mcoordinates) {
+        for (int i = 0; i < mcoordinates.length / 2; i++){
+            MCoordinate h = mcoordinates[i];
+            mcoordinates[i] = mcoordinates[mcoordinates.length - 1 - i];
+            mcoordinates[mcoordinates.length -1 - i] = h;
+        }
+        return mcoordinates;
+    }
 
-	/**
-	 * todo consider refactoring to add INCREASING_STRICT and DECREASING_STRICT
+
+    /**
 	 * determine the direction of the measures w.r.t. the direction of the line
 	 * 
 	 * @return MGeometry.NON_MONOTONE<BR>
@@ -626,4 +672,10 @@ public class MLineString extends LineString implements MGeometry {
 		assert (returnmlinestring.isMonotone(false)) : "new unionM-ed MLineString is not monotone";
 		return returnmlinestring;
 	}
+
+    static class CoordinateSubSequence  {
+        private int firstIndex;
+        private int lastIndex;
+        private List<MCoordinate> vertices = new ArrayList<MCoordinate>();
+    }
 }

@@ -50,7 +50,7 @@ import org.hibernate.usertype.UserType;
  * @author Karel Maesen
  * 
  */
-public class GeometryUserType implements UserType, ParameterizedType {
+public class GeometryUserType implements UserType, ParameterizedType, Serializable {
 
 	private SpatialDialect spatialDialect = null;
 

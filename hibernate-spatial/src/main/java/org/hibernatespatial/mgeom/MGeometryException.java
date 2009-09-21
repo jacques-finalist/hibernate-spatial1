@@ -59,6 +59,11 @@ public class MGeometryException extends Exception {
 		this.type = type;
 	}
 
+    public MGeometryException(int type, String msg) {
+		super(msg);
+		this.type = type;
+	}
+
 	public int getType() {
 		return type;
 	}

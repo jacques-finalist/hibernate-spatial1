@@ -35,29 +35,40 @@ import com.vividsolutions.jts.geom.Point;
 public class EventLocator {
 
 	/**
-	 * 
-	 * @return a Point Geometry as a point geometry
+	 * Returns the point on the specified MGeometry where its measure equals the specified position.
+     *
+	 * @return a Point Geometry
 	 * @throws MGeometryException
 	 */
 	public static Point getPointGeometry(MGeometry lrs, double position)
 			throws MGeometryException {
+        if (lrs == null) {
+            throw new MGeometryException("Non-null MGeometry parameter is required.");
+        }
 		Coordinate c = lrs.getCoordinateAtM(position);
-		CoordinateSequence cs = lrs.getFactory().getCoordinateSequenceFactory()
-				.create(new Coordinate[] { c });
-		return new Point(cs, lrs.getFactory());
+        return lrs.getFactory().createPoint(c);
+
 	}
 
 	public static MultiMLineString getLinearGeometry(MGeometry lrs,
 			double begin, double end) throws MGeometryException {
 
+         if (lrs == null) {
+            throw new MGeometryException("Non-null MGeometry parameter is required.");
+        }
 		MGeometryFactory factory = (MGeometryFactory) lrs.getFactory();
 		CoordinateSequence[] cs = lrs.getCoordinatesBetween(begin, end);
 		MLineString[] mlar = new MLineString[cs.length];
 		for (int i = 0; i < cs.length; i++) {
-			MLineString ml = factory.createMLineString(cs[i]);
+            MLineString ml;
+            if (cs[i].size() < 2) {
+                ml = factory.createMLineString((CoordinateSequence) null);
+            } else {
+			    ml = factory.createMLineString(cs[i]);
+            }
 			mlar[i] = ml;
 		}
-		return factory.createMultiMLineString(mlar);
+        return factory.createMultiMLineString(mlar);
 	}
 
 }

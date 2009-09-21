@@ -32,13 +32,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
+import java.io.Serializable;
+
 /**
  * Defines geometries that carry measures in their CoordinateSequence.
  * 
  * @author Karel Maesen
  */
 
-public interface MGeometry extends Cloneable {
+public interface MGeometry extends Cloneable, Serializable {
 
 	/**
 	 * Measures are increasing in the direction of the MGeometry
