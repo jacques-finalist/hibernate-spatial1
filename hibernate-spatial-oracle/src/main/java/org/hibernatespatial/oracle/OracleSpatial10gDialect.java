@@ -30,6 +30,7 @@ package org.hibernatespatial.oracle;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +67,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Karel Maesen
  */
 public class OracleSpatial10gDialect extends Oracle9Dialect implements
-		SpatialDialect {
+		SpatialDialect, Serializable {
 	
 	/**
 	 * Implementation of the OGC astext function for HQL.

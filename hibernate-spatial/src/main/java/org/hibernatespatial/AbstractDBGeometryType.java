@@ -50,7 +50,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Karel Maesen
  */
 public abstract class AbstractDBGeometryType implements UserType,
-		ParameterizedType {
+		ParameterizedType, Serializable {
 	
 	private MGeometryFactory geomFactory = null;
 
