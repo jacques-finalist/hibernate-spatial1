@@ -540,7 +540,11 @@ public class MLineString extends LineString implements MGeometry {
 		return strict ? this.strictMonotone : this.monotone;
 	}
 
-	// TODO get clear on function and implications of normalize
+    public Geometry asGeometry() {
+        return this;
+    }
+
+    // TODO get clear on function and implications of normalize
 	// public void normalize(){
 	//
 	// }

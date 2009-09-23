@@ -31,6 +31,7 @@ package org.hibernatespatial.mgeom;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;
 
@@ -173,5 +174,14 @@ public interface MGeometry extends Cloneable, Serializable {
 	// * @see #isMonotone()
 	// */
 	// public boolean isStrictMonotone();
+
+    /**
+     * Returns this <code>MGeometry</code> as a <code>Geometry</code>.
+     *
+     * Modifying the returned <code>Geometry</code> will result in internal state changes. 
+     *
+     * @return this object as a Geometry.
+     */
+     public Geometry asGeometry();
 
 }

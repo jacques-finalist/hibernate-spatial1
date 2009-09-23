@@ -31,6 +31,7 @@ package org.hibernatespatial.mgeom;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Geometry;
 
 public class EventLocator {
 
@@ -46,8 +47,9 @@ public class EventLocator {
             throw new MGeometryException("Non-null MGeometry parameter is required.");
         }
 		Coordinate c = lrs.getCoordinateAtM(position);
-        return lrs.getFactory().createPoint(c);
-
+        Point pnt = lrs.getFactory().createPoint(c);
+        copySRID(lrs.asGeometry(), pnt);
+        return pnt;
 	}
 
 	public static MultiMLineString getLinearGeometry(MGeometry lrs,
@@ -68,7 +70,13 @@ public class EventLocator {
             }
 			mlar[i] = ml;
 		}
-        return factory.createMultiMLineString(mlar);
+        MultiMLineString result = factory.createMultiMLineString(mlar);
+        copySRID(lrs.asGeometry(), result.asGeometry());
+        return result;
 	}
+
+    public static void copySRID(Geometry source, Geometry target){
+        target.setSRID(target.getSRID());
+    }
 
 }
