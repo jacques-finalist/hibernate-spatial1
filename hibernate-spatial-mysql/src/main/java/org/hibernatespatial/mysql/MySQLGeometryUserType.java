@@ -47,11 +47,6 @@ public class MySQLGeometryUserType extends AbstractDBGeometryType {
 
 	private static final int SRIDLEN = 4;
 
-	private final WKBReader reader = new WKBReader();
-
-	private final WKBWriter writer = new WKBWriter(2,
-			ByteOrderValues.LITTLE_ENDIAN);
-
 	private static final int[] geometryTypes = new int[] { Types.ARRAY };
 
 	public int[] sqlTypes() {
@@ -79,6 +74,7 @@ public class MySQLGeometryUserType extends AbstractDBGeometryType {
 				| (data[0] & 0xff);
 		Geometry geom = null;
 		try {
+            WKBReader reader = new WKBReader();
 			geom = reader.read(wkb);
 		} catch (Exception e) {
 			throw new RuntimeException(
@@ -99,6 +95,9 @@ public class MySQLGeometryUserType extends AbstractDBGeometryType {
 	 */
 	public Object conv2DBGeometry(Geometry jtsGeom, Connection connection) {
 		int srid = jtsGeom.getSRID();
+
+        WKBWriter writer = new WKBWriter(2,
+			ByteOrderValues.LITTLE_ENDIAN);
 		byte[] wkb = writer.write(jtsGeom);
 
 		byte[] byteArr = new byte[wkb.length + SRIDLEN];
