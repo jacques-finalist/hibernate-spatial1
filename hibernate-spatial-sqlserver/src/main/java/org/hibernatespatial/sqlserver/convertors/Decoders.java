@@ -37,16 +37,10 @@ import java.util.ArrayList;
 public class Decoders {
 
     final private static List<Decoder<? extends Geometry>> DECODERS = new ArrayList<Decoder<? extends Geometry>>();
-    final private static List<Encoder<? extends Geometry>> ENCODERS = new ArrayList<Encoder<? extends Geometry>>();
-
 
     static {
         //Decoders
         DECODERS.add(new PointDecoder());
-
-        //Encoders
-        ENCODERS.add(new PointEncoder());
-
     }
 
 
@@ -58,23 +52,10 @@ public class Decoders {
         throw new IllegalArgumentException("No decoder for type " + object.openGisType());
     }
 
-    private static Encoder<? extends Geometry> encoderFor(Geometry geom) {
-        for (Encoder<? extends Geometry> encoder : ENCODERS) {
-            if (encoder.accepts(geom))
-                return encoder;
-        }
-        throw new IllegalArgumentException("No encoder for type " + geom.getGeometryType());
-    }
-
     public static Geometry decode(byte[] raw) {
         SqlGeometryV1 sqlGeom = SqlGeometryV1.load(raw);
-        Decoder<?> decoder = decoderFor(sqlGeom);
+        Decoder decoder = decoderFor(sqlGeom);
         return decoder.decode(sqlGeom);
-    }
-
-    public static <T extends Geometry> SqlGeometryV1 encode(T geom) {
-        Encoder<T> encoder = (Encoder<T>) encoderFor(geom);
-        return encoder.encode(geom);
     }
 
 }
