@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,9 +25,9 @@
 
 package org.hibernatespatial.sqlserver;
 
-import org.hibernatespatial.SpatialDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.usertype.UserType;
+import org.hibernatespatial.SpatialDialect;
 
 /**
  * @author Karel Maesen, Geovise BVBA.

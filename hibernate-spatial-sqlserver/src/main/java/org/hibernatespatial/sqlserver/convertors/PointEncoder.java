@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,10 +25,9 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Coordinate;
-import org.hibernatespatial.mgeom.MGeometry;
 import org.hibernatespatial.mgeom.MCoordinate;
 
 /**
