@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -113,5 +113,9 @@ public class LineStringConvertorTest extends AbstractConvertorTest {
 
     }
 
+    @Test
+    public void test_encoding() {
+        super.test_encoding();
+    }
 
 }

@@ -36,6 +36,7 @@ public class LineStringEncoder implements Encoder<LineString> {
 
     private final static Shape LINESTRING_SHAPE = new Shape(-1, 0, OpenGisType.LINESTRING);
 
+
     public SqlGeometryV1 encode(LineString geom) {
         SqlGeometryV1 nativeGeom = new SqlGeometryV1();
         nativeGeom.setSrid(geom.getSRID());
@@ -43,6 +44,7 @@ public class LineStringEncoder implements Encoder<LineString> {
         nativeGeom.setNumberOfPoints(geom.getNumPoints());
         if (geom instanceof MLineString)
             nativeGeom.setHasMValues();
+        //TODO -- remove the if/else - this is confusing.
         if (geom.getNumPoints() == 2) {
             encodeSingleLineSegment(nativeGeom, geom);
         } else {

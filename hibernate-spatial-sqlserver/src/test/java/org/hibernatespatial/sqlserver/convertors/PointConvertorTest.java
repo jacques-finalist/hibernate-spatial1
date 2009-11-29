@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -72,6 +72,10 @@ public class PointConvertorTest extends AbstractConvertorTest {
         assertEquals(expected, decodedGeoms.get(4).getCoordinate());
     }
 
+    @Test
+    public void test_encoding() {
+        super.test_encoding();
+    }
 
     @Test
     public void test_test_empty_point() {

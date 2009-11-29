@@ -64,11 +64,11 @@ class SqlGeometryV1 {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
     }
 
-    public SqlGeometryV1() {
+    SqlGeometryV1() {
     }
 
     //TODO -- refactor: all iterations in separate methods.
-    public static byte[] store(SqlGeometryV1 sqlNative) {
+    static byte[] store(SqlGeometryV1 sqlNative) {
         int capacity = sqlNative.calculateCapacity();
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -109,13 +109,13 @@ class SqlGeometryV1 {
         return buffer.array();
     }
 
-    public static SqlGeometryV1 load(byte[] bytes) {
+    static SqlGeometryV1 load(byte[] bytes) {
         SqlGeometryV1 result = new SqlGeometryV1(bytes);
         result.parse();
         return result;
     }
 
-    public MCoordinate getCoordinate(int index) {
+    MCoordinate getCoordinate(int index) {
         MCoordinate coordinate = new MCoordinate();
         coordinate.x = points[index].x;
         coordinate.y = points[index].y;
@@ -124,15 +124,15 @@ class SqlGeometryV1 {
         return coordinate;
     }
 
-    public Figure getFigure(int index) {
+    Figure getFigure(int index) {
         return figures[index];
     }
 
-    public Shape getShape(int index) {
+    Shape getShape(int index) {
         return shapes[index];
     }
 
-    public void setCoordinate(int index, Coordinate coordinate) {
+    void setCoordinate(int index, Coordinate coordinate) {
         Point pnt = new Point(coordinate.x, coordinate.y);
         points[index] = pnt;
         if (hasZValues()) {
@@ -143,11 +143,11 @@ class SqlGeometryV1 {
         }
     }
 
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return this.numberOfPoints == 0;
     }
 
-    public OpenGisType openGisType() {
+    OpenGisType openGisType() {
         if (isValid() && isSinglePoint())
             return OpenGisType.POINT;
         if (isValid() && isSingleLineSegment())
@@ -155,42 +155,39 @@ class SqlGeometryV1 {
         return firstShapeOpenGisType();
     }
 
-    public void setHasZValues() {
+    void setHasZValues() {
         this.zValues = new double[this.numberOfPoints];
         serializationPropertiesByte |= hasZValuesMask;
 
     }
 
 
-    public void setHasMValues() {
+    void setHasMValues() {
         this.mValues = new double[this.numberOfPoints];
         serializationPropertiesByte |= hasMValuesMask;
     }
 
-    public void setIsValid() {
+    void setIsValid() {
         serializationPropertiesByte |= isValidMask;
     }
 
-    public void setIsSinglePoint() {
+    void setIsSinglePoint() {
         setNumberOfPoints(1);
         serializationPropertiesByte |= isSinglePointMask;
     }
 
-    public void setIsSingleLineSegment() {
+    void setIsSingleLineSegment() {
         setNumberOfPoints(2);
         serializationPropertiesByte |= isSingleLineSegment;
     }
 
-    public int getNumPoints() {
+    int getNumPoints() {
         return this.numberOfPoints;
     }
 
-    public void setNumberOfPoints(int num) {
+    void setNumberOfPoints(int num) {
         this.numberOfPoints = num;
         this.points = new Point[this.numberOfPoints];
-        if (num == 1) {
-            this.setIsSinglePoint();
-        }
     }
 
     private void parse() {

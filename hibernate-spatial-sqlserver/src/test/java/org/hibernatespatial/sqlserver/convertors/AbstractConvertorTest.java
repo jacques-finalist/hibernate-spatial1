@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -29,7 +29,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.sqlserver.DataSourceUtils;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,7 +70,7 @@ public class AbstractConvertorTest {
         }
     }
 
-    @Test
+
     public void test_encoding() {
         for (Integer id : encodedGeoms.keySet()) {
             assertTrue("Wrong encoding for case " + id, Arrays.equals(rawResults.get(id), encodedGeoms.get(id)));
