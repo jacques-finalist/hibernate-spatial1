@@ -25,31 +25,29 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-/**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
- */
-enum OpenGisType {
-    POINT((byte) 1),
-    LINESTRING((byte) 2),
-    POLYGON((byte) 3),
-    MULTIPOINT((byte) 4),
-    MULTILINESTRING((byte) 5),
-    MULTIPOLYGON((byte) 6),
-    GEOMETRYCOLLECTION((byte) 7),
-    INVALID_TYPE((byte) 0);
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.LineString;
+import org.hibernatespatial.mgeom.MCoordinate;
 
-    final byte byteValue;
+class LineStringDecoder extends AbstractDecoder<LineString> {
 
-    OpenGisType(byte v) {
-        byteValue = v;
+    public boolean accepts(SqlGeometryV1 nativeGeom) {
+        return nativeGeom.openGisType() == OpenGisType.LINESTRING;
     }
 
-    static OpenGisType valueOf(byte b) {
-        for (OpenGisType t : values()) {
-            if (t.byteValue == b) return t;
+    protected LineString createNullGeometry() {
+        return getGeometryFactory().createLineString((CoordinateSequence) null);
+    }
+
+    protected LineString createGeometry(SqlGeometryV1 nativeGeom) {
+        MCoordinate[] coords = new MCoordinate[nativeGeom.getNumPoints()];
+        for (int idx = 0; idx < nativeGeom.getNumPoints(); idx++) {
+            coords[idx] = nativeGeom.getCoordinate(idx);
         }
-        return INVALID_TYPE;
+        if (!nativeGeom.hasMValues())
+            return getGeometryFactory().createLineString(coords);
+        else
+            return getGeometryFactory().createMLineString(coords);
     }
 
 }

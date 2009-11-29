@@ -26,15 +26,16 @@
 package org.hibernatespatial.sqlserver;
 
 import org.apache.commons.dbcp.BasicDataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.util.*;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>Unit test support class.</p>
@@ -73,6 +74,14 @@ public class DataSourceUtils {
                 "insert into geomtest values (2, 'POINT', Geometry::STGeomFromText('POINT(52.25  2.53)', 4326))",
                 "insert into geomtest values (3, 'POINT', Geometry::STGeomFromText('POINT(150000 200000)', 31370))",
                 "insert into geomtest values (4, 'POINT', Geometry::STGeomFromText('POINT(10.0 2.0 1.0 3.0)', 4326))",
+                "insert into geomtest values (5, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0, 20.0 15.0)', 4326))",
+                "insert into geomtest values (6, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0, 20.0 15.0, 30.3 22.4, 10 30.0)', 4326))",
+                "insert into geomtest values (7, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 0.0, 20.0 15.0 3.0)', 4326))",
+                "insert into geomtest values (8, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 0.0 0.0, 20.0 15.0 3.0 1.0)', 4326))",
+                "insert into geomtest values (9, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 1, 20.0 15.0 2, 30.3 22.4 5, 10 30.0 2)', 4326))",
+                "insert into geomtest values (10, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 1 1, 20.0 15.0 2 3, 30.3 22.4 5 10, 10 30.0 2 12)', 4326))",
+
+
         };
     }
 

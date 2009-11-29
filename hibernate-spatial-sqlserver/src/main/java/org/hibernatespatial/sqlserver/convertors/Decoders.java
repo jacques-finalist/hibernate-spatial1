@@ -27,8 +27,8 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
@@ -41,6 +41,7 @@ public class Decoders {
     static {
         //Decoders
         DECODERS.add(new PointDecoder());
+        DECODERS.add(new LineStringDecoder());
     }
 
 

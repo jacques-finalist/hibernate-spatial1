@@ -25,40 +25,25 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Coordinate;
-import org.hibernatespatial.mgeom.MGeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
-class PointDecoder implements Decoder<Point> {
-
-    //TODO -- get GeometryFactory from HSExtension
-    private final MGeometryFactory geometryFactory = new MGeometryFactory();
-
-    PointDecoder() {
-        //TODO -- check how to construct these items.
-    }
-
-    public Point decode(SqlGeometryV1 sqlNative) {
-        if (!accepts(sqlNative))
-            throw new IllegalArgumentException("Point convertor received object of type " + sqlNative.openGisType());
-        if (sqlNative.isEmpty())
-            return geometryFactory.createPoint((Coordinate) null);
-        Point result = geometryFactory.createPoint(sqlNative.getCoordinate(0));
-        setSrid(sqlNative, result);
-        return result;
-    }
-
-    private void setSrid(SqlGeometryV1 sqlNative, Point result) {
-        if (sqlNative.getSrid() != null)
-            result.setSRID(sqlNative.getSrid());
-    }
+class PointDecoder extends AbstractDecoder<Point> {
 
     public boolean accepts(SqlGeometryV1 sqlNative) {
         return (sqlNative.openGisType() == OpenGisType.POINT);
+    }
+
+    protected Point createNullGeometry() {
+        return getGeometryFactory().createPoint((Coordinate) null);
+    }
+
+    protected Point createGeometry(SqlGeometryV1 nativeGeom) {
+        return getGeometryFactory().createPoint(nativeGeom.getCoordinate(0));
     }
 
 

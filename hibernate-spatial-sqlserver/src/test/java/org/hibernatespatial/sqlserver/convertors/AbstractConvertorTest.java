@@ -25,13 +25,15 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import org.junit.BeforeClass;
-import org.hibernatespatial.sqlserver.DataSourceUtils;
-
-import java.util.Map;
-import java.util.HashMap;
-
 import com.vividsolutions.jts.geom.Geometry;
+import org.hibernatespatial.sqlserver.DataSourceUtils;
+import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
@@ -66,6 +68,13 @@ public class AbstractConvertorTest {
             Geometry geom = decodedGeoms.get(id);
             byte[] bytes = Encoders.encode(geom);
             encodedGeoms.put(id, bytes);
+        }
+    }
+
+    @Test
+    public void test_encoding() {
+        for (Integer id : encodedGeoms.keySet()) {
+            assertTrue("Wrong encoding for case " + id, Arrays.equals(rawResults.get(id), encodedGeoms.get(id)));
         }
     }
 }

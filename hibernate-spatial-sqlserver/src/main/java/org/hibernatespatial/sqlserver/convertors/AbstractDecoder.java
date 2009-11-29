@@ -26,38 +26,37 @@
 package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
 
-/**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
- */
-public class Encoders {
+    //TODO -- get GeometryFactory from HSExtension
+    private final MGeometryFactory geometryFactory = new MGeometryFactory();
 
-    final private static List<Encoder<? extends Geometry>> ENCODERS = new ArrayList<Encoder<? extends Geometry>>();
-
-
-    static {
-        //Encoders
-        ENCODERS.add(new PointEncoder());
-        ENCODERS.add(new LineStringEncoder());
-
+    public G decode(SqlGeometryV1 nativeGeom) {
+        if (!accepts(nativeGeom))
+            throw new IllegalArgumentException("Point convertor received object of type " + nativeGeom.openGisType());
+        if (nativeGeom.isEmpty())
+            return createNullGeometry();
+        G result = createGeometry(nativeGeom);
+        setSrid(nativeGeom, result);
+        return result;
     }
 
-    private static Encoder<? extends Geometry> encoderFor(Geometry geom) {
-        for (Encoder<? extends Geometry> encoder : ENCODERS) {
-            if (encoder.accepts(geom))
-                return encoder;
-        }
-        throw new IllegalArgumentException("No encoder for type " + geom.getGeometryType());
+    public abstract boolean accepts(SqlGeometryV1 nativeGeom);
+
+    protected abstract G createNullGeometry();
+
+    protected abstract G createGeometry(SqlGeometryV1 nativeGeom);
+
+    protected MGeometryFactory getGeometryFactory() {
+        return this.geometryFactory;
     }
 
-    public static <T extends Geometry> byte[] encode(T geom) {
-        Encoder<T> encoder = (Encoder<T>) encoderFor(geom);
-        SqlGeometryV1 nativeSql = encoder.encode(geom);
-        return SqlGeometryV1.store(nativeSql);
+    protected void setSrid(SqlGeometryV1 sqlNative, G result) {
+        if (sqlNative.getSrid() != null)
+            result.setSRID(sqlNative.getSrid());
     }
+
 
 }

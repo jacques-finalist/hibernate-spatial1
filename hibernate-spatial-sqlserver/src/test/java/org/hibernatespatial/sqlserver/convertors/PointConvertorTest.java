@@ -25,17 +25,12 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.hibernatespatial.mgeom.MCoordinate;
-
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Point;
 import static junit.framework.Assert.assertEquals;
-
-import java.util.Arrays;
+import org.hibernatespatial.mgeom.MCoordinate;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
@@ -77,12 +72,6 @@ public class PointConvertorTest extends AbstractConvertorTest {
         assertEquals(expected, decodedGeoms.get(4).getCoordinate());
     }
 
-    @Test
-    public void test_encoding() {
-        for (Integer id : encodedGeoms.keySet()) {
-            assertTrue(Arrays.equals(rawResults.get(id), encodedGeoms.get(id)));
-        }
-    }
 
     @Test
     public void test_test_empty_point() {

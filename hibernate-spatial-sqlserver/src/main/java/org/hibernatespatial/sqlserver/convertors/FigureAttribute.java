@@ -23,33 +23,28 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
+
 package org.hibernatespatial.sqlserver.convertors;
 
 /**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
+ * @author Karel Maesen, Geovise BVBA
+ * @Date 2009-11-29
  */
-enum OpenGisType {
-    POINT((byte) 1),
-    LINESTRING((byte) 2),
-    POLYGON((byte) 3),
-    MULTIPOINT((byte) 4),
-    MULTILINESTRING((byte) 5),
-    MULTIPOLYGON((byte) 6),
-    GEOMETRYCOLLECTION((byte) 7),
-    INVALID_TYPE((byte) 0);
+enum FigureAttribute {
+    InteriorRing((byte) 0),
+    Stroke((byte) 1),
+    ExteriorRing((byte) 2);
 
     final byte byteValue;
 
-    OpenGisType(byte v) {
+    FigureAttribute(byte v) {
         byteValue = v;
     }
 
-    static OpenGisType valueOf(byte b) {
-        for (OpenGisType t : values()) {
-            if (t.byteValue == b) return t;
+    static FigureAttribute valueOf(byte b) {
+        for (FigureAttribute fa : values()) {
+            if (fa.byteValue == b) return fa;
         }
-        return INVALID_TYPE;
+        throw new IllegalArgumentException(String.format("Can't interpret value %d as FigureAttribute.", b));
     }
-
 }

@@ -25,12 +25,11 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.hibernatespatial.mgeom.MCoordinate;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
@@ -54,6 +53,10 @@ class SqlGeometryV1 {
     private Point[] points;
     private double[] mValues;
     private double[] zValues;
+    private int numberOfFigures;
+    private Figure[] figures = null;
+    private int numberOfShapes;
+    private Shape[] shapes = null;
 
 
     private SqlGeometryV1(byte[] bytes) {
@@ -89,6 +92,20 @@ class SqlGeometryV1 {
                 buffer.putDouble(sqlNative.mValues[i]);
             }
         }
+        if (sqlNative.isSingleLineSegment() || sqlNative.isSinglePoint())
+            return buffer.array();
+
+        //in all other cases, we continue to store shapes and figures
+        buffer.putInt(sqlNative.getNumFigures());
+        for (int i = 0; i < sqlNative.getNumFigures(); i++) {
+            sqlNative.getFigure(i).store(buffer);
+        }
+
+        buffer.putInt(sqlNative.getNumShapes());
+        for (int i = 0; i < sqlNative.getNumShapes(); i++) {
+            sqlNative.getShape(i).store(buffer);
+        }
+
         return buffer.array();
     }
 
@@ -107,10 +124,15 @@ class SqlGeometryV1 {
         return coordinate;
     }
 
+    public Figure getFigure(int index) {
+        return figures[index];
+    }
+
+    public Shape getShape(int index) {
+        return shapes[index];
+    }
+
     public void setCoordinate(int index, Coordinate coordinate) {
-        if (points == null) {
-            initPointArrays();
-        }
         Point pnt = new Point(coordinate.x, coordinate.y);
         points[index] = pnt;
         if (hasZValues()) {
@@ -126,16 +148,22 @@ class SqlGeometryV1 {
     }
 
     public OpenGisType openGisType() {
-        if (isValid() && getNumPoints() == 1)
+        if (isValid() && isSinglePoint())
             return OpenGisType.POINT;
-        return OpenGisType.INVALD_TYPE;
+        if (isValid() && isSingleLineSegment())
+            return OpenGisType.LINESTRING;
+        return firstShapeOpenGisType();
     }
 
     public void setHasZValues() {
+        this.zValues = new double[this.numberOfPoints];
         serializationPropertiesByte |= hasZValuesMask;
+
     }
 
+
     public void setHasMValues() {
+        this.mValues = new double[this.numberOfPoints];
         serializationPropertiesByte |= hasMValuesMask;
     }
 
@@ -144,10 +172,12 @@ class SqlGeometryV1 {
     }
 
     public void setIsSinglePoint() {
+        setNumberOfPoints(1);
         serializationPropertiesByte |= isSinglePointMask;
     }
 
     public void setIsSingleLineSegment() {
+        setNumberOfPoints(2);
         serializationPropertiesByte |= isSingleLineSegment;
     }
 
@@ -157,14 +187,10 @@ class SqlGeometryV1 {
 
     public void setNumberOfPoints(int num) {
         this.numberOfPoints = num;
-    }
-
-    public void initPointArrays() {
         this.points = new Point[this.numberOfPoints];
-        if (hasMValues())
-            this.mValues = new double[this.numberOfPoints];
-        if (hasZValues())
-            this.zValues = new double[this.numberOfPoints];
+        if (num == 1) {
+            this.setIsSinglePoint();
+        }
     }
 
     private void parse() {
@@ -180,18 +206,76 @@ class SqlGeometryV1 {
             readZValues();
         if (hasMValues())
             readMValues();
+
+        if (isSingleLineSegment() ||
+                isSinglePoint()) {
+            return; //parsing can stop here
+        }
+        readFigures();
+        readShapes();
+    }
+
+    private void readShapes() {
+        setNumberOfShapes(buffer.getInt());
+        for (int sIdx = 0; sIdx < numberOfShapes; sIdx++) {
+            int parentOffset = buffer.getInt();
+            int figureOffset = buffer.getInt();
+            byte ogtByte = buffer.get();
+            OpenGisType type = OpenGisType.valueOf(ogtByte);
+            Shape shape = new Shape(parentOffset, figureOffset, type);
+            setShape(sIdx, shape);
+        }
+    }
+
+    private void readFigures() {
+        setNumberOfFigures(buffer.getInt());
+        for (int fIdx = 0; fIdx < numberOfFigures; fIdx++) {
+            byte faByte = buffer.get();
+            int pointOffset = buffer.getInt();
+            FigureAttribute fa = FigureAttribute.valueOf(faByte);
+            Figure figure = new Figure(fa, pointOffset);
+            setFigure(fIdx, figure);
+        }
+    }
+
+    private OpenGisType firstShapeOpenGisType() {
+        if (shapes == null || shapes.length == 0)
+            return OpenGisType.INVALID_TYPE;
+        return shapes[0].openGisType;
     }
 
     private int calculateCapacity() {
-        if (openGisType() == OpenGisType.POINT) {
-            int capacity = 22;
+        int numPoints = getNumPoints();
+        int prefixSize = 6;
+
+        if (isSinglePoint() ||
+                isSingleLineSegment()) {
+            int capacity = prefixSize + 16 * numPoints;
             if (hasZValues())
-                capacity += 8;
+                capacity += 8 * numPoints;
             if (hasMValues())
-                capacity += 8;
+                capacity += 8 * numPoints;
             return capacity;
         }
-        throw new IllegalArgumentException("Can't determine the capacity for type " + openGisType());
+
+        int pointSize = getPointByteSize();
+        int size = prefixSize + 3 * 4; // prefix + 3 ints for points, shapes and figures
+        size += getNumPoints() * pointSize;
+        size += getNumFigures() * Figure.getByteSize();
+        size += getNumShapes() * Shape.getByteSize();
+        return size;
+    }
+
+    private int getNumShapes() {
+        return this.numberOfShapes;
+    }
+
+    private int getPointByteSize() {
+        int size = 16; //for X/Y values
+        if (hasMValues()) size += 8;
+        if (hasZValues()) size += 8;
+        return size;
+
     }
 
     private void readPoints() {
@@ -230,36 +314,58 @@ class SqlGeometryV1 {
         numberOfPoints = buffer.getInt();
     }
 
-    private boolean isCompatible() {
+    boolean isCompatible() {
         return version == SUPPORTED_VERSION;
     }
 
-    public void setSrid(Integer srid) {
+    void setSrid(Integer srid) {
         this.srid = (srid == null) ? -1 : srid;
     }
 
-    public Integer getSrid() {
+    Integer getSrid() {
         return srid != -1 ? srid : null;
     }
 
-    private boolean hasZValues() {
+    boolean hasZValues() {
         return (serializationPropertiesByte & hasZValuesMask) != 0;
     }
 
-    private boolean hasMValues() {
+    boolean hasMValues() {
         return (serializationPropertiesByte & hasMValuesMask) != 0;
     }
 
-    private boolean isValid() {
+    boolean isValid() {
         return (serializationPropertiesByte & isValidMask) != 0;
     }
 
-    private boolean isSinglePoint() {
+    boolean isSinglePoint() {
         return (serializationPropertiesByte & isSinglePointMask) != 0;
     }
 
-    private boolean isSingleLineSegment() {
+    boolean isSingleLineSegment() {
         return (serializationPropertiesByte & isSingleLineSegment) != 0;
+    }
+
+    void setNumberOfFigures(int num) {
+        numberOfFigures = num;
+        figures = new Figure[numberOfFigures];
+    }
+
+    void setFigure(int i, Figure figure) {
+        figures[i] = figure;
+    }
+
+    void setNumberOfShapes(int num) {
+        numberOfShapes = num;
+        shapes = new Shape[numberOfShapes];
+    }
+
+    void setShape(int i, Shape shape) {
+        shapes[i] = shape;
+    }
+
+    int getNumFigures() {
+        return this.numberOfFigures;
     }
 
     private static class Point {

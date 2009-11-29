@@ -25,31 +25,26 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-/**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
- */
-enum OpenGisType {
-    POINT((byte) 1),
-    LINESTRING((byte) 2),
-    POLYGON((byte) 3),
-    MULTIPOINT((byte) 4),
-    MULTILINESTRING((byte) 5),
-    MULTIPOLYGON((byte) 6),
-    GEOMETRYCOLLECTION((byte) 7),
-    INVALID_TYPE((byte) 0);
+import java.nio.ByteBuffer;
 
-    final byte byteValue;
+class Figure {
 
-    OpenGisType(byte v) {
-        byteValue = v;
+
+    final FigureAttribute figureAttribute;
+    final int pointOffset;
+
+    Figure(FigureAttribute attribute, int offset) {
+        this.figureAttribute = attribute;
+        this.pointOffset = offset;
     }
 
-    static OpenGisType valueOf(byte b) {
-        for (OpenGisType t : values()) {
-            if (t.byteValue == b) return t;
-        }
-        return INVALID_TYPE;
+    static int getByteSize() {
+        return 5;
+    }
+
+    void store(ByteBuffer buffer) {
+        buffer.put(figureAttribute.byteValue);
+        buffer.putInt(pointOffset);
     }
 
 }
