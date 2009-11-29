@@ -44,10 +44,10 @@ class PointEncoder implements Encoder<Point> {
         sqlGeom.setIsValid();
         sqlGeom.setNumberOfPoints(1);
         Coordinate coordinate = geom.getCoordinate();
-        if (!is3DPoint(coordinate)) {
+        if (is3DPoint(coordinate)) {
             sqlGeom.setHasZValues();
         }
-        if (!isMPoint(coordinate)) {
+        if (isMPoint(coordinate)) {
             sqlGeom.setHasMValues();
         }
         sqlGeom.setCoordinate(0, coordinate);
@@ -56,11 +56,11 @@ class PointEncoder implements Encoder<Point> {
 
     private boolean isMPoint(Coordinate coordinate) {
         return (coordinate instanceof MCoordinate) &&
-                Double.isNaN(((MCoordinate) coordinate).m);
+                !Double.isNaN(((MCoordinate) coordinate).m);
     }
 
     private boolean is3DPoint(Coordinate coordinate) {
-        return Double.isNaN(coordinate.z);
+        return !Double.isNaN(coordinate.z);
     }
 
     public boolean accepts(Geometry geom) {
