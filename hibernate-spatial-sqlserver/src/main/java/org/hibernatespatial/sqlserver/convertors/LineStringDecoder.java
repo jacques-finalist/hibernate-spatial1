@@ -25,9 +25,11 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import org.hibernatespatial.mgeom.MCoordinate;
+import org.hibernatespatial.mgeom.MLineString;
 
 class LineStringDecoder extends AbstractDecoder<LineString> {
 
@@ -40,14 +42,27 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
     }
 
     protected LineString createGeometry(SqlGeometryV1 nativeGeom) {
-        MCoordinate[] coords = new MCoordinate[nativeGeom.getNumPoints()];
-        for (int idx = 0; idx < nativeGeom.getNumPoints(); idx++) {
-            coords[idx] = nativeGeom.getCoordinate(idx);
+        if (nativeGeom.hasMValues()) {
+            return createMLineString(nativeGeom, 0, nativeGeom.getNumPoints());
         }
-        if (!nativeGeom.hasMValues())
-            return getGeometryFactory().createLineString(coords);
-        else
-            return getGeometryFactory().createMLineString(coords);
+        return createLineString(nativeGeom, 0, nativeGeom.getNumPoints());
     }
+
+    protected MLineString createMLineString(SqlGeometryV1 nativeGeom, int offset, int nextOffset) {
+        MCoordinate[] coords = new MCoordinate[nextOffset - offset];
+        for (int idx = offset, i = 0; idx < nextOffset; idx++, i++) {
+            coords[i] = (MCoordinate) nativeGeom.getCoordinate(idx);
+        }
+        return getGeometryFactory().createMLineString(coords);
+    }
+
+    protected LineString createLineString(SqlGeometryV1 nativeGeom, int offset, int nextOffset) {
+        Coordinate[] coords = new Coordinate[nextOffset - offset];
+        for (int idx = offset, i = 0; idx < nextOffset; idx++, i++) {
+            coords[i] = nativeGeom.getCoordinate(idx);
+        }
+        return getGeometryFactory().createLineString(coords);
+    }
+
 
 }

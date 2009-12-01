@@ -43,6 +43,7 @@ public class Encoders {
         //Encoders
         ENCODERS.add(new PointEncoder());
         ENCODERS.add(new LineStringEncoder());
+        ENCODERS.add(new MultiLineStringEncoder());
 
     }
 

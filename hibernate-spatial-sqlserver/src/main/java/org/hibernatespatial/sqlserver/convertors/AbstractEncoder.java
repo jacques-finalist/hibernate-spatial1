@@ -28,27 +28,29 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import org.hibernatespatial.mgeom.MLineString;
 
-class LineStringEncoder extends AbstractEncoder<LineString> {
+public abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
 
-    private final static Figure LINESTRING_FIGURE = new Figure(FigureAttribute.Stroke, 0);
-
-    private final static Shape LINESTRING_SHAPE = new Shape(-1, 0, OpenGisType.LINESTRING);
-
-
-    protected void encodePoints(SqlGeometryV1 nativeGeom, Geometry geom) {
-        if (geom.getNumPoints() == 2) {
-            encodeSingleLineSegment(nativeGeom, geom);
-        } else {
-            super.encodePoints(nativeGeom, geom);
-        }
+    public SqlGeometryV1 encode(LineString geom) {
+        SqlGeometryV1 nativeGeom = new SqlGeometryV1();
+        nativeGeom.setSrid(geom.getSRID());
+        if (geom.isValid()) nativeGeom.setIsValid();
+        nativeGeom.setNumberOfPoints(geom.getNumPoints());
+        if (geom instanceof MLineString)
+            nativeGeom.setHasMValues();
+        encodePoints(nativeGeom, geom);
+        encodeFigures(nativeGeom, geom);
+        encodeShapes(nativeGeom, geom);
+        return nativeGeom;
     }
 
-    private void encodeSingleLineSegment(SqlGeometryV1 nativeGeom, Geometry geom) {
-        nativeGeom.setIsSingleLineSegment();
+    protected void encodePoints(SqlGeometryV1 nativeGeom, Geometry geom) {
+
         Coordinate[] coords = geom.getCoordinates();
-        setCoordinate(nativeGeom, 0, coords[0]);
-        setCoordinate(nativeGeom, 1, coords[1]);
+        for (int i = 0; i < coords.length; i++) {
+            setCoordinate(nativeGeom, i, coords[i]);
+        }
     }
 
     protected void setCoordinate(SqlGeometryV1 nativeGeom, int idx, Coordinate coordinate) {
@@ -58,18 +60,8 @@ class LineStringEncoder extends AbstractEncoder<LineString> {
         nativeGeom.setCoordinate(idx, coordinate);
     }
 
-    protected void encodeFigures(SqlGeometryV1 nativeGeom, Geometry geometry) {
-        nativeGeom.setNumberOfFigures(1);
-        nativeGeom.setFigure(0, LINESTRING_FIGURE);
-    }
+    abstract protected void encodeFigures(SqlGeometryV1 nativeGeom, Geometry geom);
 
-    protected void encodeShapes(SqlGeometryV1 nativeGeom, Geometry geometry) {
-        nativeGeom.setNumberOfShapes(1);
-        nativeGeom.setShape(0, LINESTRING_SHAPE);
-    }
+    abstract protected void encodeShapes(SqlGeometryV1 nativeGeom, Geometry geom);
 
-
-    public boolean accepts(Geometry geom) {
-        return geom instanceof LineString;
-    }
 }

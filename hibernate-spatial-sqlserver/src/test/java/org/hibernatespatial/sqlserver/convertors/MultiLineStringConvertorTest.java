@@ -25,40 +25,20 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MultiLineStringConvertorTest extends AbstractConvertorTest {
 
-/**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
- */
-public class Decoders {
-
-    final private static List<Decoder<? extends Geometry>> DECODERS = new ArrayList<Decoder<? extends Geometry>>();
-
-    static {
-        //Decoders
-        DECODERS.add(new PointDecoder());
-        DECODERS.add(new LineStringDecoder());
-        DECODERS.add(new MultiLineStringDecoder());
-
+    @Before
+    public void setUp() {
+        doDecoding(OpenGisType.MULTILINESTRING);
+        doEncoding();
     }
 
-
-    private static Decoder<? extends Geometry> decoderFor(SqlGeometryV1 object) {
-        for (Decoder<? extends Geometry> decoder : DECODERS) {
-            if (decoder.accepts(object))
-                return decoder;
-        }
-        throw new IllegalArgumentException("No decoder for type " + object.openGisType());
-    }
-
-    public static Geometry decode(byte[] raw) {
-        SqlGeometryV1 sqlGeom = SqlGeometryV1.load(raw);
-        Decoder decoder = decoderFor(sqlGeom);
-        return decoder.decode(sqlGeom);
+    @Test
+    public void test_encoding() {
+        super.test_encoding();
     }
 
 }

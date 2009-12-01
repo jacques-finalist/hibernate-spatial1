@@ -115,12 +115,26 @@ class SqlGeometryV1 {
         return result;
     }
 
-    MCoordinate getCoordinate(int index) {
-        MCoordinate coordinate = new MCoordinate();
+//    MCoordinate getCoordinate(int index) {
+//        MCoordinate coordinate = new MCoordinate();
+//        coordinate.x = points[index].x;
+//        coordinate.y = points[index].y;
+//        if (hasZValues()) coordinate.z = zValues[index];
+//        if (hasMValues()) coordinate.m = mValues[index];
+//        return coordinate;
+//    }
+
+    Coordinate getCoordinate(int index) {
+        Coordinate coordinate;
+        if (hasMValues()) {
+            coordinate = new MCoordinate();
+            ((MCoordinate) coordinate).m = mValues[index];
+        } else {
+            coordinate = new Coordinate();
+        }
         coordinate.x = points[index].x;
         coordinate.y = points[index].y;
         if (hasZValues()) coordinate.z = zValues[index];
-        if (hasMValues()) coordinate.m = mValues[index];
         return coordinate;
     }
 
@@ -263,7 +277,7 @@ class SqlGeometryV1 {
         return size;
     }
 
-    private int getNumShapes() {
+    int getNumShapes() {
         return this.numberOfShapes;
     }
 
