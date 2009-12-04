@@ -27,17 +27,16 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import org.hibernatespatial.mgeom.MLineString;
+import org.hibernatespatial.mgeom.MGeometry;
 
-public abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
+abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
 
-    public SqlGeometryV1 encode(LineString geom) {
+    public SqlGeometryV1 encode(G geom) {
         SqlGeometryV1 nativeGeom = new SqlGeometryV1();
         nativeGeom.setSrid(geom.getSRID());
         if (geom.isValid()) nativeGeom.setIsValid();
         nativeGeom.setNumberOfPoints(geom.getNumPoints());
-        if (geom instanceof MLineString)
+        if (geom instanceof MGeometry)
             nativeGeom.setHasMValues();
         encodePoints(nativeGeom, geom);
         encodeFigures(nativeGeom, geom);
@@ -60,8 +59,8 @@ public abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> 
         nativeGeom.setCoordinate(idx, coordinate);
     }
 
-    abstract protected void encodeFigures(SqlGeometryV1 nativeGeom, Geometry geom);
+    abstract protected void encodeFigures(SqlGeometryV1 nativeGeom, G geom);
 
-    abstract protected void encodeShapes(SqlGeometryV1 nativeGeom, Geometry geom);
+    abstract protected void encodeShapes(SqlGeometryV1 nativeGeom, G geom);
 
 }

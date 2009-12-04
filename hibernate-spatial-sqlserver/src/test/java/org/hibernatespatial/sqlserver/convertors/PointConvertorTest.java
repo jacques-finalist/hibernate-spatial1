@@ -78,6 +78,11 @@ public class PointConvertorTest extends AbstractConvertorTest {
     }
 
     @Test
+    public void test_decoding() {
+        super.test_decoding();
+    }
+
+    @Test
     public void test_test_empty_point() {
         //TODO  -- How?
     }

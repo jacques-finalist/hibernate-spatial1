@@ -118,4 +118,9 @@ public class LineStringConvertorTest extends AbstractConvertorTest {
         super.test_encoding();
     }
 
+    @Test
+    public void test_decoding() {
+        super.test_decoding();
+    }
+
 }

@@ -29,7 +29,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import org.hibernatespatial.mgeom.MLineString;
 
-public class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
+class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
 
     private LineStringDecoder lineStringDecoder = new LineStringDecoder();
 
@@ -60,10 +60,7 @@ public class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
         for (int i = 0; i < pointOffsets.length - 1; i++) {
             int startOffset = pointOffsets[i];
             int nextOffset = pointOffsets[i + 1];
-            if (nativeGeom.hasMValues())
-                lineStrings[i] = lineStringDecoder.createMLineString(nativeGeom, startOffset, nextOffset);
-            else
-                lineStrings[i] = lineStringDecoder.createLineString(nativeGeom, startOffset, nextOffset);
+            lineStrings[i] = lineStringDecoder.createLineString(nativeGeom, startOffset, nextOffset);
         }
     }
 

@@ -27,24 +27,11 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiLineString;
-import org.hibernatespatial.mgeom.MultiMLineString;
 
 public class MultiLineStringEncoder extends AbstractEncoder<MultiLineString> {
 
-    public SqlGeometryV1 encode(MultiLineString geom) {
-        SqlGeometryV1 nativeGeom = new SqlGeometryV1();
-        nativeGeom.setSrid(geom.getSRID());
-        if (geom.isValid()) nativeGeom.setIsValid();
-        nativeGeom.setNumberOfPoints(geom.getNumPoints());
-        if (geom instanceof MultiMLineString)
-            nativeGeom.setHasMValues();
-        encodePoints(nativeGeom, geom);
-        encodeFigures(nativeGeom, geom);
-        encodeShapes(nativeGeom, geom);
-        return nativeGeom;
-    }
 
-    protected void encodeFigures(SqlGeometryV1 nativeGeom, Geometry geom) {
+    protected void encodeFigures(SqlGeometryV1 nativeGeom, MultiLineString geom) {
         nativeGeom.setNumberOfFigures(geom.getNumGeometries());
         int offset = 0;
         for (int i = 0; i < geom.getNumGeometries(); i++) {
@@ -55,7 +42,7 @@ public class MultiLineStringEncoder extends AbstractEncoder<MultiLineString> {
         }
     }
 
-    protected void encodeShapes(SqlGeometryV1 nativeGeom, Geometry geom) {
+    protected void encodeShapes(SqlGeometryV1 nativeGeom, MultiLineString geom) {
         MultiLineString mls = (MultiLineString) geom;
         //number of shapes is 1 + number of linestrings
         nativeGeom.setNumberOfShapes(geom.getNumGeometries() + 1);

@@ -58,12 +58,12 @@ class LineStringEncoder extends AbstractEncoder<LineString> {
         nativeGeom.setCoordinate(idx, coordinate);
     }
 
-    protected void encodeFigures(SqlGeometryV1 nativeGeom, Geometry geometry) {
+    protected void encodeFigures(SqlGeometryV1 nativeGeom, LineString geometry) {
         nativeGeom.setNumberOfFigures(1);
         nativeGeom.setFigure(0, LINESTRING_FIGURE);
     }
 
-    protected void encodeShapes(SqlGeometryV1 nativeGeom, Geometry geometry) {
+    protected void encodeShapes(SqlGeometryV1 nativeGeom, LineString geometry) {
         nativeGeom.setNumberOfShapes(1);
         nativeGeom.setShape(0, LINESTRING_SHAPE);
     }

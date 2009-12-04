@@ -23,27 +23,27 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver.convertors;
+package org.hibernatespatial.sqlserver;
 
-import org.junit.Before;
-import org.junit.Test;
+class TestWKT {
 
-public class MultiLineStringConvertorTest extends AbstractConvertorTest {
+    final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', Geometry::STGeomFromText('%s', %d))";
+    final String wkt;
+    final int id;
+    final int srid;
+    final String type;
 
-    @Before
-    public void setUp() {
-        doDecoding(OpenGisType.MULTILINESTRING);
-        doEncoding();
+    TestWKT(int id, String type, String wkt, int srid) {
+        this.wkt = wkt;
+        this.id = id;
+        this.type = type;
+        this.srid = srid;
     }
 
-    @Test
-    public void test_encoding() {
-        super.test_encoding();
+    public String toSql() {
+        return String.format(SQL_TEMPLATE, id, type, wkt, srid);
     }
 
-    @Test
-    public void test_decoding() {
-        super.test_decoding();
-    }
 
 }
+

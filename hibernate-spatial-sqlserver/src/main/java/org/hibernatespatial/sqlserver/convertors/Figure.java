@@ -47,4 +47,16 @@ class Figure {
         buffer.putInt(pointOffset);
     }
 
+    public boolean isInteriorRing() {
+        return this.figureAttribute.equals(FigureAttribute.InteriorRing);
+    }
+
+    public boolean isExteriorRing() {
+        return this.figureAttribute.equals(FigureAttribute.ExteriorRing);
+    }
+
+    public boolean isStroke() {
+        return this.figureAttribute.equals(FigureAttribute.Stroke);
+    }
+
 }

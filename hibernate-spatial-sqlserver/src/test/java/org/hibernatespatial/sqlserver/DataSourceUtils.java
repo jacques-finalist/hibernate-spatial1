@@ -25,6 +25,8 @@
 
 package org.hibernatespatial.sqlserver;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
@@ -34,7 +36,9 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>Unit test support class.</p>
@@ -66,71 +70,6 @@ public class DataSourceUtils {
 
     private static final DataSource dataSource = createBasicDataSource();
 
-    private static class GeomTest {
-
-        final static WKTReader parser = new WKTReader();
-
-        //TODO -- how to define EMPTY Geomtries in SQL?
-
-        final static List<TestWKT> TEST_WKTS = new ArrayList<TestWKT>();
-
-//        final static String[] DATA = new String[]{
-//                //POINT
-//
-//                "insert into geomtest values (1, 'POINT', Geometry::STGeomFromText('POINT(10 5)', 0))",
-//                "insert into geomtest values (2, 'POINT', Geometry::STGeomFromText('POINT(52.25  2.53)', 4326))",
-//                "insert into geomtest values (3, 'POINT', Geometry::STGeomFromText('POINT(150000 200000)', 31370))",
-//                "insert into geomtest values (4, 'POINT', Geometry::STGeomFromText('POINT(10.0 2.0 1.0 3.0)', 4326))",
-//                //LINESTRING
-//                "insert into geomtest values (5, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0, 20.0 15.0)', 4326))",
-//                "insert into geomtest values (6, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0, 20.0 15.0, 30.3 22.4, 10 30.0)', 4326))",
-//                "insert into geomtest values (7, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 0.0, 20.0 15.0 3.0)', 4326))",
-//                "insert into geomtest values (8, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 0.0 0.0, 20.0 15.0 3.0 1.0)', 4326))",
-//                "insert into geomtest values (9, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 1, 20.0 15.0 2, 30.3 22.4 5, 10 30.0 2)', 4326))",
-//                "insert into geomtest values (10, 'LINESTRING', Geometry::STGeomFromText('LINESTRING(10.0 5.0 1 1, 20.0 15.0 2 3, 30.3 22.4 5 10, 10 30.0 2 12)', 4326))",
-//                //MULTILINESTRING
-//                "insert into geomtest values (11, 'MULTILINESTRING', Geometry::STGeomFromText('MULTILINESTRING((10.0 5.0, 20.0 15.0),( 25.0 30.0, 30.0 20.0))', 4326))",
-//                "insert into geomtest values (12, 'MULTILINESTRING', Geometry::STGeomFromText('MULTILINESTRING((10.0 5.0, 20.0 15.0, 30.3 22.4, 10 30.0), " +
-//                        "(40.0 20.0, 42.0 18.0, 43.0 16.0, 40 14.0))', 4326))",
-//                "insert into geomtest values (13, 'MULTILINESTRING', Geometry::STGeomFromText('MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0, 30.3 22.4 1.0, 10 30.0 1.0), " +
-//                                        "(40.0 20.0 0.0, 42.0 18.0 1.0, 43.0 16.0 2.0, 40 14.0 3.0))', 4326))",
-//                "insert into geomtest values (14, 'MULTILINESTRING', Geometry::STGeomFromText('MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0 0.0, 30.3 22.4 1.0 1.0, 10 30.0 1.0 2.0), " +
-//                                        "(40.0 20.0 0.0 3.0, 42.0 18.0 1.0 4.0, 43.0 16.0 2.0 5.0, 40 14.0 3.0 6.0))', 4326))",
-//                "insert into geomtest values (15, 'MULTILINESTRING', Geometry::STGeomFromText('MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0 0.0, 30.3 22.4 1.0 1.0, 10 30.0 1.0 2.0))', 4326))"
-//
-//
-//        };
-
-        static {
-
-            //POINT test cases
-            TEST_WKTS.add(new TestWKT(1, "POINT", "POINT(10 5)", 0));
-            TEST_WKTS.add(new TestWKT(2, "POINT", "POINT(52.25  2.53)", 4326));
-            TEST_WKTS.add(new TestWKT(3, "POINT", "POINT(150000 200000)", 31370));
-            TEST_WKTS.add(new TestWKT(4, "POINT", "POINT(10.0 2.0 1.0 3.0)", 4326));
-            //LINESTRING test cases
-            TEST_WKTS.add(new TestWKT(5, "LINESTRING", "LINESTRING(10.0 5.0, 20.0 15.0)", 4326));
-            TEST_WKTS.add(new TestWKT(6, "LINESTRING", "LINESTRING(10.0 5.0, 20.0 15.0, 30.3 22.4, 10 30.0)", 4326));
-            TEST_WKTS.add(new TestWKT(7, "LINESTRING", "LINESTRING(10.0 5.0 0.0, 20.0 15.0 3.0)", 4326));
-            TEST_WKTS.add(new TestWKT(8, "LINESTRING", "LINESTRING(10.0 5.0 0.0 0.0, 20.0 15.0 3.0 1.0)", 4326));
-            TEST_WKTS.add(new TestWKT(9, "LINESTRING", "LINESTRING(10.0 5.0 1, 20.0 15.0 2, 30.3 22.4 5, 10 30.0 2)", 4326));
-            TEST_WKTS.add(new TestWKT(10, "LINESTRING",
-                    "LINESTRING(10.0 5.0 1 1, 20.0 15.0 2 3, 30.3 22.4 5 10, 10 30.0 2 12)", 4326));
-            //MULTILINESTRING test cases
-            TEST_WKTS.add(new TestWKT(11, "MULTILINESTRING",
-                    "MULTILINESTRING((10.0 5.0, 20.0 15.0),( 25.0 30.0, 30.0 20.0))", 4326));
-            TEST_WKTS.add(new TestWKT(12, "MULTILINESTRING",
-                    "MULTILINESTRING((10.0 5.0, 20.0 15.0, 30.3 22.4, 10 30.0), (40.0 20.0, 42.0 18.0, 43.0 16.0, 40 14.0))", 4326));
-            TEST_WKTS.add(new TestWKT(13, "MULTILINESTRING",
-                    "MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0, 30.3 22.4 1.0, 10 30.0 1.0),(40.0 20.0 0.0, 42.0 18.0 1.0, 43.0 16.0 2.0, 40 14.0 3.0))", 4326));
-            TEST_WKTS.add(new TestWKT(14, "MULTILINESTRING",
-                    "MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0 0.0, 30.3 22.4 1.0 1.0, 10 30.0 1.0 2.0),(40.0 20.0 0.0 3.0, 42.0 18.0 1.0 4.0, 43.0 16.0 2.0 5.0, 40 14.0 3.0 6.0))", 4326));
-            TEST_WKTS.add(new TestWKT(15, "MULTILINESTRING",
-                    "MULTILINESTRING((10.0 5.0 1.0, 20.0 15.0 2.0 0.0, 30.3 22.4 1.0 1.0, 10 30.0 1.0 2.0))", 4326));
-
-
-        }
-    }
 
     private static DataSource createBasicDataSource() {
         String url = properties.getProperty("jdbcUrl");
@@ -221,6 +160,23 @@ public class DataSourceUtils {
 
     }
 
+    // TODO -- extend JTS WKT Reader to handle MGeometries.
+    public static Map<Integer, Geometry> expectedGeoms(String type) {
+        Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
+        WKTReader parser = new WKTReader();
+        for (TestWKT testWKT : GeomTest.TEST_WKTS) {
+            if (testWKT.type.equalsIgnoreCase(type)) {
+                try {
+                    result.put(testWKT.id, parser.read(testWKT.wkt));
+                } catch (ParseException e) {
+                    System.err.println("Can't parse wkt for case " + testWKT.id + ": " + testWKT.wkt);
+                }
+            }
+        }
+        return result;
+    }
+
+
     private static int sum(int[] insCounts) {
         int result = 0;
         for (int idx = 0; idx < insCounts.length; idx++) {
@@ -229,26 +185,5 @@ public class DataSourceUtils {
         return result;
     }
 
-    private static class TestWKT {
-
-        final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', Geometry::STGeomFromText('%s', %d))";
-        final String wkt;
-        final int id;
-        final int srid;
-        final String type;
-
-        TestWKT(int id, String type, String wkt, int srid) {
-            this.wkt = wkt;
-            this.id = id;
-            this.type = type;
-            this.srid = srid;
-        }
-
-        public String toSql() {
-            return String.format(SQL_TEMPLATE, id, type, wkt, srid);
-        }
-
-
-    }
 
 }

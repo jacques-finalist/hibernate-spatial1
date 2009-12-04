@@ -28,11 +28,12 @@ package org.hibernatespatial.sqlserver.convertors;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultiLineStringConvertorTest extends AbstractConvertorTest {
+public class PolygonConvertorTest extends AbstractConvertorTest {
+
 
     @Before
     public void setUp() {
-        doDecoding(OpenGisType.MULTILINESTRING);
+        doDecoding(OpenGisType.POLYGON);
         doEncoding();
     }
 
@@ -45,5 +46,6 @@ public class MultiLineStringConvertorTest extends AbstractConvertorTest {
     public void test_decoding() {
         super.test_decoding();
     }
+
 
 }

@@ -43,7 +43,7 @@ public class Decoders {
         DECODERS.add(new PointDecoder());
         DECODERS.add(new LineStringDecoder());
         DECODERS.add(new MultiLineStringDecoder());
-
+        DECODERS.add(new PolygonDecoder());
     }
 
 

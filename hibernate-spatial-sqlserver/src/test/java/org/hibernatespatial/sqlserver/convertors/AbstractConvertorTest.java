@@ -43,6 +43,7 @@ public class AbstractConvertorTest {
     Map<Integer, Geometry> decodedGeoms;
     Map<Integer, byte[]> rawResults;
     Map<Integer, byte[]> encodedGeoms;
+    Map<Integer, Geometry> expectedGeoms;
 
     @BeforeClass
     public static void beforeClass() {
@@ -53,6 +54,7 @@ public class AbstractConvertorTest {
 
     public void doDecoding(OpenGisType type) {
         rawResults = DataSourceUtils.rawByteArrays(type.toString());
+        expectedGeoms = DataSourceUtils.expectedGeoms(type.toString());
         decodedGeoms = new HashMap<Integer, Geometry>();
 
         for (Integer id : rawResults.keySet()) {
@@ -70,10 +72,18 @@ public class AbstractConvertorTest {
         }
     }
 
-
     public void test_encoding() {
         for (Integer id : encodedGeoms.keySet()) {
             assertTrue("Wrong encoding for case " + id, Arrays.equals(rawResults.get(id), encodedGeoms.get(id)));
+        }
+    }
+
+    public void test_decoding() {
+        for (Integer id : decodedGeoms.keySet()) {
+            Geometry expected = expectedGeoms.get(id);
+            Geometry received = decodedGeoms.get(id);
+            if (expected == null) continue; //not all geometries can currently be parsed by WKTReader
+            assertTrue("Wrong decoding for case " + id, expected.equalsExact(received));
         }
     }
 }
