@@ -79,6 +79,12 @@ class GeometryTestCases {
                         "( (0 0, 0 50, 50 50, 0 0), (10 10, 10 20, 20 20, 20 10, 10 10) ), " +
                         "((5 0, 20 40, 30 34, 5 0)) )", 4326));
 
+        //MultiPoint
+        TEST_WKTS.add(new TestWKT(25, "MULTIPOINT", "MULTIPOINT(21 2, 25 5, 30 3)", 4326));
+        TEST_WKTS.add(new TestWKT(26, "MULTIPOINT", "MULTIPOINT(21 2)", 4326));
+        TEST_WKTS.add(new TestWKT(27, "MULTIPOINT", "MULTIPOINT(21 2 1, 25 5 2, 30 3 5)", 4326));
+        TEST_WKTS.add(new TestWKT(28, "MULTIPOINT", "MULTIPOINT(21 2 1 0, 25 5 2 4, 30 3 5 2)", 4326));
+
 
     }
 }

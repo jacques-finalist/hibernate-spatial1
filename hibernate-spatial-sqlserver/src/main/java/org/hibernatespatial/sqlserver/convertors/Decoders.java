@@ -45,6 +45,7 @@ public class Decoders {
         DECODERS.add(new MultiLineStringDecoder());
         DECODERS.add(new PolygonDecoder());
         DECODERS.add(new MultiPolygonDecoder());
+        DECODERS.add(new MultiPointDecoder());
     }
 
 

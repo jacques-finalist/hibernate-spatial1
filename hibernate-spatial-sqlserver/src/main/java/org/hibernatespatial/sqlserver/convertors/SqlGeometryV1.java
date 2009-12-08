@@ -73,7 +73,7 @@ class SqlGeometryV1 {
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putInt(sqlNative.srid);
-        buffer.put(SUPPORTED_VERSION);
+        buffer.put(SUPPORTED_VERSION);  //TODO -- this should be the version property!!
         buffer.put(sqlNative.serializationPropertiesByte);
         if (!sqlNative.isSinglePoint() && !sqlNative.isSingleLineSegment()) {
             buffer.putInt(sqlNative.numberOfPoints);

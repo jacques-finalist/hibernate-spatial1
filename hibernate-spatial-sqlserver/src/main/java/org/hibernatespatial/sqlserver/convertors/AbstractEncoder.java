@@ -36,12 +36,16 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
         nativeGeom.setSrid(geom.getSRID());
         if (geom.isValid()) nativeGeom.setIsValid();
         nativeGeom.setNumberOfPoints(geom.getNumPoints());
-        if (geom instanceof MGeometry)
+        if (hasMValues(geom))
             nativeGeom.setHasMValues();
         encodePoints(nativeGeom, geom);
         encodeFigures(nativeGeom, geom);
         encodeShapes(nativeGeom, geom);
         return nativeGeom;
+    }
+
+    protected boolean hasMValues(G geom) {
+        return geom instanceof MGeometry;
     }
 
     protected void encodePoints(SqlGeometryV1 nativeGeom, Geometry geom) {
