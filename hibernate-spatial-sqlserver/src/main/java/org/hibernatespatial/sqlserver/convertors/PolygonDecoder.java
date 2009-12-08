@@ -40,10 +40,14 @@ public class PolygonDecoder extends AbstractDecoder<Polygon> {
     }
 
     protected Polygon createGeometry(SqlGeometryV1 nativeGeom) {
+        return createGeometry(nativeGeom, 0, nativeGeom.getNumFigures());
+    }
+
+    protected Polygon createGeometry(SqlGeometryV1 nativeGeom, int startFigureOffset, int nextShapeFigureOffset) {
         //polygons consist of one exterior ring figure, and several interior ones.
-        LinearRing[] holes = new LinearRing[nativeGeom.getNumFigures() - 1];
+        LinearRing[] holes = new LinearRing[nextShapeFigureOffset - startFigureOffset - 1];
         LinearRing shell = null;
-        for (int figureIdx = 0, i = 0; figureIdx < nativeGeom.getNumFigures(); figureIdx++) {
+        for (int figureIdx = startFigureOffset, i = 0; figureIdx < nextShapeFigureOffset; figureIdx++) {
             Figure figure = nativeGeom.getFigure(figureIdx);
             int nextPntOffset = getNextPointOffset(nativeGeom, figureIdx);
             if (figure.isInteriorRing()) {
@@ -53,6 +57,7 @@ public class PolygonDecoder extends AbstractDecoder<Polygon> {
             }
         }
         return getGeometryFactory().createPolygon(shell, holes);
+
     }
 
     private LinearRing toLinearRing(SqlGeometryV1 nativeGeom, int pointOffset, int nextPntOffset) {

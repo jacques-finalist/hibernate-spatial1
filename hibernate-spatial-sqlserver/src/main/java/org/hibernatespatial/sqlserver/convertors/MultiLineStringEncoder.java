@@ -43,7 +43,6 @@ public class MultiLineStringEncoder extends AbstractEncoder<MultiLineString> {
     }
 
     protected void encodeShapes(SqlGeometryV1 nativeGeom, MultiLineString geom) {
-        MultiLineString mls = (MultiLineString) geom;
         //number of shapes is 1 + number of linestrings
         nativeGeom.setNumberOfShapes(geom.getNumGeometries() + 1);
         //first encode the parent

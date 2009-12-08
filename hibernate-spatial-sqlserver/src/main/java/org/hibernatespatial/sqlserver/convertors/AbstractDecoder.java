@@ -35,7 +35,7 @@ abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
 
     public G decode(SqlGeometryV1 nativeGeom) {
         if (!accepts(nativeGeom))
-            throw new IllegalArgumentException("Point convertor received object of type " + nativeGeom.openGisType());
+            throw new IllegalArgumentException(getClass().getSimpleName() + " received object of type " + nativeGeom.openGisType());
         if (nativeGeom.isEmpty())
             return createNullGeometry();
         G result = createGeometry(nativeGeom);

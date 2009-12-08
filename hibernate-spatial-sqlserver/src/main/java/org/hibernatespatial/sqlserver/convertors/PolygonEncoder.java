@@ -39,25 +39,30 @@ public class PolygonEncoder extends AbstractEncoder<Polygon> {
 
     protected void encodeFigures(SqlGeometryV1 nativeGeom, Polygon geom) {
         nativeGeom.setNumberOfFigures(geom.getNumInteriorRing() + 1);
-        int offset = 0;
-        offset = addExteriorRing(nativeGeom, geom, offset);
+        int pointOffset = 0;
+        int figure = 0;
+        addFiguresForPolygon(nativeGeom, geom, pointOffset, figure);
+    }
+
+    protected void addFiguresForPolygon(SqlGeometryV1 nativeGeom, Polygon geom, int pointOffset, int figure) {
+        pointOffset = addExteriorRing(nativeGeom, geom, pointOffset, figure);
         for (int ring = 0; ring < geom.getNumInteriorRing(); ring++) {
-            offset = addInteriorRing(nativeGeom, geom, offset, ring);
+            pointOffset = addInteriorRing(nativeGeom, geom, ring, pointOffset, ++figure);
         }
     }
 
-    private int addInteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int offset, int i) {
-        LineString ls = geom.getInteriorRingN(i);
-        Figure figure = new Figure(FigureAttribute.InteriorRing, offset);
-        nativeGeom.setFigure(i + 1, figure);
-        offset += ls.getNumPoints();
-        return offset;
+    private int addInteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int ring, int pointOffset, int numFigure) {
+        LineString ls = geom.getInteriorRingN(ring);
+        Figure figure = new Figure(FigureAttribute.InteriorRing, pointOffset);
+        nativeGeom.setFigure(numFigure, figure);
+        pointOffset += ls.getNumPoints();
+        return pointOffset;
     }
 
-    private int addExteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int offset) {
+    private int addExteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int offset, int numFigure) {
         LineString shell = geom.getExteriorRing();
         Figure exterior = new Figure(FigureAttribute.ExteriorRing, offset);
-        nativeGeom.setFigure(0, exterior);
+        nativeGeom.setFigure(numFigure, exterior);
         offset += shell.getNumPoints();
         return offset;
     }

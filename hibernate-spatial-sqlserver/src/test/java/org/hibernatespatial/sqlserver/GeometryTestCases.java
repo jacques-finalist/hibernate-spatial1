@@ -28,7 +28,7 @@ package org.hibernatespatial.sqlserver;
 import java.util.ArrayList;
 import java.util.List;
 
-class GeomTest {
+class GeometryTestCases {
 
     //TODO -- how to define EMPTY Geomtries in SQL?
 
@@ -68,6 +68,16 @@ class GeomTest {
         TEST_WKTS.add(new TestWKT(18, "POLYGON",
                 "POLYGON( (0 0, 0 10, 10 10, 10 0, 0 0), " +
                         "(2 2, 2 5, 5 5,5 2, 2 2))", 4326));
+
+        //MULTIPOLYGON
+        TEST_WKTS.add(new TestWKT(20, "MULTIPOLYGON",
+                "MULTIPOLYGON( ((10 20, 30 40, 44 50, 10 20)), ((5 0, 20 40, 30 34, 5 0)) )", 4326));
+        TEST_WKTS.add(new TestWKT(21, "MULTIPOLYGON",
+                "MULTIPOLYGON( ((10 20 1, 30 40 2, 44 50 2, 10 20 1)), ((5 0 0, 20 40 10, 30 34 20, 5 0 0)) )", 4326));
+        TEST_WKTS.add(new TestWKT(22, "MULTIPOLYGON",
+                "MULTIPOLYGON( " +
+                        "( (0 0, 0 50, 50 50, 0 0), (10 10, 10 20, 20 20, 20 10, 10 10) ), " +
+                        "((5 0, 20 40, 30 34, 5 0)) )", 4326));
 
 
     }

@@ -115,9 +115,9 @@ public class DataSourceUtils {
         try {
             cn = getDataSource().getConnection();
             Statement stmt = cn.createStatement();
-            for (int i = 0; i < GeomTest.TEST_WKTS.size(); i++) {
-                LOGGER.debug("adding stmt: " + GeomTest.TEST_WKTS.get(i).toSql());
-                stmt.addBatch(GeomTest.TEST_WKTS.get(i).toSql());
+            for (int i = 0; i < GeometryTestCases.TEST_WKTS.size(); i++) {
+                LOGGER.debug("adding stmt: " + GeometryTestCases.TEST_WKTS.get(i).toSql());
+                stmt.addBatch(GeometryTestCases.TEST_WKTS.get(i).toSql());
             }
             int[] insCounts = stmt.executeBatch();
             stmt.close();
@@ -164,7 +164,7 @@ public class DataSourceUtils {
     public static Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
         WKTReader parser = new WKTReader();
-        for (TestWKT testWKT : GeomTest.TEST_WKTS) {
+        for (TestWKT testWKT : GeometryTestCases.TEST_WKTS) {
             if (testWKT.type.equalsIgnoreCase(type)) {
                 try {
                     result.put(testWKT.id, parser.read(testWKT.wkt));

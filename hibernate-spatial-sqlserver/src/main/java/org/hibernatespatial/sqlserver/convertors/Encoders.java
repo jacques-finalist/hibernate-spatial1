@@ -45,6 +45,7 @@ public class Encoders {
         ENCODERS.add(new LineStringEncoder());
         ENCODERS.add(new MultiLineStringEncoder());
         ENCODERS.add(new PolygonEncoder());
+        ENCODERS.add(new MultiPolygonEncoder());
 
     }
 

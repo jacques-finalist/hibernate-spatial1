@@ -31,7 +31,7 @@ import org.hibernatespatial.mgeom.MLineString;
 
 class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
 
-    private LineStringDecoder lineStringDecoder = new LineStringDecoder();
+    private final LineStringDecoder lineStringDecoder = new LineStringDecoder();
 
     public boolean accepts(SqlGeometryV1 nativeGeom) {
         return nativeGeom.openGisType() == OpenGisType.MULTILINESTRING;
