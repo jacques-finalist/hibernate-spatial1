@@ -41,8 +41,6 @@ import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.Oracle9Dialect;
-import org.hibernate.dialect.Oracle9iDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.type.Type;
@@ -544,7 +542,6 @@ public class TestHQL extends TestCase {
     /**
      * test spatial analysis functions for HQL
      *
-     * @param cls
      * @throws Exception
      */
     public void testHqlAnalysis() throws Exception {
@@ -942,14 +939,14 @@ public class TestHQL extends TestCase {
      * @return
      */
     private boolean isWritable(Session session, Geometry geometry) {
-        Dialect dialect = findDialect(session);
-        if (dialect instanceof Oracle9Dialect ||
-                dialect instanceof Oracle9iDialect) {
-            for (Coordinate c : geometry.getCoordinates()) {
-                if (!Double.isNaN(c.z)) return false;
-                if (!Double.isNaN(getCoordM(c))) return false;
-            }
-        }
+//        Dialect dialect = findDialect(session);
+//        if (dialect instanceof Oracle9Dialect ||
+//                dialect instanceof Oracle9iDialect) {
+//            for (Coordinate c : geometry.getCoordinates()) {
+//                if (!Double.isNaN(c.z)) return false;
+//                if (!Double.isNaN(getCoordM(c))) return false;
+//            }
+//        }
         return true;
     }
 
