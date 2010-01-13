@@ -31,6 +31,7 @@ import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.type.CustomType;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialRelation;
 
 /**
  * @author Karel Maesen, Martin Steinwender.
@@ -67,6 +68,7 @@ public class SQLServer2008SpatialDialect extends SQLServerDialect implements Spa
         registerFunction("issimple", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STIsSimple()"));
         registerFunction("boundary", new SQLFunctionTemplate(geomType, "?1.STBoundary()"));
 
+        // section 2.1.1.2
         // Register functions for spatial relation constructs
         registerFunction("contains", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STContains(?2)"));
         registerFunction("crosses", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STCrosses(?2)"));
@@ -78,27 +80,102 @@ public class SQLServer2008SpatialDialect extends SQLServerDialect implements Spa
         registerFunction("within", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STWithin(?2)"));
         registerFunction("relate", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STRelate(?2,?3)"));
 
+        // section 2.1.1.3
+        // Register spatial analysis functions.
+        registerFunction("distance", new SQLFunctionTemplate(Hibernate.DOUBLE, "?1.STDistance(?2)"));
+        registerFunction("buffer", new SQLFunctionTemplate(geomType, "?1.STBuffer(?2)"));
+        registerFunction("convexhull", new SQLFunctionTemplate(geomType, "?1.STConvexHull()"));
+        registerFunction("difference", new SQLFunctionTemplate(geomType, "?1.STDifference(?2)"));
+        registerFunction("intersection", new SQLFunctionTemplate(geomType, "?1.STIntersection(?2)"));
+        registerFunction("symdifference", new SQLFunctionTemplate(geomType, "?1.STSymDifference(?2)"));
+        registerFunction("geomunion", new SQLFunctionTemplate(geomType, "?1.STUnion(?2)"));
+        // we rename OGC union to geomunion because union is a reserved SQL keyword.
+        // (See also postgis documentation).
+
+        // portable spatial aggregate functions
+        // no aggregatefunctions implemented in sql-server2000
+        //registerFunction("extent", new SQLFunctionTemplate(geomType, "?1.STExtent()"));
+
+        // section 2.1.9.1 methods on surfaces
+        registerFunction("area", new SQLFunctionTemplate(Hibernate.DOUBLE, "?1.STArea()"));
+        registerFunction("centroid", new SQLFunctionTemplate(geomType, "?1.STCentroid()"));
+        registerFunction("pointonsurface", new SQLFunctionTemplate(geomType, "?1.STPointOnSurface()"));
     }
 
-    public String getSpatialRelateSQL(String s, int i, boolean b) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /* (non-Javadoc)
+    * @see org.hibernatespatial.SpatialDialect#getSpatialRelateSQL(java.lang.String, int, boolean)
+    */
+
+    public String getSpatialRelateSQL(String columnName, int spatialRelation, boolean useFilter) {
+        final String stfunction;
+        switch (spatialRelation) {
+            case SpatialRelation.WITHIN:
+                stfunction = "STWithin";
+                break;
+            case SpatialRelation.CONTAINS:
+                stfunction = "STContains";
+                break;
+            case SpatialRelation.CROSSES:
+                stfunction = "STCrosses";
+                break;
+            case SpatialRelation.OVERLAPS:
+                stfunction = "STOverlaps";
+                break;
+            case SpatialRelation.DISJOINT:
+                stfunction = "STDisjoint";
+                break;
+            case SpatialRelation.INTERSECTS:
+                stfunction = "STIntersects";
+                break;
+            case SpatialRelation.TOUCHES:
+                stfunction = "STTouches";
+                break;
+            case SpatialRelation.EQUALS:
+                stfunction = "STEquals";
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Spatial relation is not known by this dialect");
+        }
+
+        return columnName + "." + stfunction + "(?) = 1";
     }
 
-    public String getSpatialFilterExpression(String s) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /* (non-Javadoc)
+    * @see org.hibernatespatial.SpatialDialect#getSpatialFilterExpression(java.lang.String)
+    */
+
+    public String getSpatialFilterExpression(String columnName) {
+        return columnName + ".Filter(?) = 1";
     }
+
+    /* (non-Javadoc)
+     * @see org.hibernatespatial.SpatialDialect#getGeometryUserType()
+     */
 
     public UserType getGeometryUserType() {
         return new SQLServer2008GeometryUserType();
     }
 
-    public String getSpatialAggregateSQL(String s, int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /* (non-Javadoc)
+     * @see org.hibernatespatial.SpatialDialect#getSpatialAggregateSQL(java.lang.String, int)
+     */
+
+    public String getSpatialAggregateSQL(String columnName, int aggregation) {
+        throw new UnsupportedOperationException("No spatial aggregate SQL functions.");
     }
+
+    /* (non-Javadoc)
+     * @see org.hibernatespatial.SpatialDialect#getDbGeometryTypeName()
+     */
 
     public String getDbGeometryTypeName() {
         return COLUMN_TYPE;
     }
+
+    /* (non-Javadoc)
+     * @see org.hibernatespatial.SpatialDialect#isTwoPhaseFiltering()
+     */
 
     public boolean isTwoPhaseFiltering() {
         return false;
