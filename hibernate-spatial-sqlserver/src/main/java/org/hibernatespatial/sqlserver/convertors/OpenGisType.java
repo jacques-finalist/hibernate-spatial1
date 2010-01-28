@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,24 +25,32 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.*;
+
 /**
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
 enum OpenGisType {
-    POINT((byte) 1),
-    LINESTRING((byte) 2),
-    POLYGON((byte) 3),
-    MULTIPOINT((byte) 4),
-    MULTILINESTRING((byte) 5),
-    MULTIPOLYGON((byte) 6),
-    GEOMETRYCOLLECTION((byte) 7),
-    INVALID_TYPE((byte) 0);
+    POINT((byte) 1, Point.class),
+    LINESTRING((byte) 2, LineString.class),
+    POLYGON((byte) 3, Polygon.class),
+    MULTIPOINT((byte) 4, MultiPoint.class),
+    MULTILINESTRING((byte) 5, MultiLineString.class),
+    MULTIPOLYGON((byte) 6, MultiPolygon.class),
+    GEOMETRYCOLLECTION((byte) 7, GeometryCollection.class),
+    INVALID_TYPE((byte) 0, null);
 
     final byte byteValue;
+    final Class geomClass;
 
-    OpenGisType(byte v) {
-        byteValue = v;
+    OpenGisType(byte v, Class geomClass) {
+        this.byteValue = v;
+        this.geomClass = geomClass;
+    }
+
+    boolean typeOf(Object o){
+        return geomClass.isAssignableFrom(o.getClass());
     }
 
     static OpenGisType valueOf(byte b) {

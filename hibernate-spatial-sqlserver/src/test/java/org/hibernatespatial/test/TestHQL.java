@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -397,12 +397,12 @@ public class TestHQL extends TestCase {
                         System.out.println(i + ": ASSERTION FAILED.");
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw e;
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         } finally {
             session.close();
         }

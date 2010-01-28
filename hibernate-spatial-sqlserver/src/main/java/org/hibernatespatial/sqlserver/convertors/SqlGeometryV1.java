@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -68,7 +68,7 @@ class SqlGeometryV1 {
     }
 
     //TODO -- refactor: all iterations in separate methods.
-    static byte[] store(SqlGeometryV1 sqlNative) {
+    public static byte[] store(SqlGeometryV1 sqlNative) {
         int capacity = sqlNative.calculateCapacity();
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -109,7 +109,7 @@ class SqlGeometryV1 {
         return buffer.array();
     }
 
-    static SqlGeometryV1 load(byte[] bytes) {
+    public static SqlGeometryV1 load(byte[] bytes) {
         SqlGeometryV1 result = new SqlGeometryV1(bytes);
         result.parse();
         return result;
@@ -124,7 +124,7 @@ class SqlGeometryV1 {
 //        return coordinate;
 //    }
 
-    Coordinate getCoordinate(int index) {
+    public Coordinate getCoordinate(int index) {
         Coordinate coordinate;
         if (hasMValues()) {
             coordinate = new MCoordinate();
@@ -138,11 +138,69 @@ class SqlGeometryV1 {
         return coordinate;
     }
 
-    Figure getFigure(int index) {
+    public int getStartFigureForShape(int shapeIndex){
+        return getShape(shapeIndex).figureOffset;
+    }
+
+    /**
+     * Returns the index in the figure array after the last figure of the specified shape.
+     * @param shapeIndex index to shape in shape array
+     * @return index after last shape figure
+     */
+    public int getEndFigureForShape(int shapeIndex) {
+        int nextIdx = shapeIndex + 1;
+        if (nextIdx == getNumShapes())
+            return getNumFigures();
+        return getShape(nextIdx).figureOffset;
+    }
+
+    public int getStartPointForFigure(int figureIndex){
+        return getFigure(figureIndex).pointOffset;
+    }
+
+     /**
+     * Returns the index in the point array after the last point of the specified figure.
+     * @param figureIndex index to shape in shape array
+     * @return index after last shape figure
+     */
+    public int getEndPointForFigure(int figureIndex) {
+        int next = figureIndex + 1;
+        if (next == getNumFigures()) {
+            return getNumPoints();
+        }
+        return getFigure(next).pointOffset;
+    }
+
+    public boolean isFigureInteriorRing(int figureIdx) {
+        return getFigure(figureIdx).isInteriorRing();
+    }
+
+    public OpenGisType getOpenGisTypeOfShape(int shpIdx) {
+        return getShape(shpIdx).openGisType;
+    }
+
+    public Coordinate[] coordinateRange(int start, int end){
+        Coordinate[] coordinates = createCoordinateArray(end - start);
+        for (int idx = start, i = 0; idx < end; idx++, i++) {
+            coordinates[i] = getCoordinate(idx);
+        }
+        return coordinates;
+    }
+
+    private Coordinate[] createCoordinateArray(int size) {
+        if (hasMValues()) {
+            return new MCoordinate[size];
+        } else {
+            return new Coordinate[size];
+        }
+    }
+
+
+    private Figure getFigure(int index) {
         return figures[index];
     }
 
-    Shape getShape(int index) {
+    private Shape getShape(int index) {
         return shapes[index];
     }
 
@@ -170,14 +228,23 @@ class SqlGeometryV1 {
     }
 
     void setHasZValues() {
-        this.zValues = new double[this.numberOfPoints];
+
         serializationPropertiesByte |= hasZValuesMask;
 
     }
 
+    void allocateZValueArray(){
+        if (this.hasZValues())
+            this.zValues = new double[this.numberOfPoints];
+    }
+
+    void allocateMValueArray(){
+        if (this.hasMValues())
+            this.mValues = new double[this.numberOfPoints];
+    }
 
     void setHasMValues() {
-        this.mValues = new double[this.numberOfPoints];
+
         serializationPropertiesByte |= hasMValuesMask;
     }
 
@@ -191,7 +258,7 @@ class SqlGeometryV1 {
     }
 
     void setIsSingleLineSegment() {
-        setNumberOfPoints(2);
+//        setNumberOfPoints(2);
         serializationPropertiesByte |= isSingleLineSegment;
     }
 
@@ -220,8 +287,18 @@ class SqlGeometryV1 {
 
         if (isSingleLineSegment() ||
                 isSinglePoint()) {
-            return; //parsing can stop here
+            //generate figure and shape.
+            // These are assumed, not explicitly encoded in the
+            // serialized data. See specs.
+            setNumberOfFigures(1);
+            setFigure(0, new Figure(FigureAttribute.Stroke, 0));
+            setNumberOfShapes(1);
+            OpenGisType gisType = isSinglePoint() ? OpenGisType.POINT : OpenGisType.LINESTRING;
+            setShape(0, new Shape(-1,0,gisType));
+            return;
         }
+        //in all other cases, figures and shapes are
+        //explicitly encoded.
         readFigures();
         readShapes();
     }
@@ -377,6 +454,24 @@ class SqlGeometryV1 {
 
     int getNumFigures() {
         return this.numberOfFigures;
+    }
+
+
+    /**
+     * Returns the index  after the last child shape of the specified shape.
+     * @param shapeIndex index of parent shape
+     * @return index one past the last child shape
+     */
+    public int getEndChildShape(int shapeIndex) {
+        int childIndex = shapeIndex + 1;
+        while (childIndex < shapes.length){
+            if (shapes[childIndex].parentOffset == shapeIndex){
+                childIndex++;
+            } else {
+                break;
+            }
+        }
+        return childIndex;
     }
 
     private static class Point {

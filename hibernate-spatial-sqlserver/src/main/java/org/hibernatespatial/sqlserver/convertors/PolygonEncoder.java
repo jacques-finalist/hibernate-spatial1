@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,9 +25,12 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
+
+import java.util.List;
 
 public class PolygonEncoder extends AbstractEncoder<Polygon> {
 
@@ -37,38 +40,47 @@ public class PolygonEncoder extends AbstractEncoder<Polygon> {
         return geom instanceof Polygon;
     }
 
-    protected void encodeFigures(SqlGeometryV1 nativeGeom, Polygon geom) {
-        nativeGeom.setNumberOfFigures(geom.getNumInteriorRing() + 1);
-        int pointOffset = 0;
-        int figure = 0;
-        addFiguresForPolygon(nativeGeom, geom, pointOffset, figure);
+    @Override
+    protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
+        if (! (geom instanceof Polygon)) throw new IllegalArgumentException("Polygon geometry expected.");
+        Polygon polygon = (Polygon)geom;
+        int figureOffset = figures.size();
+        shapes.add( new Shape(parentShapeIndex, figureOffset, OpenGisType.POLYGON));
+
+        int pointOffset = coordinates.size();
+        addExteriorRing(polygon, coordinates, figures);
+        addInteriorRings(polygon, coordinates, figures);
+
     }
 
-    protected void addFiguresForPolygon(SqlGeometryV1 nativeGeom, Polygon geom, int pointOffset, int figure) {
-        pointOffset = addExteriorRing(nativeGeom, geom, pointOffset, figure);
-        for (int ring = 0; ring < geom.getNumInteriorRing(); ring++) {
-            pointOffset = addInteriorRing(nativeGeom, geom, ring, pointOffset, ++figure);
+
+    private void addInteriorRings(Polygon geom, List<Coordinate> coordinates, List<Figure> figures){
+        for (int idx = 0; idx < geom.getNumInteriorRing(); idx++){
+            addInteriorRing(geom.getInteriorRingN(idx), coordinates, figures);
         }
     }
 
-    private int addInteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int ring, int pointOffset, int numFigure) {
-        LineString ls = geom.getInteriorRingN(ring);
+    private void addInteriorRing(LineString ring, List<Coordinate> coordinates, List<Figure> figures) {
+        int pointOffset = coordinates.size();
+        addPoints(ring, coordinates);
         Figure figure = new Figure(FigureAttribute.InteriorRing, pointOffset);
-        nativeGeom.setFigure(numFigure, figure);
-        pointOffset += ls.getNumPoints();
-        return pointOffset;
+        figures.add(figure);
+
     }
 
-    private int addExteriorRing(SqlGeometryV1 nativeGeom, Polygon geom, int offset, int numFigure) {
+    private void addPoints(LineString ring, List<Coordinate> coordinates) {
+        for (Coordinate c : ring.getCoordinates()){
+            coordinates.add(c);
+        }
+    }
+
+    private void addExteriorRing(Polygon geom, List<Coordinate> coordinates, List<Figure> figures) {
         LineString shell = geom.getExteriorRing();
+        int offset = coordinates.size();
+        addPoints(shell, coordinates);
         Figure exterior = new Figure(FigureAttribute.ExteriorRing, offset);
-        nativeGeom.setFigure(numFigure, exterior);
-        offset += shell.getNumPoints();
-        return offset;
+        figures.add(exterior);
     }
 
-    protected void encodeShapes(SqlGeometryV1 nativeGeom, Polygon geom) {
-        nativeGeom.setNumberOfShapes(1);
-        nativeGeom.setShape(0, SHAPE);
-    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -47,15 +47,15 @@ class Figure {
         buffer.putInt(pointOffset);
     }
 
-    public boolean isInteriorRing() {
+    boolean isInteriorRing() {
         return this.figureAttribute.equals(FigureAttribute.InteriorRing);
     }
 
-    public boolean isExteriorRing() {
+    boolean isExteriorRing() {
         return this.figureAttribute.equals(FigureAttribute.ExteriorRing);
     }
 
-    public boolean isStroke() {
+    boolean isStroke() {
         return this.figureAttribute.equals(FigureAttribute.Stroke);
     }
 

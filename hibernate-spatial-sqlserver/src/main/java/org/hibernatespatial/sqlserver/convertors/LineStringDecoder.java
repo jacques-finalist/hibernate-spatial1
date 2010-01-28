@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,8 +32,9 @@ import org.hibernatespatial.mgeom.MCoordinate;
 
 class LineStringDecoder extends AbstractDecoder<LineString> {
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
-        return nativeGeom.openGisType() == OpenGisType.LINESTRING;
+    @Override
+    protected OpenGisType getOpenGisType() {
+        return OpenGisType.LINESTRING;
     }
 
     protected LineString createNullGeometry() {
@@ -44,12 +45,18 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
         return createLineString(nativeGeom, 0, nativeGeom.getNumPoints());
     }
 
+    @Override
+    protected LineString createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+        int figureOffset = nativeGeom.getStartFigureForShape(shapeIndex);
+        //linestring shapes have exactly one figure
+        int startOffset = nativeGeom.getStartPointForFigure(figureOffset);
+        int endOffset = nativeGeom.getEndPointForFigure(figureOffset);
+        return createLineString(nativeGeom, startOffset, endOffset);
+    }
+
     protected LineString createLineString(SqlGeometryV1 nativeGeom, int offset, int nextOffset) {
-        Coordinate[] coords = createCoordinateArray(nextOffset - offset, nativeGeom);
-        for (int idx = offset, i = 0; idx < nextOffset; idx++, i++) {
-            coords[i] = nativeGeom.getCoordinate(idx);
-        }
-        return createLineString(coords, nativeGeom);
+        Coordinate[] coordinates = nativeGeom.coordinateRange(offset, nextOffset);
+        return createLineString(coordinates, nativeGeom);
     }
 
     private LineString createLineString(Coordinate[] coords, SqlGeometryV1 nativeGeom) {
@@ -61,12 +68,5 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
 
     }
 
-    private Coordinate[] createCoordinateArray(int size, SqlGeometryV1 nativeGeom) {
-        if (nativeGeom.hasMValues()) {
-            return new MCoordinate[size];
-        } else {
-            return new Coordinate[size];
-        }
-    }
-
+    
 }

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -176,7 +176,6 @@ public class DataSourceUtils {
         return result;
     }
 
-
     private static int sum(int[] insCounts) {
         int result = 0;
         for (int idx = 0; idx < insCounts.length; idx++) {
@@ -184,6 +183,5 @@ public class DataSourceUtils {
         }
         return result;
     }
-
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -43,11 +43,21 @@ abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
         return result;
     }
 
-    public abstract boolean accepts(SqlGeometryV1 nativeGeom);
+    public boolean accepts(OpenGisType type){
+        return type == getOpenGisType();
+    }
+
+    public boolean accepts(SqlGeometryV1 nativeGeom) {
+        return accepts(nativeGeom.openGisType());
+    }
+
+    protected abstract OpenGisType getOpenGisType();
 
     protected abstract G createNullGeometry();
 
     protected abstract G createGeometry(SqlGeometryV1 nativeGeom);
+
+    protected abstract G createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex);
 
     protected MGeometryFactory getGeometryFactory() {
         return this.geometryFactory;

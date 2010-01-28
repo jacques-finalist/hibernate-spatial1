@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -30,13 +30,25 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.mgeom.MCoordinate;
 
+import java.util.List;
+
 /**
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
-class PointEncoder implements Encoder<Point> {
+class PointEncoder extends AbstractEncoder<Point> {
 
+    /**
+     * Encodes a point as an <code>SQLGeometryV1</code> object.
+     *
+     * This is a specific implementation because points don't explicitly serialize figure and shape components.
+     *
+     * @param geom  Geometry to serialize
+     * @return 
+     */
+    @Override
     public SqlGeometryV1 encode(Point geom) {
+
         SqlGeometryV1 sqlGeom = new SqlGeometryV1();
         sqlGeom.setSrid(geom.getSRID());
         sqlGeom.setIsSinglePoint();
@@ -45,12 +57,26 @@ class PointEncoder implements Encoder<Point> {
         Coordinate coordinate = geom.getCoordinate();
         if (is3DPoint(coordinate)) {
             sqlGeom.setHasZValues();
+            sqlGeom.allocateZValueArray();
         }
         if (isMPoint(coordinate)) {
             sqlGeom.setHasMValues();
+            sqlGeom.allocateMValueArray();
         }
         sqlGeom.setCoordinate(0, coordinate);
         return sqlGeom;
+    }
+
+    @Override
+    protected void encode(Geometry geom, int parentIdx, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
+        if (!(geom instanceof Point)) throw new IllegalArgumentException("Require Point geometry");
+        int pntOffset = coordinates.size();
+        int figureOffset = figures.size();
+        coordinates.add(geom.getCoordinate());
+        Figure figure = new Figure(FigureAttribute.Stroke,pntOffset);
+        figures.add(figure);
+        Shape shape = new Shape(parentIdx, figureOffset,OpenGisType.POINT);
+        shapes.add(shape);
     }
 
     private boolean isMPoint(Coordinate coordinate) {

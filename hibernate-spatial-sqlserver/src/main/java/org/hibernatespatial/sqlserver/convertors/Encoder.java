@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -36,5 +36,5 @@ public interface Encoder<T extends Geometry> {
     public SqlGeometryV1 encode(T geom);
 
     public boolean accepts(Geometry geom);
-
+    
 }

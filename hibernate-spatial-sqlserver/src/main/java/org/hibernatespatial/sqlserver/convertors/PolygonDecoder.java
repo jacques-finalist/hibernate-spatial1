@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -31,8 +31,9 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class PolygonDecoder extends AbstractDecoder<Polygon> {
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
-        return nativeGeom.openGisType().equals(OpenGisType.POLYGON);
+    @Override
+    protected OpenGisType getOpenGisType() {
+        return OpenGisType.POLYGON;
     }
 
     protected Polygon createNullGeometry() {
@@ -40,41 +41,30 @@ public class PolygonDecoder extends AbstractDecoder<Polygon> {
     }
 
     protected Polygon createGeometry(SqlGeometryV1 nativeGeom) {
-        return createGeometry(nativeGeom, 0, nativeGeom.getNumFigures());
+        return createGeometry(nativeGeom, 0);
     }
 
-    protected Polygon createGeometry(SqlGeometryV1 nativeGeom, int startFigureOffset, int nextShapeFigureOffset) {
+    protected Polygon createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
         //polygons consist of one exterior ring figure, and several interior ones.
-        LinearRing[] holes = new LinearRing[nextShapeFigureOffset - startFigureOffset - 1];
+        int startFigure = nativeGeom.getStartFigureForShape(shapeIndex);
+        int endFigure = nativeGeom.getEndFigureForShape(shapeIndex);
+        LinearRing[] holes = new LinearRing[endFigure - startFigure - 1];
         LinearRing shell = null;
-        for (int figureIdx = startFigureOffset, i = 0; figureIdx < nextShapeFigureOffset; figureIdx++) {
-            Figure figure = nativeGeom.getFigure(figureIdx);
-            int nextPntOffset = getNextPointOffset(nativeGeom, figureIdx);
-            if (figure.isInteriorRing()) {
-                holes[i++] = toLinearRing(nativeGeom, figure.pointOffset, nextPntOffset);
+        for (int figureIdx = startFigure, i = 0; figureIdx < endFigure; figureIdx++) {
+            int startPnt = nativeGeom.getStartPointForFigure(figureIdx);
+            int endPnt = nativeGeom.getEndPointForFigure(figureIdx);
+            if (nativeGeom.isFigureInteriorRing(figureIdx)) {
+                holes[i++] = toLinearRing(nativeGeom, startPnt, endPnt);
             } else {
-                shell = toLinearRing(nativeGeom, figure.pointOffset, nextPntOffset);
+                shell = toLinearRing(nativeGeom, startPnt, endPnt);
             }
         }
         return getGeometryFactory().createPolygon(shell, holes);
-
     }
 
     private LinearRing toLinearRing(SqlGeometryV1 nativeGeom, int pointOffset, int nextPntOffset) {
-        Coordinate[] coordinates = new Coordinate[nextPntOffset - pointOffset];
-        for (int pIdx = pointOffset, cIdx = 0; pIdx < nextPntOffset; pIdx++, cIdx++) {
-            coordinates[cIdx] = nativeGeom.getCoordinate(pIdx);
-        }
+        Coordinate[] coordinates = nativeGeom.coordinateRange(pointOffset, nextPntOffset);
         return getGeometryFactory().createLinearRing(coordinates);
-    }
-
-
-    private int getNextPointOffset(SqlGeometryV1 nativeGeom, int figureIndex) {
-        int next = figureIndex + 1;
-        if (next == nativeGeom.getNumFigures()) {
-            return nativeGeom.getNumPoints();
-        }
-        return nativeGeom.getFigure(next).pointOffset;
     }
 
 }

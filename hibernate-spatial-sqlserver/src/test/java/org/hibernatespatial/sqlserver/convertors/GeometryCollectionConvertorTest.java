@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,19 +25,32 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
+ * Created by IntelliJ IDEA.
+ * User: maesenka
+ * Date: Jan 24, 2010
+ * Time: 5:33:19 PM
+ * To change this template use File | Settings | File Templates.
  */
-public interface Decoder<T extends Geometry> {
+public class GeometryCollectionConvertorTest extends AbstractConvertorTest{
 
-    public T decode(SqlGeometryV1 nativeGeom);
+    @Before
+    public void setUp() {
+        doDecoding(OpenGisType.GEOMETRYCOLLECTION);
+        doEncoding();
+    }
 
-    boolean accepts(SqlGeometryV1 nativeGeom);
+    @Test
+    public void test_encoding() {
+        super.test_encoding();
+    }
 
-    boolean accepts(OpenGisType type);
-
+    @Test
+    public void test_decoding() {
+        super.test_decoding();
+    }
 
 }

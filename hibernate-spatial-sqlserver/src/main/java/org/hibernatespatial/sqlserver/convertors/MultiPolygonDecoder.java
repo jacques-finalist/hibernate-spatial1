@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,8 +32,9 @@ public class MultiPolygonDecoder extends AbstractDecoder<MultiPolygon> {
 
     private final PolygonDecoder polygonDecoder = new PolygonDecoder();
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
-        return nativeGeom.openGisType().equals(OpenGisType.MULTIPOLYGON);
+    @Override
+    protected OpenGisType getOpenGisType() {
+        return OpenGisType.MULTIPOLYGON;
     }
 
     protected MultiPolygon createNullGeometry() {
@@ -41,20 +42,19 @@ public class MultiPolygonDecoder extends AbstractDecoder<MultiPolygon> {
     }
 
     protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom) {
-        Polygon[] polygons = new Polygon[nativeGeom.getNumShapes() - 1];
-        for (int shpIdx = 1; shpIdx < nativeGeom.getNumShapes(); shpIdx++) {
-            Shape shape = nativeGeom.getShape(shpIdx);
-            int figureOffset = shape.figureOffset;
-            int nextFigureOffset = getNextShapeFigureOffset(nativeGeom, shpIdx);
-            polygons[shpIdx - 1] = polygonDecoder.createGeometry(nativeGeom, figureOffset, nextFigureOffset);
+        return createGeometry(nativeGeom, 0);
+    }
+
+    @Override
+    protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+        int startChildShape = shapeIndex + 1;
+        int endChildShape = nativeGeom.getEndChildShape(shapeIndex);
+        Polygon[] polygons = new Polygon[endChildShape - startChildShape];
+        for (int i = 0; i < polygons.length; i++){
+            polygons[i] = polygonDecoder.createGeometry(nativeGeom,startChildShape++);
         }
         return getGeometryFactory().createMultiPolygon(polygons);
     }
 
-    private int getNextShapeFigureOffset(SqlGeometryV1 nativeGeom, int shpIdx) {
-        int nextIdx = shpIdx + 1;
-        if (nextIdx == nativeGeom.getNumShapes())
-            return nativeGeom.getNumFigures();
-        return nativeGeom.getShape(nextIdx).figureOffset;
-    }
+
 }

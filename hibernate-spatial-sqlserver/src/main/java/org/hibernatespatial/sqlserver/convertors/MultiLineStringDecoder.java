@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -33,8 +33,10 @@ class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
 
     private final LineStringDecoder lineStringDecoder = new LineStringDecoder();
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
-        return nativeGeom.openGisType() == OpenGisType.MULTILINESTRING;
+
+    @Override
+    protected OpenGisType getOpenGisType() {
+        return OpenGisType.MULTILINESTRING;
     }
 
     protected MultiLineString createNullGeometry() {
@@ -42,51 +44,30 @@ class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
     }
 
     protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom) {
+        return createGeometry(nativeGeom, 0);
+    }
+
+    @Override
+    protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
         LineString[] lineStrings;
+        int startChildIndex = shapeIndex + 1;
+        int endChildShapeIndex = nativeGeom.getEndChildShape(shapeIndex);
         if (nativeGeom.hasMValues()) {
-            lineStrings = new MLineString[nativeGeom.getNumShapes() - 1];
-            collectLineStrings(nativeGeom, lineStrings);
+            lineStrings = new MLineString[endChildShapeIndex - startChildIndex];
+            collectLineStrings(nativeGeom, lineStrings, startChildIndex, endChildShapeIndex);
             return getGeometryFactory().createMultiMLineString((MLineString[]) lineStrings);
         } else {
-            lineStrings = new LineString[nativeGeom.getNumShapes() - 1];
-            collectLineStrings(nativeGeom, lineStrings);
+            lineStrings = new LineString[endChildShapeIndex - startChildIndex];
+            collectLineStrings(nativeGeom, lineStrings, startChildIndex, endChildShapeIndex);
             return getGeometryFactory().createMultiLineString(lineStrings);
         }
-
     }
 
-    private void collectLineStrings(SqlGeometryV1 nativeGeom, LineString[] lineStrings) {
-        int[] pointOffsets = collectPointOffsets(nativeGeom);
-        for (int i = 0; i < pointOffsets.length - 1; i++) {
-            int startOffset = pointOffsets[i];
-            int nextOffset = pointOffsets[i + 1];
-            lineStrings[i] = lineStringDecoder.createLineString(nativeGeom, startOffset, nextOffset);
+    private void collectLineStrings(SqlGeometryV1 nativeGeom, LineString[] lineStrings, int startChild, int endChild) {
+
+        for (int idx = startChild, i = 0; idx < endChild; idx++, i++){
+            lineStrings[i] = lineStringDecoder.createGeometry(nativeGeom, idx);
         }
-    }
-
-
-    /**
-     * Returns an array of point offsets for quickly returning the parts
-     * in the point array the correspond to the linestrings.
-     * <p/>
-     * The last offset points beyond the end of the point array.
-     *
-     * @param nativeGeom
-     * @return
-     */
-    private int[] collectPointOffsets(SqlGeometryV1 nativeGeom) {
-        int[] pointOffsets = new int[nativeGeom.getNumShapes()];
-
-        // first shape is the parent shape; second and following are linestrings.
-        for (int shpIdx = 1; shpIdx < nativeGeom.getNumShapes(); shpIdx++) {
-            Shape shape = nativeGeom.getShape(shpIdx);
-            assert (shape.openGisType == OpenGisType.LINESTRING);
-            int figureOffset = shape.figureOffset;
-            Figure figure = nativeGeom.getFigure(figureOffset);
-            pointOffsets[shpIdx - 1] = figure.pointOffset;
-        }
-        pointOffsets[nativeGeom.getNumShapes() - 1] = nativeGeom.getNumPoints();
-        return pointOffsets;
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,7 +25,7 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +43,15 @@ public class Encoders {
         //Encoders
         ENCODERS.add(new PointEncoder());
         ENCODERS.add(new LineStringEncoder());
-        ENCODERS.add(new MultiLineStringEncoder());
         ENCODERS.add(new PolygonEncoder());
-        ENCODERS.add(new MultiPolygonEncoder());
-        ENCODERS.add(new MultiPointEncoder());
+        ENCODERS.add(new GeometryCollectionEncoder<MultiPoint>(OpenGisType.MULTIPOINT));
+        ENCODERS.add(new GeometryCollectionEncoder<MultiLineString>(OpenGisType.MULTILINESTRING));
+        ENCODERS.add(new GeometryCollectionEncoder<MultiPolygon>(OpenGisType.MULTIPOLYGON));
+        ENCODERS.add(new GeometryCollectionEncoder<GeometryCollection>(OpenGisType.GEOMETRYCOLLECTION));
 
     }
 
-    private static Encoder<? extends Geometry> encoderFor(Geometry geom) {
+    public static Encoder<? extends Geometry> encoderFor(Geometry geom) {
         for (Encoder<? extends Geometry> encoder : ENCODERS) {
             if (encoder.accepts(geom))
                 return encoder;

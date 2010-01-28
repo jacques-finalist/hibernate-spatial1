@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -42,10 +42,11 @@ public class Decoders {
         //Decoders
         DECODERS.add(new PointDecoder());
         DECODERS.add(new LineStringDecoder());
-        DECODERS.add(new MultiLineStringDecoder());
         DECODERS.add(new PolygonDecoder());
+        DECODERS.add(new MultiLineStringDecoder());
         DECODERS.add(new MultiPolygonDecoder());
         DECODERS.add(new MultiPointDecoder());
+        DECODERS.add(new GeometryCollectionDecoder());
     }
 
 
@@ -61,6 +62,14 @@ public class Decoders {
         SqlGeometryV1 sqlGeom = SqlGeometryV1.load(raw);
         Decoder decoder = decoderFor(sqlGeom);
         return decoder.decode(sqlGeom);
+    }
+
+    public static Decoder<? extends Geometry> decoderFor(OpenGisType type){
+        for (Decoder<? extends Geometry> decoder : DECODERS) {
+            if (decoder.accepts(type))
+                return decoder;
+        }
+        throw new IllegalArgumentException("No decoder for type " + type);
     }
 
 }

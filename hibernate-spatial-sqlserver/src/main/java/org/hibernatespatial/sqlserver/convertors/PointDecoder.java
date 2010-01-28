@@ -34,8 +34,9 @@ import com.vividsolutions.jts.geom.Point;
  */
 class PointDecoder extends AbstractDecoder<Point> {
 
-    public boolean accepts(SqlGeometryV1 sqlNative) {
-        return (sqlNative.openGisType() == OpenGisType.POINT);
+    @Override
+    protected OpenGisType getOpenGisType() {
+        return OpenGisType.POINT;
     }
 
     protected Point createNullGeometry() {
@@ -43,7 +44,18 @@ class PointDecoder extends AbstractDecoder<Point> {
     }
 
     protected Point createGeometry(SqlGeometryV1 nativeGeom) {
-        return getGeometryFactory().createPoint(nativeGeom.getCoordinate(0));
+        return createPoint(nativeGeom, 0);
+    }
+
+    @Override
+    protected Point createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+        int figureOffset = nativeGeom.getStartFigureForShape(shapeIndex);
+        int pntOffset = nativeGeom.getStartPointForFigure(figureOffset);
+        return createPoint(nativeGeom, pntOffset);
+    }
+
+    private Point createPoint(SqlGeometryV1 nativeGeom, int pntOffset){
+        return getGeometryFactory().createPoint(nativeGeom.getCoordinate(pntOffset));
     }
 
 

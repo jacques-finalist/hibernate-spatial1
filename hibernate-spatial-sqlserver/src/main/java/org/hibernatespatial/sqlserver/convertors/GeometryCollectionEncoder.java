@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -27,33 +27,43 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.GeometryCollection;
 
 import java.util.List;
 
-class LineStringEncoder extends AbstractEncoder<LineString> {
+/**
+ * @Author Karel Maesen
+ */
+public class GeometryCollectionEncoder<T extends GeometryCollection> extends AbstractEncoder<T> {
 
-    @Override
-    protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
-        if (! (geom instanceof LineString)) throw new IllegalArgumentException("Require LineString geometry");
-        int figureOffset = figures.size();
-        int pointOffset = coordinates.size();
-        for (Coordinate coordinate : geom.getCoordinates()) {
-            coordinates.add(coordinate);
-        }
-        figures.add(new Figure(FigureAttribute.Stroke, pointOffset));
-        shapes.add(new Shape(parentShapeIndex, figureOffset, OpenGisType.LINESTRING));
-    }
+    private final OpenGisType openGisType;
 
-    @Override
-    protected void encodePoints(SqlGeometryV1 nativeGeom, List<Coordinate> coordinates){
-        super.encodePoints(nativeGeom, coordinates);
-        if (coordinates.size() == 2){
-            nativeGeom.setIsSingleLineSegment();
-        }
+    GeometryCollectionEncoder(OpenGisType openGisType){
+        this.openGisType = openGisType;
     }
 
     public boolean accepts(Geometry geom) {
-        return geom instanceof LineString;        
+        return this.openGisType.typeOf(geom);
+    }
+
+    @Override
+    protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
+        int thisShapeIndex = shapes.size();
+        Shape thisShape = createShape(parentShapeIndex, figures);
+        shapes.add(thisShape);
+        for (int i = 0; i < geom.getNumGeometries(); i++){
+            Geometry component = geom.getGeometryN(i);
+            encodeComponent(component, thisShapeIndex, coordinates, figures, shapes);
+        }
+    }
+
+    protected Shape createShape(int parentShapeIndex, List<Figure> figures) {
+        Shape thisShape = new Shape(parentShapeIndex, figures.size(), this.openGisType);
+        return thisShape;
+    }
+
+    protected void encodeComponent(Geometry geom, int thisShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
+        AbstractEncoder<? extends Geometry> encoder = (AbstractEncoder<? extends Geometry>) Encoders.encoderFor(geom);
+        encoder.encode(geom, thisShapeIndex, coordinates, figures, shapes);
     }
 }

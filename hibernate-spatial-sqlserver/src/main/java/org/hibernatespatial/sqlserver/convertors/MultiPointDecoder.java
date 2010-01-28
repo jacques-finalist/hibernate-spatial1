@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -31,8 +31,10 @@ import com.vividsolutions.jts.geom.Point;
 
 public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
-        return nativeGeom.openGisType() == OpenGisType.MULTIPOINT;
+
+    @Override
+    protected OpenGisType getOpenGisType() {
+         return OpenGisType.MULTIPOINT;
     }
 
     protected MultiPoint createNullGeometry() {
@@ -40,11 +42,25 @@ public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
     }
 
     protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom) {
+        //optimized multipoint decoding
         Coordinate[] coords = new Coordinate[nativeGeom.getNumPoints()];
         for (int cIdx = 0; cIdx < nativeGeom.getNumPoints(); cIdx++) {
             coords[cIdx] = nativeGeom.getCoordinate(cIdx);
         }
         return getGeometryFactory().createMultiPoint(coords);
+    }
+
+    @Override
+    protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+        int startChildIdx = shapeIndex + 1;
+        int endchildIdx = nativeGeom.getEndChildShape(shapeIndex);
+        Coordinate[] coordinates = new Coordinate[endchildIdx - startChildIdx];
+        for (int i = 0 ; i < coordinates.length; i++){
+            int figureOffset = nativeGeom.getStartFigureForShape(startChildIdx++);
+            int pntIdx = nativeGeom.getStartPointForFigure(figureOffset);
+            coordinates[i]  = nativeGeom.getCoordinate(pntIdx);
+        }
+        return getGeometryFactory().createMultiPoint(coordinates);
     }
 
 
