@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,13 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.sqlserver.DataSourceUtils;
-import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
@@ -47,8 +48,8 @@ public class AbstractConvertorTest {
 
     @BeforeClass
     public static void beforeClass() {
-        DataSourceUtils.removeReadTestData();
-        DataSourceUtils.loadReadTestData();
+        DataSourceUtils.deleteTestData();
+        DataSourceUtils.insertTestData();
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -48,10 +48,10 @@ public class TestHQL2008 {
     }
 
     @Test
-    public void testEquity() throws Exception {
-        delegate.testEquity(PointEntity.class);
-        delegate.testEquity(LineStringEntity.class);
-        delegate.testEquity(PolygonEntity.class);
+    public void testWriteReadIntegrity() throws Exception {
+        delegate.testWriteReadIntegrity(PointEntity.class);
+        delegate.testWriteReadIntegrity(LineStringEntity.class);
+        delegate.testWriteReadIntegrity(PolygonEntity.class);
     }
 
     @Test

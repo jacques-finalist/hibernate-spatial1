@@ -25,7 +25,10 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,7 @@ public class Encoders {
         ENCODERS.add(new PointEncoder());
         ENCODERS.add(new LineStringEncoder());
         ENCODERS.add(new PolygonEncoder());
-        ENCODERS.add(new GeometryCollectionEncoder<MultiPoint>(OpenGisType.MULTIPOINT));
+        ENCODERS.add(new MultiPointEncoder());
         ENCODERS.add(new GeometryCollectionEncoder<MultiLineString>(OpenGisType.MULTILINESTRING));
         ENCODERS.add(new GeometryCollectionEncoder<MultiPolygon>(OpenGisType.MULTIPOLYGON));
         ENCODERS.add(new GeometryCollectionEncoder<GeometryCollection>(OpenGisType.GEOMETRYCOLLECTION));

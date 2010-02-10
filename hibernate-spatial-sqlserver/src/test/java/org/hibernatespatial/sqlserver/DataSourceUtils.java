@@ -27,8 +27,8 @@ package org.hibernatespatial.sqlserver;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.hibernatespatial.test.EWKTReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,16 +49,25 @@ import java.util.Properties;
 public class DataSourceUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtils.class);
-    static Properties properties;
+
+    private static TestGeometries testGeometries;
+    private static Properties properties;
+    private static DataSource dataSource;
 
     static {
+        readProperties();
+        createBasicDataSource();
+        loadTestGeometries();
+    }
+
+    private static void readProperties() {
         InputStream is = null;
         try {
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream("hibernate-spatial-sqlsever-test.properties");
             properties = new Properties();
             properties.load(is);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw (new RuntimeException(e));
         } finally {
             if (is != null) try {
                 is.close();
@@ -68,19 +77,22 @@ public class DataSourceUtils {
         }
     }
 
-    private static final DataSource dataSource = createBasicDataSource();
-
-
-    private static DataSource createBasicDataSource() {
+    private static void createBasicDataSource() {
         String url = properties.getProperty("jdbcUrl");
         String user = properties.getProperty("dbUsername");
         String pwd = properties.getProperty("dbPassword");
-        BasicDataSource result = new BasicDataSource();
-        result.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        result.setUrl(url);
-        result.setUsername(user);
-        result.setPassword(pwd);
-        return result;
+        BasicDataSource bds = new BasicDataSource();
+        bds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        bds.setUrl(url);
+        bds.setUsername(user);
+        bds.setPassword(pwd);
+        dataSource = bds;
+    }
+
+
+    private static void loadTestGeometries() {
+        testGeometries = new TestGeometries();
+        testGeometries.prepare();
     }
 
     public static DataSource getDataSource() {
@@ -88,7 +100,7 @@ public class DataSourceUtils {
     }
 
 
-    public static void removeReadTestData() {
+    public static void deleteTestData() {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -110,14 +122,14 @@ public class DataSourceUtils {
     }
 
 
-    public static void loadReadTestData() {
+    public static void insertTestData() {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
             Statement stmt = cn.createStatement();
-            for (int i = 0; i < GeometryTestCases.TEST_WKTS.size(); i++) {
-                LOGGER.debug("adding stmt: " + GeometryTestCases.TEST_WKTS.get(i).toSql());
-                stmt.addBatch(GeometryTestCases.TEST_WKTS.get(i).toSql());
+            for (TestGeometry testGeometry : testGeometries) {
+                LOGGER.debug("adding stmt: " + testGeometry.toSql());
+                stmt.addBatch(testGeometry.toSql());
             }
             int[] insCounts = stmt.executeBatch();
             stmt.close();
@@ -161,15 +173,17 @@ public class DataSourceUtils {
     }
 
     // TODO -- extend JTS WKT Reader to handle MGeometries.
+
     public static Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
-        WKTReader parser = new WKTReader();
-        for (TestWKT testWKT : GeometryTestCases.TEST_WKTS) {
-            if (testWKT.type.equalsIgnoreCase(type)) {
+        EWKTReader parser = new EWKTReader();
+        for (TestGeometry testGeometry : testGeometries) {
+            if (testGeometry.type.equalsIgnoreCase(type)) {
                 try {
-                    result.put(testWKT.id, parser.read(testWKT.wkt));
+                    result.put(testGeometry.id, parser.read(testGeometry.wkt));
                 } catch (ParseException e) {
-                    System.err.println("Can't parse wkt for case " + testWKT.id + ": " + testWKT.wkt);
+                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testGeometry.id, testGeometry.wkt));
+                    throw new RuntimeException(e);
                 }
             }
         }

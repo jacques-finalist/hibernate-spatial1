@@ -35,8 +35,6 @@
 package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.*;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Criterion;
@@ -51,15 +49,23 @@ import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.mgeom.MLineString;
 import org.hibernatespatial.test.model.*;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Martin Steinwender
  */
-public class TestHQL extends TestCase {
+public class TestHQL {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(TestHQL.class);
 
     private SessionFactory factory;
 
@@ -287,14 +293,15 @@ public class TestHQL extends TestCase {
     }
 
     /**
-     * compare database entities with stored entities
+     * Tests whether geometries are intact after write/read operations
      *
      * @param cls
      * @throws Exception
      */
-    public void testEquity(Class<?> cls) throws Exception {
+    @Test
+    public void testWriteReadIntegrity(Class<?> cls) throws Exception {
 
-        System.out.println("testEquity " + cls.getSimpleName());
+        LOGGER.info("testWriteReadIntegrity " + cls.getSimpleName());
 
         String[] hqls = {
                 "FROM " + cls.getName()
@@ -310,10 +317,8 @@ public class TestHQL extends TestCase {
                     assertEqualEntity(item);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
-            session.close();
+            if (session != null) session.close();
         }
     }
 
@@ -323,9 +328,10 @@ public class TestHQL extends TestCase {
      * @param cls
      * @throws Exception
      */
+    @Test
     public void testHqlFunctions(Class<?> cls) throws Exception {
 
-        System.out.println("testHqlFunctions " + cls.getSimpleName());
+        LOGGER.info("testHqlFunctions " + cls.getSimpleName());
 
         AbstractEntityPersister metadata = (AbstractEntityPersister) factory.getClassMetadata(LineStringEntity.class);
         Type geomType = metadata.getPropertyType("geometry");
@@ -335,10 +341,10 @@ public class TestHQL extends TestCase {
                 "SELECT astext(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
                 "SELECT geometrytype(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
                 "SELECT srid(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
-                "SELECT envelope(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
                 "SELECT issimple(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
                 "SELECT isempty(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
-                "SELECT boundary(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1"
+                "SELECT boundary(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1",
+                "SELECT envelope(e.geometry) FROM " + cls.getName() + " e WHERE e.id = 1"
         };
 
         Geometry geom;
@@ -352,7 +358,7 @@ public class TestHQL extends TestCase {
             PolygonEntity e = (PolygonEntity) this.entities.get("PolygonEntity_1");
             geom = e.getGeometry();
         } else {
-            throw new RuntimeException("No volid class.");
+            throw new RuntimeException("No valid class.");
         }
 
         Object[] results = new Object[]{
@@ -360,10 +366,10 @@ public class TestHQL extends TestCase {
                 geom.toText(),
                 geom.getGeometryType(),
                 geom.getSRID(),
-                geom.getEnvelope(),
                 geom.isSimple(),
                 geom.isEmpty(),
-                geom.getBoundary()
+                geom.getBoundary(),
+                geom.getEnvelope()
         };
 
         Session session = null;
@@ -372,37 +378,20 @@ public class TestHQL extends TestCase {
             for (int i = 0; i < hqls.length; i++) {
                 String hql = hqls[i];
                 if (hql == null) continue;
-
-                try {
-                    Object expected = results[i];
-                    Query query = session.createQuery(hql);
-                    List<?> list = query.list();
-                    assertTrue(list.size() == 1);
-                    Object retrieved = list.iterator().next();
-
-                    System.out.println(i + " expected:  " + expected);
-                    System.out.println(i + " retrieved: " + retrieved);
-
-                    boolean equal = true;
-                    if (expected instanceof Geometry) {
-                        try {
-                            assertEquality((Geometry) expected, (Geometry) retrieved);
-                        } catch (AssertionFailedError e) {
-                            equal = false;
-                        }
-                    } else {
-                        equal = expected.equals(retrieved);
-                    }
-                    if (!equal) {
-                        System.out.println(i + ": ASSERTION FAILED.");
-                    }
-                } catch (Exception e) {
-                    throw e;
+                Object expected = results[i];
+                Query query = session.createQuery(hql);
+                List<?> list = query.list();
+                Assert.assertTrue(list.size() == 1);
+                Object retrieved = list.iterator().next();
+                LOGGER.info(i + " expected:  " + expected);
+                LOGGER.info(i + " retrieved: " + retrieved);
+                if (expected instanceof Geometry) {
+                    assertEquality((Geometry) expected, (Geometry) retrieved);
+                } else {
+                    assertEquals(expected, retrieved);
                 }
             }
 
-        } catch (Exception e) {
-            throw e;
         } finally {
             session.close();
         }
@@ -414,10 +403,11 @@ public class TestHQL extends TestCase {
      * @param cls
      * @throws Exception
      */
+    @Test
     @SuppressWarnings("unchecked")
     public void testHqlRelations(Class cls) throws Exception {
 
-        System.out.println("testHqlRelations " + cls.getSimpleName());
+        LOGGER.info("testHqlRelations " + cls.getSimpleName());
 
         AbstractEntityPersister metadata = (AbstractEntityPersister) factory.getClassMetadata(LineStringEntity.class);
         Type geomType = metadata.getPropertyType("geometry");
@@ -499,36 +489,24 @@ public class TestHQL extends TestCase {
             for (int i = 0; i < hqls.length; i++) {
                 String hql = hqls[i];
                 if (hql == null) continue;
+                LOGGER.info(i + " hql:  " + hql);
 
-                try {
-                    System.out.println(i + " hql:  " + hql);
+                Object expected = results[i];
+                Query query = session.createQuery(hql);
+                if (hql.contains(":polygon")) query.setParameter("polygon", polygon, geomType);
+                if (hql.contains(":matrix2")) query.setParameter("matrix2", matrix2, Hibernate.STRING);
 
-                    Object expected = results[i];
-                    Query query = session.createQuery(hql);
-                    if (hql.contains(":polygon")) query.setParameter("polygon", polygon, geomType);
-                    if (hql.contains(":matrix2")) query.setParameter("matrix2", matrix2, Hibernate.STRING);
+                List list = query.list();
+                Collection<Long> retrieved = new TreeSet<Long>(list);
 
-                    List list = query.list();
-                    Collection<Long> retrieved = new TreeSet<Long>(list);
+                LOGGER.info(i + " expected:  " + expected);
+                LOGGER.info(i + " retrieved: " + retrieved);
 
-                    System.out.println(i + " expected:  " + expected);
-                    System.out.println(i + " retrieved: " + retrieved);
-
-                    boolean equal = true;
-                    if (expected instanceof Geometry) {
-                        try {
-                            assertEquality((Geometry) expected, (Geometry) retrieved);
-                        } catch (AssertionFailedError e) {
-                            equal = false;
-                        }
-                    } else {
-                        equal = expected.equals(retrieved);
-                    }
-                    if (!equal) {
-                        System.out.println(i + ": ASSERTION FAILED.");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                boolean equal = true;
+                if (expected instanceof Geometry) {
+                    assertEquality((Geometry) expected, (Geometry) retrieved);
+                } else {
+                    assertEquals(expected, retrieved);
                 }
             }
 
@@ -544,9 +522,10 @@ public class TestHQL extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testHqlAnalysis() throws Exception {
 
-        System.out.println("testHqlAnalysis");
+        LOGGER.info("testHqlAnalysis");
 
         AbstractEntityPersister metadata = (AbstractEntityPersister) factory.getClassMetadata(LineStringEntity.class);
         Type geomType = metadata.getPropertyType("geometry");
@@ -603,10 +582,10 @@ public class TestHQL extends TestCase {
         try {
             session = factory.openSession();
             for (int i = 0; i < hqls.length; i++) {
-                String hql = hqls[i];
-                if (hql == null) continue;
-
+                //For now, we only write out exceptions, rather than failing !!
                 try {
+                    String hql = hqls[i];
+                    if (hql == null) continue;
                     System.out.println(i + " hql:  " + hql);
 
                     Object expected = results[i];
@@ -616,34 +595,24 @@ public class TestHQL extends TestCase {
                     if (hql.contains(":polygon")) query.setParameter("polygon", polygon, geomType);
 
                     List<?> list = query.list();
-                    assertTrue(list.size() == 1);
+                    Assert.assertTrue(list.size() == 1);
                     Object retrieved = list.iterator().next();
 
-                    System.out.println(i + " expected:  " + expected);
-                    System.out.println(i + " retrieved: " + retrieved);
+                    LOGGER.info(i + " expected:  " + expected);
+                    LOGGER.info(i + " retrieved: " + retrieved);
 
                     boolean equal = true;
                     if (expected == null) {
-                        equal = false;
+                        fail();
                     } else if (expected instanceof Geometry) {
-                        try {
-                            assertEquality((Geometry) expected, (Geometry) retrieved);
-                        } catch (AssertionFailedError e) {
-                            equal = false;
-                        }
+                        assertEquality((Geometry) expected, (Geometry) retrieved);
                     } else {
-                        equal = expected.equals(retrieved);
+                        assertEquals(expected, retrieved);
                     }
-                    if (!equal) {
-                        System.out.println(i + ": ASSERTION FAILED.");
-                    }
-                } catch (Exception e) {
+                } catch (AssertionError e) {
                     e.printStackTrace();
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             session.close();
         }
@@ -657,7 +626,7 @@ public class TestHQL extends TestCase {
      */
     public String testRestriction(Class<?> cls) throws Exception {
 
-        System.out.println("testRestriction " + cls.getSimpleName());
+        LOGGER.info("testRestriction " + cls.getSimpleName());
 
         Geometry point = ((PointEntity) this.entities.get("PointEntity_1")).getGeometry();
         Geometry linestring = ((LineStringEntity) this.entities.get("LineStringEntity_1")).getGeometry();
@@ -723,43 +692,35 @@ public class TestHQL extends TestCase {
                 Object expected = results[i];
 
                 if (crit == null) continue;
+                Criteria query = session.createCriteria(cls).add(crit);
+                Collection<Long> retrieved = new TreeSet<Long>();
 
-                try {
-
-                    Criteria query = session.createCriteria(cls).add(crit);
-                    Collection<Long> retrieved = new TreeSet<Long>();
-
-                    for (Object entity : query.list()) {
-                        Long id = (Long) methodId.invoke(entity, new Object[0]);
-                        retrieved.add(id);
-                    }
-
-                    System.out.println(i + " expected:  " + expected);
-                    System.out.println(i + " retrieved: " + retrieved);
-
-                    boolean equal = true;
-                    if (expected == null) {
-                        equal = false;
-                    } else if (expected instanceof Geometry) {
-                        try {
-                            assertEquality((Geometry) expected, (Geometry) retrieved);
-                        } catch (AssertionFailedError e) {
-                            equal = false;
-                        }
-                    } else {
-                        equal = expected.equals(retrieved);
-                    }
-                    if (!equal) {
-                        System.out.println(i + ": ASSERTION FAILED.");
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                for (Object entity : query.list()) {
+                    Long id = (Long) methodId.invoke(entity, new Object[0]);
+                    retrieved.add(id);
                 }
+
+                LOGGER.info(i + " expected:  " + expected);
+                LOGGER.info(i + " retrieved: " + retrieved);
+
+                boolean equal = true;
+                if (expected == null) {
+                    fail();
+                } else if (expected instanceof Geometry) {
+
+                    assertEquality((Geometry) expected, (Geometry) retrieved);
+
+                } else {
+                    assertEquals(expected, retrieved);
+                }
+                if (!equal) {
+                    System.out.println(i + ": ASSERTION FAILED.");
+                }
+
             }
+
+        } finally {
             session.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return sql;
@@ -777,14 +738,14 @@ public class TestHQL extends TestCase {
     }
 
     /**
-     * helper to compare recieved entity to expected entity
+     * helper to compare received entity to expected entity
      *
      * @param retrievedObj
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private void assertEqualEntity(Object retrievedObj) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private void assertEqualEntity(Object retrievedObj) throws Exception {
         Class<? extends Object> cls = retrievedObj.getClass();
 
         Method method = cls.getMethod("getId", new Class[0]);
@@ -792,20 +753,14 @@ public class TestHQL extends TestCase {
         String key = cls.getSimpleName() + "_" + id;
         Object expectedObj = this.entities.get(key);
         if (expectedObj == null) {
-            System.out.println("missing object" + retrievedObj);
+            throw new RuntimeException("Can't find the expected object for " + retrievedObj);
         }
-        assertEquals(expectedObj.getClass(), cls);
+        Assert.assertEquals(expectedObj.getClass(), cls);
 
         method = cls.getMethod("getGeometry", new Class[0]);
         Geometry retrieved = (Geometry) method.invoke(retrievedObj, new Object[0]);
         Geometry expected = (Geometry) method.invoke(expectedObj, new Object[0]);
-
-        try {
-            assertEquality(expected, retrieved);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
+        assertEquality(expected, retrieved);
 
         System.out.println("OK: " + id + " - " + retrieved.toText());
     }
@@ -820,22 +775,53 @@ public class TestHQL extends TestCase {
         if (expected == retrieved) return;
         assertTrue(expected != null && retrieved != null);
 
-        assertTrue(expected.equals(retrieved));
-        Coordinate[] rCoords = retrieved.getCoordinates();
-        Coordinate[] eCoords = expected.getCoordinates();
-
-        if (rCoords.length != eCoords.length) return;
-
-        for (int i = 0; i < rCoords.length; i++) {
-            double ez = eCoords[i].z;
-            double rz = rCoords[i].z;
-
-            double em = getCoordM(eCoords[i]);
-            double rm = getCoordM(rCoords[i]);
-
-            assertEquals("z value not equal", ez, rz, 0.000001);
-            assertEquals("m value not equal", em, rm, 0.000001);
+        //TODO --  testing equality for GeometryCollections doesn't appear to work
+        if (expected.getClass() != retrieved.getClass()) {
+            fail("Expected and received objects have different classes.");
         }
+        if (expected instanceof GeometryCollection) {
+            assertEquality((GeometryCollection) expected, (GeometryCollection) retrieved);
+        } else {
+            assertTrue(expected.equals(retrieved));
+            Coordinate[] rCoords = retrieved.getCoordinates();
+            Coordinate[] eCoords = expected.getCoordinates();
+
+            if (rCoords.length != eCoords.length) return;
+
+            for (int i = 0; i < rCoords.length; i++) {
+                double ez = eCoords[i].z;
+                double rz = rCoords[i].z;
+
+                double em = getCoordM(eCoords[i]);
+                double rm = getCoordM(rCoords[i]);
+
+                assertEquals("z value not equal", ez, rz, 0.000001);
+                assertEquals("m value not equal", em, rm, 0.000001);
+            }
+        }
+    }
+
+    private static void assertEquality(GeometryCollection expected, GeometryCollection retrieved) {
+        for (int i = 0; i < expected.getNumGeometries(); i++) {
+            Geometry element = expected.getGeometryN(i);
+            if (!isConstituentOf(element, retrieved)) {
+                fail();
+            }
+        }
+
+
+    }
+
+    private static boolean isConstituentOf(Geometry element, GeometryCollection retrieved) {
+        for (int i = 0; i < retrieved.getNumGeometries(); i++) {
+            Geometry candidate = retrieved.getGeometryN(i);
+            try {
+                assertEquality(element, candidate);
+                return true;        //no exception, then element is constituent of retrieved.
+            } catch (Exception e) {
+            } //
+        }
+        return false;
     }
 
 

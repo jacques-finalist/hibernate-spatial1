@@ -38,7 +38,7 @@ public class GeometryCollectionEncoder<T extends GeometryCollection> extends Abs
 
     private final OpenGisType openGisType;
 
-    GeometryCollectionEncoder(OpenGisType openGisType){
+    GeometryCollectionEncoder(OpenGisType openGisType) {
         this.openGisType = openGisType;
     }
 
@@ -51,7 +51,7 @@ public class GeometryCollectionEncoder<T extends GeometryCollection> extends Abs
         int thisShapeIndex = shapes.size();
         Shape thisShape = createShape(parentShapeIndex, figures);
         shapes.add(thisShape);
-        for (int i = 0; i < geom.getNumGeometries(); i++){
+        for (int i = 0; i < geom.getNumGeometries(); i++) {
             Geometry component = geom.getGeometryN(i);
             encodeComponent(component, thisShapeIndex, coordinates, figures, shapes);
         }
