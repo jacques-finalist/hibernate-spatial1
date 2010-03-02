@@ -28,6 +28,9 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiPolygonDecoder extends AbstractDecoder<MultiPolygon> {
 
     private final PolygonDecoder polygonDecoder = new PolygonDecoder();
@@ -48,12 +51,12 @@ public class MultiPolygonDecoder extends AbstractDecoder<MultiPolygon> {
     @Override
     protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
         int startChildShape = shapeIndex + 1;
-        int endChildShape = nativeGeom.getEndChildShape(shapeIndex);
-        Polygon[] polygons = new Polygon[endChildShape - startChildShape];
-        for (int i = 0; i < polygons.length; i++){
-            polygons[i] = polygonDecoder.createGeometry(nativeGeom,startChildShape++);
+        List<Polygon> polygons = new ArrayList<Polygon>(nativeGeom.getNumShapes());
+        for (int childIdx = startChildShape; childIdx < nativeGeom.getNumShapes(); childIdx++) {
+            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
+            polygons.add(polygonDecoder.createGeometry(nativeGeom, childIdx));
         }
-        return getGeometryFactory().createMultiPolygon(polygons);
+        return getGeometryFactory().createMultiPolygon(polygons.toArray(new Polygon[polygons.size()]));
     }
 
 

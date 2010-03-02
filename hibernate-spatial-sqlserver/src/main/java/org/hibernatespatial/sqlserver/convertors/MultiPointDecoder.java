@@ -29,12 +29,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
 
 
     @Override
     protected OpenGisType getOpenGisType() {
-         return OpenGisType.MULTIPOINT;
+        return OpenGisType.MULTIPOINT;
     }
 
     protected MultiPoint createNullGeometry() {
@@ -42,26 +45,20 @@ public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
     }
 
     protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom) {
-        //optimized multipoint decoding
-        Coordinate[] coords = new Coordinate[nativeGeom.getNumPoints()];
-        for (int cIdx = 0; cIdx < nativeGeom.getNumPoints(); cIdx++) {
-            coords[cIdx] = nativeGeom.getCoordinate(cIdx);
-        }
-        return getGeometryFactory().createMultiPoint(coords);
+        return createGeometry(nativeGeom, 0);
     }
 
     @Override
     protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
         int startChildIdx = shapeIndex + 1;
-        int endchildIdx = nativeGeom.getEndChildShape(shapeIndex);
-        Coordinate[] coordinates = new Coordinate[endchildIdx - startChildIdx];
-        for (int i = 0 ; i < coordinates.length; i++){
-            int figureOffset = nativeGeom.getStartFigureForShape(startChildIdx++);
+        List<Coordinate> coordinates = new ArrayList<Coordinate>(nativeGeom.getNumShapes());
+        for (int childIdx = startChildIdx; childIdx < nativeGeom.getNumShapes(); childIdx++) {
+            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
+            int figureOffset = nativeGeom.getStartFigureForShape(childIdx);
             int pntIdx = nativeGeom.getStartPointForFigure(figureOffset);
-            coordinates[i]  = nativeGeom.getCoordinate(pntIdx);
+            coordinates.add(nativeGeom.getCoordinate(pntIdx));
         }
-        return getGeometryFactory().createMultiPoint(coordinates);
+        return getGeometryFactory().createMultiPoint(coordinates.toArray(new Coordinate[coordinates.size()]));
     }
-
 
 }

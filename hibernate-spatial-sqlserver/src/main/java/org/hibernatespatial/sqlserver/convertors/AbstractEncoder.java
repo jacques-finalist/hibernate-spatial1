@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//TODO -- determining whether geometry has Z- or M-Values should be more straightforward.
-
 abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
 
     public SqlGeometryV1 encode(G geom) {
@@ -51,8 +49,8 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
         List<Shape> shapes = new ArrayList<Shape>();
 
         encode(geom, -1, coordinates, figures, shapes);
-        encodePoints(nativeGeom,coordinates);
-        encodeFigures(nativeGeom,figures);
+        encodePoints(nativeGeom, coordinates);
+        encodeFigures(nativeGeom, figures);
         encodeShapes(nativeGeom, shapes);
 
         return nativeGeom;
@@ -61,25 +59,25 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
     /**
      * Appends the points, figures, shapes to the resp. lists
      *
-     * @param geom geometry to serialization
+     * @param geom             geometry to serialization
      * @param parentShapeIndex index of the parent Shape for the geometry
-     * @param coordinates coordinate list to append to
-     * @param figures figure list to append to
-     * @param shapes shape list to append to
+     * @param coordinates      coordinate list to append to
+     * @param figures          figure list to append to
+     * @param shapes           shape list to append to
      */
     protected abstract void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes);
 
     protected void encodeShapes(SqlGeometryV1 nativeGeom, List<Shape> shapes) {
         nativeGeom.setNumberOfShapes(shapes.size());
-        for (int i = 0; i < shapes.size();i++){
-            nativeGeom.setShape(i,shapes.get(i));
+        for (int i = 0; i < shapes.size(); i++) {
+            nativeGeom.setShape(i, shapes.get(i));
         }
     }
 
     protected void encodeFigures(SqlGeometryV1 nativeGeom, List<Figure> figures) {
         nativeGeom.setNumberOfFigures(figures.size());
-        for (int i = 0; i < figures.size();i++){
-            nativeGeom.setFigure(i,figures.get(i));
+        for (int i = 0; i < figures.size(); i++) {
+            nativeGeom.setFigure(i, figures.get(i));
         }
     }
 

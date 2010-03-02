@@ -28,6 +28,9 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: maesenka
@@ -56,13 +59,14 @@ public class GeometryCollectionDecoder extends AbstractDecoder<GeometryCollectio
     @Override
     protected GeometryCollection createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
         int startChildIdx = shapeIndex + 1;
-        int endChildIdx = nativeGeom.getEndChildShape(shapeIndex);
-        Geometry[] geometries = new Geometry[endChildIdx - startChildIdx];
-        for (int childIdx = startChildIdx, i = 0; childIdx < endChildIdx; childIdx++, i++){
-            AbstractDecoder<?> decoder = (AbstractDecoder<?>)Decoders.decoderFor(nativeGeom.getOpenGisTypeOfShape(childIdx));
-            geometries[i] = decoder.createGeometry(nativeGeom,childIdx);
+        List<Geometry> geometries = new ArrayList<Geometry>(nativeGeom.getNumShapes());
+        for (int childIdx = startChildIdx; childIdx < nativeGeom.getNumShapes(); childIdx++) {
+            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
+            AbstractDecoder<?> decoder = (AbstractDecoder<?>) Decoders.decoderFor(nativeGeom.getOpenGisTypeOfShape(childIdx));
+            Geometry geometry = decoder.createGeometry(nativeGeom, childIdx);
+            geometries.add(geometry);
         }
-        return getGeometryFactory().createGeometryCollection(geometries);
+        return getGeometryFactory().createGeometryCollection(geometries.toArray(new Geometry[geometries.size()]));
     }
 
 }

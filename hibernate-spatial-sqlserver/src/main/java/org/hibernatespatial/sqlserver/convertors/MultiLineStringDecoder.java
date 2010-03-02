@@ -29,6 +29,9 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import org.hibernatespatial.mgeom.MLineString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
 
     private final LineStringDecoder lineStringDecoder = new LineStringDecoder();
@@ -49,25 +52,18 @@ class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
 
     @Override
     protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        LineString[] lineStrings;
         int startChildIndex = shapeIndex + 1;
-        int endChildShapeIndex = nativeGeom.getEndChildShape(shapeIndex);
+        List<LineString> lineStrings = new ArrayList<LineString>(nativeGeom.getNumShapes());
+        for (int childIdx = startChildIndex; childIdx < nativeGeom.getNumShapes(); childIdx++) {
+            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
+            lineStrings.add(lineStringDecoder.createGeometry(nativeGeom, childIdx));
+        }
         if (nativeGeom.hasMValues()) {
-            lineStrings = new MLineString[endChildShapeIndex - startChildIndex];
-            collectLineStrings(nativeGeom, lineStrings, startChildIndex, endChildShapeIndex);
-            return getGeometryFactory().createMultiMLineString((MLineString[]) lineStrings);
+            return getGeometryFactory().createMultiMLineString(lineStrings.toArray(new MLineString[lineStrings.size()]));
         } else {
-            lineStrings = new LineString[endChildShapeIndex - startChildIndex];
-            collectLineStrings(nativeGeom, lineStrings, startChildIndex, endChildShapeIndex);
-            return getGeometryFactory().createMultiLineString(lineStrings);
+            return getGeometryFactory().createMultiLineString(lineStrings.toArray(new LineString[lineStrings.size()]));
         }
     }
 
-    private void collectLineStrings(SqlGeometryV1 nativeGeom, LineString[] lineStrings, int startChild, int endChild) {
-
-        for (int idx = startChild, i = 0; idx < endChild; idx++, i++){
-            lineStrings[i] = lineStringDecoder.createGeometry(nativeGeom, idx);
-        }
-    }
 
 }

@@ -67,13 +67,13 @@ class SqlGeometryV1 {
     SqlGeometryV1() {
     }
 
-    //TODO -- refactor: all iterations in separate methods.
+
     public static byte[] store(SqlGeometryV1 sqlNative) {
         int capacity = sqlNative.calculateCapacity();
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putInt(sqlNative.srid);
-        buffer.put(SUPPORTED_VERSION);  //TODO -- this should be the version property!!
+        buffer.put(SUPPORTED_VERSION);
         buffer.put(sqlNative.serializationPropertiesByte);
         if (!sqlNative.isSinglePoint() && !sqlNative.isSingleLineSegment()) {
             buffer.putInt(sqlNative.numberOfPoints);
@@ -115,15 +115,6 @@ class SqlGeometryV1 {
         return result;
     }
 
-//    MCoordinate getCoordinate(int index) {
-//        MCoordinate coordinate = new MCoordinate();
-//        coordinate.x = points[index].x;
-//        coordinate.y = points[index].y;
-//        if (hasZValues()) coordinate.z = zValues[index];
-//        if (hasMValues()) coordinate.m = mValues[index];
-//        return coordinate;
-//    }
-
     public Coordinate getCoordinate(int index) {
         Coordinate coordinate;
         if (hasMValues()) {
@@ -138,12 +129,17 @@ class SqlGeometryV1 {
         return coordinate;
     }
 
-    public int getStartFigureForShape(int shapeIndex){
+    public int getStartFigureForShape(int shapeIndex) {
         return getShape(shapeIndex).figureOffset;
+    }
+
+    public boolean isParentShapeOf(int parent, int child) {
+        return getShape(child).parentOffset == parent;
     }
 
     /**
      * Returns the index in the figure array after the last figure of the specified shape.
+     *
      * @param shapeIndex index to shape in shape array
      * @return index after last shape figure
      */
@@ -154,12 +150,13 @@ class SqlGeometryV1 {
         return getShape(nextIdx).figureOffset;
     }
 
-    public int getStartPointForFigure(int figureIndex){
+    public int getStartPointForFigure(int figureIndex) {
         return getFigure(figureIndex).pointOffset;
     }
 
-     /**
+    /**
      * Returns the index in the point array after the last point of the specified figure.
+     *
      * @param figureIndex index to shape in shape array
      * @return index after last shape figure
      */
@@ -179,7 +176,7 @@ class SqlGeometryV1 {
         return getShape(shpIdx).openGisType;
     }
 
-    public Coordinate[] coordinateRange(int start, int end){
+    public Coordinate[] coordinateRange(int start, int end) {
         Coordinate[] coordinates = createCoordinateArray(end - start);
         for (int idx = start, i = 0; idx < end; idx++, i++) {
             coordinates[i] = getCoordinate(idx);
@@ -233,12 +230,12 @@ class SqlGeometryV1 {
 
     }
 
-    void allocateZValueArray(){
+    void allocateZValueArray() {
         if (this.hasZValues())
             this.zValues = new double[this.numberOfPoints];
     }
 
-    void allocateMValueArray(){
+    void allocateMValueArray() {
         if (this.hasMValues())
             this.mValues = new double[this.numberOfPoints];
     }
@@ -258,7 +255,6 @@ class SqlGeometryV1 {
     }
 
     void setIsSingleLineSegment() {
-//        setNumberOfPoints(2);
         serializationPropertiesByte |= isSingleLineSegment;
     }
 
@@ -274,7 +270,6 @@ class SqlGeometryV1 {
     private void parse() {
         srid = buffer.getInt();
         version = buffer.get();
-        //TODO -- create a specific parse exception for this.
         if (!isCompatible())
             throw new IllegalStateException("Version mismatch. Expected version " + SUPPORTED_VERSION + ", but received version " + version);
         serializationPropertiesByte = buffer.get();
@@ -294,7 +289,7 @@ class SqlGeometryV1 {
             setFigure(0, new Figure(FigureAttribute.Stroke, 0));
             setNumberOfShapes(1);
             OpenGisType gisType = isSinglePoint() ? OpenGisType.POINT : OpenGisType.LINESTRING;
-            setShape(0, new Shape(-1,0,gisType));
+            setShape(0, new Shape(-1, 0, gisType));
             return;
         }
         //in all other cases, figures and shapes are
@@ -454,24 +449,6 @@ class SqlGeometryV1 {
 
     int getNumFigures() {
         return this.numberOfFigures;
-    }
-
-
-    /**
-     * Returns the index  after the last child shape of the specified shape.
-     * @param shapeIndex index of parent shape
-     * @return index one past the last child shape
-     */
-    public int getEndChildShape(int shapeIndex) {
-        int childIndex = shapeIndex + 1;
-        while (childIndex < shapes.length){
-            if (shapes[childIndex].parentOffset == shapeIndex){
-                childIndex++;
-            } else {
-                break;
-            }
-        }
-        return childIndex;
     }
 
     private static class Point {
