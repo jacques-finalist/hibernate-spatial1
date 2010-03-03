@@ -25,38 +25,23 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MultiPolygonDecoder extends AbstractDecoder<MultiPolygon> {
+public class MultiPolygonDecoder extends AbstractGeometryCollectionDecoder<MultiPolygon> {
 
-    private final PolygonDecoder polygonDecoder = new PolygonDecoder();
 
     @Override
     protected OpenGisType getOpenGisType() {
         return OpenGisType.MULTIPOLYGON;
     }
 
-    protected MultiPolygon createNullGeometry() {
-        return getGeometryFactory().createMultiPolygon(null);
-    }
-
-    protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom) {
-        return createGeometry(nativeGeom, 0);
-    }
-
     @Override
-    protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        int startChildShape = shapeIndex + 1;
-        List<Polygon> polygons = new ArrayList<Polygon>(nativeGeom.getNumShapes());
-        for (int childIdx = startChildShape; childIdx < nativeGeom.getNumShapes(); childIdx++) {
-            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
-            polygons.add(polygonDecoder.createGeometry(nativeGeom, childIdx));
-        }
-        return getGeometryFactory().createMultiPolygon(polygons.toArray(new Polygon[polygons.size()]));
+    protected MultiPolygon createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries) {
+        return getGeometryFactory().createMultiPolygon(geometries.toArray(new Polygon[geometries.size()]));
     }
 
 

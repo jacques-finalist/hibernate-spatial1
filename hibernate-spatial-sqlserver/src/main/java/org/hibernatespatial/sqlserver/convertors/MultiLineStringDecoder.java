@@ -25,45 +25,27 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import org.hibernatespatial.mgeom.MLineString;
 
-import java.util.ArrayList;
 import java.util.List;
 
-class MultiLineStringDecoder extends AbstractDecoder<MultiLineString> {
-
-    private final LineStringDecoder lineStringDecoder = new LineStringDecoder();
-
+class MultiLineStringDecoder extends AbstractGeometryCollectionDecoder<MultiLineString> {
 
     @Override
     protected OpenGisType getOpenGisType() {
         return OpenGisType.MULTILINESTRING;
     }
 
-    protected MultiLineString createNullGeometry() {
-        return getGeometryFactory().createMultiLineString(new LineString[]{});
-    }
-
-    protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom) {
-        return createGeometry(nativeGeom, 0);
-    }
 
     @Override
-    protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        int startChildIndex = shapeIndex + 1;
-        List<LineString> lineStrings = new ArrayList<LineString>(nativeGeom.getNumShapes());
-        for (int childIdx = startChildIndex; childIdx < nativeGeom.getNumShapes(); childIdx++) {
-            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
-            lineStrings.add(lineStringDecoder.createGeometry(nativeGeom, childIdx));
-        }
+    protected MultiLineString createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries) {
         if (nativeGeom.hasMValues()) {
-            return getGeometryFactory().createMultiMLineString(lineStrings.toArray(new MLineString[lineStrings.size()]));
-        } else {
-            return getGeometryFactory().createMultiLineString(lineStrings.toArray(new LineString[lineStrings.size()]));
+            return getGeometryFactory().createMultiMLineString(geometries.toArray(new MLineString[geometries.size()]));
         }
+        return getGeometryFactory().createMultiLineString(geometries.toArray(new LineString[geometries.size()]));
     }
-
 
 }

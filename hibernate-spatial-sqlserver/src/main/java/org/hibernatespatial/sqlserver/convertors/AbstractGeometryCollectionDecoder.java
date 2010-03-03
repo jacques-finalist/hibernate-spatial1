@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,25 +28,47 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
  * User: maesenka
- * Date: Jan 24, 2010
- * Time: 5:34:40 PM
+ * Date: Mar 3, 2010
+ * Time: 10:05:33 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
+public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollection> extends AbstractDecoder<T> {
 
     @Override
     protected OpenGisType getOpenGisType() {
         return OpenGisType.GEOMETRYCOLLECTION;
     }
 
-    protected GeometryCollection createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries) {
-        return getGeometryFactory().createGeometryCollection(geometries.toArray(new Geometry[geometries.size()]));
+    @Override
+    protected T createNullGeometry() {
+        return createGeometry(null, (List<Geometry>) null);
     }
+
+    @Override
+    protected T createGeometry(SqlGeometryV1 nativeGeom) {
+        return createGeometry(nativeGeom, 0);
+    }
+
+    @Override
+    protected T createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+        int startChildIdx = shapeIndex + 1;
+        List<Geometry> geometries = new ArrayList<Geometry>(nativeGeom.getNumShapes());
+        for (int childIdx = startChildIdx; childIdx < nativeGeom.getNumShapes(); childIdx++) {
+            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
+            AbstractDecoder<?> decoder = (AbstractDecoder<?>) Decoders.decoderFor(nativeGeom.getOpenGisTypeOfShape(childIdx));
+            Geometry geometry = decoder.createGeometry(nativeGeom, childIdx);
+            geometries.add(geometry);
+        }
+        return createGeometry(nativeGeom, geometries);
+    }
+
+    abstract protected T createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries);
 
 
 }

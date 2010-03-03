@@ -25,14 +25,13 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
+public class MultiPointDecoder extends AbstractGeometryCollectionDecoder<MultiPoint> {
 
 
     @Override
@@ -40,25 +39,9 @@ public class MultiPointDecoder extends AbstractDecoder<MultiPoint> {
         return OpenGisType.MULTIPOINT;
     }
 
-    protected MultiPoint createNullGeometry() {
-        return getGeometryFactory().createMultiPoint(new Point[]{});
-    }
-
-    protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom) {
-        return createGeometry(nativeGeom, 0);
-    }
-
     @Override
-    protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        int startChildIdx = shapeIndex + 1;
-        List<Coordinate> coordinates = new ArrayList<Coordinate>(nativeGeom.getNumShapes());
-        for (int childIdx = startChildIdx; childIdx < nativeGeom.getNumShapes(); childIdx++) {
-            if (!nativeGeom.isParentShapeOf(shapeIndex, childIdx)) continue;
-            int figureOffset = nativeGeom.getStartFigureForShape(childIdx);
-            int pntIdx = nativeGeom.getStartPointForFigure(figureOffset);
-            coordinates.add(nativeGeom.getCoordinate(pntIdx));
-        }
-        return getGeometryFactory().createMultiPoint(coordinates.toArray(new Coordinate[coordinates.size()]));
+    protected MultiPoint createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries) {
+        return getGeometryFactory().createMultiPoint(geometries.toArray(new Point[geometries.size()]));
     }
 
 }
