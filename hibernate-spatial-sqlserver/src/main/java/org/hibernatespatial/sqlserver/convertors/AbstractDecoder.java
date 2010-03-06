@@ -33,7 +33,7 @@ abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
     //TODO -- get GeometryFactory from HSExtension
     private final MGeometryFactory geometryFactory = new MGeometryFactory();
 
-    public G decode(SqlGeometryV1 nativeGeom) {
+    public G decode(SqlServerGeometry nativeGeom) {
         if (!accepts(nativeGeom))
             throw new IllegalArgumentException(getClass().getSimpleName() + " received object of type " + nativeGeom.openGisType());
         if (nativeGeom.isEmpty())
@@ -43,11 +43,11 @@ abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
         return result;
     }
 
-    public boolean accepts(OpenGisType type){
+    public boolean accepts(OpenGisType type) {
         return type == getOpenGisType();
     }
 
-    public boolean accepts(SqlGeometryV1 nativeGeom) {
+    public boolean accepts(SqlServerGeometry nativeGeom) {
         return accepts(nativeGeom.openGisType());
     }
 
@@ -55,17 +55,17 @@ abstract class AbstractDecoder<G extends Geometry> implements Decoder<G> {
 
     protected abstract G createNullGeometry();
 
-    protected abstract G createGeometry(SqlGeometryV1 nativeGeom);
+    protected abstract G createGeometry(SqlServerGeometry nativeGeom);
 
-    protected abstract G createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex);
+    protected abstract G createGeometry(SqlServerGeometry nativeGeom, int shapeIndex);
 
     protected MGeometryFactory getGeometryFactory() {
         return this.geometryFactory;
     }
 
-    protected void setSrid(SqlGeometryV1 sqlNative, G result) {
-        if (sqlNative.getSrid() != null)
-            result.setSRID(sqlNative.getSrid());
+    protected void setSrid(SqlServerGeometry sqlServerGeom, G result) {
+        if (sqlServerGeom.getSrid() != null)
+            result.setSRID(sqlServerGeom.getSrid());
     }
 
 

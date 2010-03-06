@@ -51,12 +51,12 @@ public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollec
     }
 
     @Override
-    protected T createGeometry(SqlGeometryV1 nativeGeom) {
+    protected T createGeometry(SqlServerGeometry nativeGeom) {
         return createGeometry(nativeGeom, 0);
     }
 
     @Override
-    protected T createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+    protected T createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
         int startChildIdx = shapeIndex + 1;
         List<Geometry> geometries = new ArrayList<Geometry>(nativeGeom.getNumShapes());
         for (int childIdx = startChildIdx; childIdx < nativeGeom.getNumShapes(); childIdx++) {
@@ -68,7 +68,7 @@ public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollec
         return createGeometry(nativeGeom, geometries);
     }
 
-    abstract protected T createGeometry(SqlGeometryV1 nativeGeom, List<Geometry> geometries);
+    abstract protected T createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries);
 
 
 }

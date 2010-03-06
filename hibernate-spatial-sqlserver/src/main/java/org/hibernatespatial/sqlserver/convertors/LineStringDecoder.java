@@ -41,25 +41,24 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
         return getGeometryFactory().createLineString((CoordinateSequence) null);
     }
 
-    protected LineString createGeometry(SqlGeometryV1 nativeGeom) {
-        return createLineString(nativeGeom, 0, nativeGeom.getNumPoints());
+    protected LineString createGeometry(SqlServerGeometry nativeGeom) {
+        return createLineString(nativeGeom, new IndexRange(0, nativeGeom.getNumPoints()));
     }
 
     @Override
-    protected LineString createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        int figureOffset = nativeGeom.getStartFigureForShape(shapeIndex);
+    protected LineString createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
+        int figureOffset = nativeGeom.getFiguresForShape(shapeIndex).start;
         //linestring shapes have exactly one figure
-        int startOffset = nativeGeom.getStartPointForFigure(figureOffset);
-        int endOffset = nativeGeom.getEndPointForFigure(figureOffset);
-        return createLineString(nativeGeom, startOffset, endOffset);
+        IndexRange pntIndexRange = nativeGeom.getPointsForFigure(figureOffset);
+        return createLineString(nativeGeom, pntIndexRange);
     }
 
-    protected LineString createLineString(SqlGeometryV1 nativeGeom, int offset, int nextOffset) {
-        Coordinate[] coordinates = nativeGeom.coordinateRange(offset, nextOffset);
+    protected LineString createLineString(SqlServerGeometry nativeGeom, IndexRange pntIndexRange) {
+        Coordinate[] coordinates = nativeGeom.coordinateRange(pntIndexRange);
         return createLineString(coordinates, nativeGeom);
     }
 
-    private LineString createLineString(Coordinate[] coords, SqlGeometryV1 nativeGeom) {
+    private LineString createLineString(Coordinate[] coords, SqlServerGeometry nativeGeom) {
         if (nativeGeom.hasMValues()) {
             return getGeometryFactory().createMLineString((MCoordinate[]) coords);
         } else {
@@ -68,5 +67,5 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
 
     }
 
-    
+
 }

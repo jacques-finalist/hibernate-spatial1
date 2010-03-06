@@ -35,8 +35,8 @@ import java.util.List;
 
 abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
 
-    public SqlGeometryV1 encode(G geom) {
-        SqlGeometryV1 nativeGeom = new SqlGeometryV1();
+    public SqlServerGeometry encode(G geom) {
+        SqlServerGeometry nativeGeom = new SqlServerGeometry();
         nativeGeom.setSrid(geom.getSRID());
         if (geom.isValid()) nativeGeom.setIsValid();
 
@@ -67,14 +67,14 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
      */
     protected abstract void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes);
 
-    protected void encodeShapes(SqlGeometryV1 nativeGeom, List<Shape> shapes) {
+    protected void encodeShapes(SqlServerGeometry nativeGeom, List<Shape> shapes) {
         nativeGeom.setNumberOfShapes(shapes.size());
         for (int i = 0; i < shapes.size(); i++) {
             nativeGeom.setShape(i, shapes.get(i));
         }
     }
 
-    protected void encodeFigures(SqlGeometryV1 nativeGeom, List<Figure> figures) {
+    protected void encodeFigures(SqlServerGeometry nativeGeom, List<Figure> figures) {
         nativeGeom.setNumberOfFigures(figures.size());
         for (int i = 0; i < figures.size(); i++) {
             nativeGeom.setFigure(i, figures.get(i));
@@ -86,7 +86,7 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
     }
 
 
-    protected void encodePoints(SqlGeometryV1 nativeGeom, List<Coordinate> coordinates) {
+    protected void encodePoints(SqlServerGeometry nativeGeom, List<Coordinate> coordinates) {
         nativeGeom.setNumberOfPoints(coordinates.size());
         nativeGeom.allocateMValueArray();
         for (int i = 0; i < coordinates.size(); i++) {
@@ -94,7 +94,7 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
         }
     }
 
-    protected void setCoordinate(SqlGeometryV1 nativeGeom, int idx, Coordinate coordinate) {
+    protected void setCoordinate(SqlServerGeometry nativeGeom, int idx, Coordinate coordinate) {
         if (!nativeGeom.hasZValues() && !Double.isNaN(coordinate.z)) {
             nativeGeom.setHasZValues();
             nativeGeom.allocateZValueArray();

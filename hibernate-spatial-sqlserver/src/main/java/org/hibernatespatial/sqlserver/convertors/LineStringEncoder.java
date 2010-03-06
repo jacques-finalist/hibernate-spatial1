@@ -35,7 +35,7 @@ class LineStringEncoder extends AbstractEncoder<LineString> {
 
     @Override
     protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
-        if (! (geom instanceof LineString)) throw new IllegalArgumentException("Require LineString geometry");
+        if (!(geom instanceof LineString)) throw new IllegalArgumentException("Require LineString geometry");
         int figureOffset = figures.size();
         int pointOffset = coordinates.size();
         for (Coordinate coordinate : geom.getCoordinates()) {
@@ -46,14 +46,14 @@ class LineStringEncoder extends AbstractEncoder<LineString> {
     }
 
     @Override
-    protected void encodePoints(SqlGeometryV1 nativeGeom, List<Coordinate> coordinates){
+    protected void encodePoints(SqlServerGeometry nativeGeom, List<Coordinate> coordinates) {
         super.encodePoints(nativeGeom, coordinates);
-        if (coordinates.size() == 2){
+        if (coordinates.size() == 2) {
             nativeGeom.setIsSingleLineSegment();
         }
     }
 
     public boolean accepts(Geometry geom) {
-        return geom instanceof LineString;        
+        return geom instanceof LineString;
     }
 }

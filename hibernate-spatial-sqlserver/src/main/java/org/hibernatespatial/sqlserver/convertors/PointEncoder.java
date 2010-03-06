@@ -40,31 +40,31 @@ class PointEncoder extends AbstractEncoder<Point> {
 
     /**
      * Encodes a point as an <code>SQLGeometryV1</code> object.
-     *
+     * <p/>
      * This is a specific implementation because points don't explicitly serialize figure and shape components.
      *
-     * @param geom  Geometry to serialize
-     * @return 
+     * @param geom Geometry to serialize
+     * @return
      */
     @Override
-    public SqlGeometryV1 encode(Point geom) {
+    public SqlServerGeometry encode(Point geom) {
 
-        SqlGeometryV1 sqlGeom = new SqlGeometryV1();
-        sqlGeom.setSrid(geom.getSRID());
-        sqlGeom.setIsSinglePoint();
-        sqlGeom.setIsValid();
-        sqlGeom.setNumberOfPoints(1);
+        SqlServerGeometry sqlServerGeom = new SqlServerGeometry();
+        sqlServerGeom.setSrid(geom.getSRID());
+        sqlServerGeom.setIsSinglePoint();
+        sqlServerGeom.setIsValid();
+        sqlServerGeom.setNumberOfPoints(1);
         Coordinate coordinate = geom.getCoordinate();
         if (is3DPoint(coordinate)) {
-            sqlGeom.setHasZValues();
-            sqlGeom.allocateZValueArray();
+            sqlServerGeom.setHasZValues();
+            sqlServerGeom.allocateZValueArray();
         }
         if (isMPoint(coordinate)) {
-            sqlGeom.setHasMValues();
-            sqlGeom.allocateMValueArray();
+            sqlServerGeom.setHasMValues();
+            sqlServerGeom.allocateMValueArray();
         }
-        sqlGeom.setCoordinate(0, coordinate);
-        return sqlGeom;
+        sqlServerGeom.setCoordinate(0, coordinate);
+        return sqlServerGeom;
     }
 
     @Override
@@ -73,9 +73,9 @@ class PointEncoder extends AbstractEncoder<Point> {
         int pntOffset = coordinates.size();
         int figureOffset = figures.size();
         coordinates.add(geom.getCoordinate());
-        Figure figure = new Figure(FigureAttribute.Stroke,pntOffset);
+        Figure figure = new Figure(FigureAttribute.Stroke, pntOffset);
         figures.add(figure);
-        Shape shape = new Shape(parentIdx, figureOffset,OpenGisType.POINT);
+        Shape shape = new Shape(parentIdx, figureOffset, OpenGisType.POINT);
         shapes.add(shape);
     }
 

@@ -33,9 +33,9 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public interface Decoder<T extends Geometry> {
 
-    public T decode(SqlGeometryV1 nativeGeom);
+    public T decode(SqlServerGeometry nativeGeom);
 
-    boolean accepts(SqlGeometryV1 nativeGeom);
+    boolean accepts(SqlServerGeometry nativeGeom);
 
     boolean accepts(OpenGisType type);
 

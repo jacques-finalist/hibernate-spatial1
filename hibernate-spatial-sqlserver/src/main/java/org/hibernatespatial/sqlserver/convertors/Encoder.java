@@ -33,8 +33,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public interface Encoder<T extends Geometry> {
 
-    public SqlGeometryV1 encode(T geom);
+    public SqlServerGeometry encode(T geom);
 
     public boolean accepts(Geometry geom);
-    
+
 }

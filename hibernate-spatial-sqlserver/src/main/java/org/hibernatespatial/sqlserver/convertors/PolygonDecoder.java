@@ -40,30 +40,28 @@ public class PolygonDecoder extends AbstractDecoder<Polygon> {
         return getGeometryFactory().createPolygon(null, null);
     }
 
-    protected Polygon createGeometry(SqlGeometryV1 nativeGeom) {
+    protected Polygon createGeometry(SqlServerGeometry nativeGeom) {
         return createGeometry(nativeGeom, 0);
     }
 
-    protected Polygon createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
+    protected Polygon createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
         //polygons consist of one exterior ring figure, and several interior ones.
-        int startFigure = nativeGeom.getStartFigureForShape(shapeIndex);
-        int endFigure = nativeGeom.getEndFigureForShape(shapeIndex);
-        LinearRing[] holes = new LinearRing[endFigure - startFigure - 1];
+        IndexRange figureRange = nativeGeom.getFiguresForShape(shapeIndex);
+        LinearRing[] holes = new LinearRing[figureRange.length() - 1];
         LinearRing shell = null;
-        for (int figureIdx = startFigure, i = 0; figureIdx < endFigure; figureIdx++) {
-            int startPnt = nativeGeom.getStartPointForFigure(figureIdx);
-            int endPnt = nativeGeom.getEndPointForFigure(figureIdx);
+        for (int figureIdx = figureRange.start, i = 0; figureIdx < figureRange.end; figureIdx++) {
+            IndexRange pntIndexRange = nativeGeom.getPointsForFigure(figureIdx);
             if (nativeGeom.isFigureInteriorRing(figureIdx)) {
-                holes[i++] = toLinearRing(nativeGeom, startPnt, endPnt);
+                holes[i++] = toLinearRing(nativeGeom, pntIndexRange);
             } else {
-                shell = toLinearRing(nativeGeom, startPnt, endPnt);
+                shell = toLinearRing(nativeGeom, pntIndexRange);
             }
         }
         return getGeometryFactory().createPolygon(shell, holes);
     }
 
-    private LinearRing toLinearRing(SqlGeometryV1 nativeGeom, int pointOffset, int nextPntOffset) {
-        Coordinate[] coordinates = nativeGeom.coordinateRange(pointOffset, nextPntOffset);
+    private LinearRing toLinearRing(SqlServerGeometry nativeGeom, IndexRange range) {
+        Coordinate[] coordinates = nativeGeom.coordinateRange(range);
         return getGeometryFactory().createLinearRing(coordinates);
     }
 

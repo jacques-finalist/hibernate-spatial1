@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -43,18 +43,18 @@ class PointDecoder extends AbstractDecoder<Point> {
         return getGeometryFactory().createPoint((Coordinate) null);
     }
 
-    protected Point createGeometry(SqlGeometryV1 nativeGeom) {
+    protected Point createGeometry(SqlServerGeometry nativeGeom) {
         return createPoint(nativeGeom, 0);
     }
 
     @Override
-    protected Point createGeometry(SqlGeometryV1 nativeGeom, int shapeIndex) {
-        int figureOffset = nativeGeom.getStartFigureForShape(shapeIndex);
-        int pntOffset = nativeGeom.getStartPointForFigure(figureOffset);
+    protected Point createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
+        int figureOffset = nativeGeom.getFiguresForShape(shapeIndex).start;
+        int pntOffset = nativeGeom.getPointsForFigure(figureOffset).start;
         return createPoint(nativeGeom, pntOffset);
     }
 
-    private Point createPoint(SqlGeometryV1 nativeGeom, int pntOffset){
+    private Point createPoint(SqlServerGeometry nativeGeom, int pntOffset) {
         return getGeometryFactory().createPoint(nativeGeom.getCoordinate(pntOffset));
     }
 

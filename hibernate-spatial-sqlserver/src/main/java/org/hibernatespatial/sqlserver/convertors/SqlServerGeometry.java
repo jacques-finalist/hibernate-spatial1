@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ import java.nio.ByteOrder;
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
-class SqlGeometryV1 {
+class SqlServerGeometry {
 
     public static final byte SUPPORTED_VERSION = 1;
 
@@ -50,7 +50,7 @@ class SqlGeometryV1 {
     private byte version;
     private byte serializationPropertiesByte;
     private int numberOfPoints;
-    private Point[] points;
+    private double[] points;
     private double[] mValues;
     private double[] zValues;
     private int numberOfFigures;
@@ -59,58 +59,58 @@ class SqlGeometryV1 {
     private Shape[] shapes = null;
 
 
-    private SqlGeometryV1(byte[] bytes) {
+    private SqlServerGeometry(byte[] bytes) {
         buffer = ByteBuffer.wrap(bytes);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
     }
 
-    SqlGeometryV1() {
+    SqlServerGeometry() {
     }
 
 
-    public static byte[] store(SqlGeometryV1 sqlNative) {
-        int capacity = sqlNative.calculateCapacity();
+    public static byte[] store(SqlServerGeometry sqlServerGeom) {
+        int capacity = sqlServerGeom.calculateCapacity();
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putInt(sqlNative.srid);
+        buffer.putInt(sqlServerGeom.srid);
         buffer.put(SUPPORTED_VERSION);
-        buffer.put(sqlNative.serializationPropertiesByte);
-        if (!sqlNative.isSinglePoint() && !sqlNative.isSingleLineSegment()) {
-            buffer.putInt(sqlNative.numberOfPoints);
+        buffer.put(sqlServerGeom.serializationPropertiesByte);
+        if (!sqlServerGeom.isSinglePoint() && !sqlServerGeom.isSingleLineSegment()) {
+            buffer.putInt(sqlServerGeom.numberOfPoints);
         }
-        for (int i = 0; i < sqlNative.points.length; i++) {
-            buffer.putDouble(sqlNative.points[i].x);
-            buffer.putDouble(sqlNative.points[i].y);
+        for (int i = 0; i < sqlServerGeom.getNumPoints(); i++) {
+            buffer.putDouble(sqlServerGeom.points[2 * i]);
+            buffer.putDouble(sqlServerGeom.points[2 * i + 1]);
         }
-        if (sqlNative.hasZValues()) {
-            for (int i = 0; i < sqlNative.zValues.length; i++) {
-                buffer.putDouble(sqlNative.zValues[i]);
+        if (sqlServerGeom.hasZValues()) {
+            for (int i = 0; i < sqlServerGeom.zValues.length; i++) {
+                buffer.putDouble(sqlServerGeom.zValues[i]);
             }
         }
-        if (sqlNative.hasMValues()) {
-            for (int i = 0; i < sqlNative.mValues.length; i++) {
-                buffer.putDouble(sqlNative.mValues[i]);
+        if (sqlServerGeom.hasMValues()) {
+            for (int i = 0; i < sqlServerGeom.mValues.length; i++) {
+                buffer.putDouble(sqlServerGeom.mValues[i]);
             }
         }
-        if (sqlNative.isSingleLineSegment() || sqlNative.isSinglePoint())
+        if (sqlServerGeom.isSingleLineSegment() || sqlServerGeom.isSinglePoint())
             return buffer.array();
 
         //in all other cases, we continue to store shapes and figures
-        buffer.putInt(sqlNative.getNumFigures());
-        for (int i = 0; i < sqlNative.getNumFigures(); i++) {
-            sqlNative.getFigure(i).store(buffer);
+        buffer.putInt(sqlServerGeom.getNumFigures());
+        for (int i = 0; i < sqlServerGeom.getNumFigures(); i++) {
+            sqlServerGeom.getFigure(i).store(buffer);
         }
 
-        buffer.putInt(sqlNative.getNumShapes());
-        for (int i = 0; i < sqlNative.getNumShapes(); i++) {
-            sqlNative.getShape(i).store(buffer);
+        buffer.putInt(sqlServerGeom.getNumShapes());
+        for (int i = 0; i < sqlServerGeom.getNumShapes(); i++) {
+            sqlServerGeom.getShape(i).store(buffer);
         }
 
         return buffer.array();
     }
 
-    public static SqlGeometryV1 load(byte[] bytes) {
-        SqlGeometryV1 result = new SqlGeometryV1(bytes);
+    public static SqlServerGeometry load(byte[] bytes) {
+        SqlServerGeometry result = new SqlServerGeometry(bytes);
         result.parse();
         return result;
     }
@@ -123,49 +123,45 @@ class SqlGeometryV1 {
         } else {
             coordinate = new Coordinate();
         }
-        coordinate.x = points[index].x;
-        coordinate.y = points[index].y;
+        coordinate.x = points[2 * index];
+        coordinate.y = points[2 * index + 1];
         if (hasZValues()) coordinate.z = zValues[index];
         return coordinate;
-    }
-
-    public int getStartFigureForShape(int shapeIndex) {
-        return getShape(shapeIndex).figureOffset;
     }
 
     public boolean isParentShapeOf(int parent, int child) {
         return getShape(child).parentOffset == parent;
     }
 
-    /**
-     * Returns the index in the figure array after the last figure of the specified shape.
-     *
-     * @param shapeIndex index to shape in shape array
-     * @return index after last shape figure
-     */
-    public int getEndFigureForShape(int shapeIndex) {
-        int nextIdx = shapeIndex + 1;
-        if (nextIdx == getNumShapes())
-            return getNumFigures();
-        return getShape(nextIdx).figureOffset;
-    }
 
-    public int getStartPointForFigure(int figureIndex) {
-        return getFigure(figureIndex).pointOffset;
+    public IndexRange getFiguresForShape(int shapeIndex) {
+        int startIdx = getShape(shapeIndex).figureOffset;
+        int endIdx = -1;
+        int nextShapeIdx = shapeIndex + 1;
+        if (nextShapeIdx == getNumShapes()) {
+            endIdx = getNumFigures();
+        } else {
+            endIdx = getShape(nextShapeIdx).figureOffset;
+        }
+        return new IndexRange(startIdx, endIdx);
     }
 
     /**
-     * Returns the index in the point array after the last point of the specified figure.
+     * Returns the range of indices in the point array for the specified figure.
      *
      * @param figureIndex index to shape in shape array
-     * @return index after last shape figure
+     * @return index range for
      */
-    public int getEndPointForFigure(int figureIndex) {
-        int next = figureIndex + 1;
-        if (next == getNumFigures()) {
-            return getNumPoints();
+    public IndexRange getPointsForFigure(int figureIndex) {
+        int start = getFigure(figureIndex).pointOffset;
+        int end = -1;
+        int nextFigure = figureIndex + 1;
+        if (nextFigure == getNumFigures()) {
+            end = getNumPoints();
+        } else {
+            end = getFigure(nextFigure).pointOffset;
         }
-        return getFigure(next).pointOffset;
+        return new IndexRange(start, end);
     }
 
     public boolean isFigureInteriorRing(int figureIdx) {
@@ -176,9 +172,9 @@ class SqlGeometryV1 {
         return getShape(shpIdx).openGisType;
     }
 
-    public Coordinate[] coordinateRange(int start, int end) {
-        Coordinate[] coordinates = createCoordinateArray(end - start);
-        for (int idx = start, i = 0; idx < end; idx++, i++) {
+    public Coordinate[] coordinateRange(IndexRange range) {
+        Coordinate[] coordinates = createCoordinateArray(range.end - range.start);
+        for (int idx = range.start, i = 0; idx < range.end; idx++, i++) {
             coordinates[i] = getCoordinate(idx);
         }
         return coordinates;
@@ -202,8 +198,8 @@ class SqlGeometryV1 {
     }
 
     void setCoordinate(int index, Coordinate coordinate) {
-        Point pnt = new Point(coordinate.x, coordinate.y);
-        points[index] = pnt;
+        points[2 * index] = coordinate.x;
+        points[2 * index + 1] = coordinate.y;
         if (hasZValues()) {
             zValues[index] = coordinate.z;
         }
@@ -225,9 +221,7 @@ class SqlGeometryV1 {
     }
 
     void setHasZValues() {
-
         serializationPropertiesByte |= hasZValuesMask;
-
     }
 
     void allocateZValueArray() {
@@ -241,7 +235,6 @@ class SqlGeometryV1 {
     }
 
     void setHasMValues() {
-
         serializationPropertiesByte |= hasMValuesMask;
     }
 
@@ -264,7 +257,7 @@ class SqlGeometryV1 {
 
     void setNumberOfPoints(int num) {
         this.numberOfPoints = num;
-        this.points = new Point[this.numberOfPoints];
+        this.points = new double[2 * this.numberOfPoints];
     }
 
     private void parse() {
@@ -362,11 +355,10 @@ class SqlGeometryV1 {
     }
 
     private void readPoints() {
-        points = new Point[numberOfPoints];
+        points = new double[2 * numberOfPoints];
         for (int i = 0; i < numberOfPoints; i++) {
-            double x = buffer.getDouble();
-            double y = buffer.getDouble();
-            points[i] = new Point(x, y);
+            points[2 * i] = buffer.getDouble();
+            points[2 * i + 1] = buffer.getDouble();
         }
     }
 
@@ -451,14 +443,5 @@ class SqlGeometryV1 {
         return this.numberOfFigures;
     }
 
-    private static class Point {
-        final double x;
-        final double y;
 
-        Point(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-    }
 }

@@ -64,8 +64,8 @@ public class Encoders {
 
     public static <T extends Geometry> byte[] encode(T geom) {
         Encoder<T> encoder = (Encoder<T>) encoderFor(geom);
-        SqlGeometryV1 nativeSql = encoder.encode(geom);
-        return SqlGeometryV1.store(nativeSql);
+        SqlServerGeometry sqlServerGeometry = encoder.encode(geom);
+        return SqlServerGeometry.store(sqlServerGeometry);
     }
 
 }

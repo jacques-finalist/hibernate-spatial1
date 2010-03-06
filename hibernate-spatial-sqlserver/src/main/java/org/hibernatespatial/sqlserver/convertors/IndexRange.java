@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,28 +25,25 @@
 
 package org.hibernatespatial.sqlserver.convertors;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-
-import java.util.List;
-
 /**
  * Created by IntelliJ IDEA.
  * User: maesenka
- * Date: Jan 24, 2010
- * Time: 5:34:40 PM
+ * Date: Mar 6, 2010
+ * Time: 6:38:14 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
+class IndexRange {
 
-    @Override
-    protected OpenGisType getOpenGisType() {
-        return OpenGisType.GEOMETRYCOLLECTION;
+    final int start;
+    final int end;
+
+    IndexRange(int start, int end) {
+        this.start = start;
+        this.end = end;
     }
 
-    protected GeometryCollection createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries) {
-        return getGeometryFactory().createGeometryCollection(geometries.toArray(new Geometry[geometries.size()]));
+    int length() {
+        return this.end - this.start;
     }
-
 
 }

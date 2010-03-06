@@ -50,7 +50,7 @@ public class Decoders {
     }
 
 
-    private static Decoder<? extends Geometry> decoderFor(SqlGeometryV1 object) {
+    private static Decoder<? extends Geometry> decoderFor(SqlServerGeometry object) {
         for (Decoder<? extends Geometry> decoder : DECODERS) {
             if (decoder.accepts(object))
                 return decoder;
@@ -59,12 +59,12 @@ public class Decoders {
     }
 
     public static Geometry decode(byte[] raw) {
-        SqlGeometryV1 sqlGeom = SqlGeometryV1.load(raw);
-        Decoder decoder = decoderFor(sqlGeom);
-        return decoder.decode(sqlGeom);
+        SqlServerGeometry sqlServerGeom = SqlServerGeometry.load(raw);
+        Decoder decoder = decoderFor(sqlServerGeom);
+        return decoder.decode(sqlServerGeom);
     }
 
-    public static Decoder<? extends Geometry> decoderFor(OpenGisType type){
+    public static Decoder<? extends Geometry> decoderFor(OpenGisType type) {
         for (Decoder<? extends Geometry> decoder : DECODERS) {
             if (decoder.accepts(type))
                 return decoder;
