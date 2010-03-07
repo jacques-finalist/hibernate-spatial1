@@ -42,10 +42,14 @@ public class PolygonEncoder extends AbstractEncoder<Polygon> {
 
     @Override
     protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
-        if (! (geom instanceof Polygon)) throw new IllegalArgumentException("Polygon geometry expected.");
-        Polygon polygon = (Polygon)geom;
+        if (!(geom instanceof Polygon)) throw new IllegalArgumentException("Polygon geometry expected.");
+        if (geom.isEmpty()) {
+            shapes.add(new Shape(parentShapeIndex, -1, OpenGisType.POLYGON));
+            return;
+        }
+        Polygon polygon = (Polygon) geom;
         int figureOffset = figures.size();
-        shapes.add( new Shape(parentShapeIndex, figureOffset, OpenGisType.POLYGON));
+        shapes.add(new Shape(parentShapeIndex, figureOffset, OpenGisType.POLYGON));
 
         int pointOffset = coordinates.size();
         addExteriorRing(polygon, coordinates, figures);
@@ -54,8 +58,8 @@ public class PolygonEncoder extends AbstractEncoder<Polygon> {
     }
 
 
-    private void addInteriorRings(Polygon geom, List<Coordinate> coordinates, List<Figure> figures){
-        for (int idx = 0; idx < geom.getNumInteriorRing(); idx++){
+    private void addInteriorRings(Polygon geom, List<Coordinate> coordinates, List<Figure> figures) {
+        for (int idx = 0; idx < geom.getNumInteriorRing(); idx++) {
             addInteriorRing(geom.getInteriorRingN(idx), coordinates, figures);
         }
     }
@@ -69,7 +73,7 @@ public class PolygonEncoder extends AbstractEncoder<Polygon> {
     }
 
     private void addPoints(LineString ring, List<Coordinate> coordinates) {
-        for (Coordinate c : ring.getCoordinates()){
+        for (Coordinate c : ring.getCoordinates()) {
             coordinates.add(c);
         }
     }

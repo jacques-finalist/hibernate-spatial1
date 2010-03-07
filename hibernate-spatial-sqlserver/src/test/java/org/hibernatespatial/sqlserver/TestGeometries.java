@@ -84,16 +84,19 @@ class TestGeometries implements List<TestGeometry> {
         geometries.add(new TestGeometry(18, "POLYGON",
                 "POLYGON( (0 0, 0 10, 10 10, 10 0, 0 0), " +
                         "(2 2, 2 5, 5 5,5 2, 2 2))", 4326));
+        geometries.add(new TestGeometry(19, "POLYGON",
+                "POLYGON( (110 110, 110 120, 120 120, 120 110, 110 110) )", 4326));
+
 
         //MULTIPOLYGON test cases
         geometries.add(new TestGeometry(20, "MULTIPOLYGON",
-                "MULTIPOLYGON( ((10 20, 30 40, 44 50, 10 20)), ((5 0, 20 40, 30 34, 5 0)) )", 4326));
+                "MULTIPOLYGON( ((10 20, 30 40, 44 50, 10 20)), ((105 100, 120 140, 130 134, 105 100)) )", 4326));
         geometries.add(new TestGeometry(21, "MULTIPOLYGON",
-                "MULTIPOLYGON( ((10 20 1, 30 40 2, 44 50 2, 10 20 1)), ((5 0 0, 20 40 10, 30 34 20, 5 0 0)) )", 4326));
+                "MULTIPOLYGON( ((10 20 1, 30 40 2, 44 50 2, 10 20 1)), ((105 100 0, 120 140 10, 130 134 20, 105 100 0)) )", 4326));
         geometries.add(new TestGeometry(22, "MULTIPOLYGON",
                 "MULTIPOLYGON( " +
-                        "( (0 0, 0 50, 50 50, 0 0), (10 10, 10 20, 20 20, 20 10, 10 10) ), " +
-                        "((5 0, 20 40, 30 34, 5 0)) )", 4326));
+                        "( (0 0, 0 50, 50 50, 50 0, 0 0), (10 10, 10 20, 20 20, 20 10, 10 10) ), " +
+                        "((105 100, 120 140, 130 134, 105 100)) )", 4326));
 
         //MultiPoint test cases
         geometries.add(new TestGeometry(25, "MULTIPOINT", "MULTIPOINT(21 2, 25 5, 30 3)", 4326));
@@ -106,8 +109,18 @@ class TestGeometries implements List<TestGeometry> {
         geometries.add(new TestGeometry(31, "GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION(POINT(4 0), LINESTRING(4 2, 5 3), POLYGON((0 0, 3 0, 3 3,0 3, 0 0)))", 4326));
         geometries.add(new TestGeometry(32, "GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION(POINT(4 0), LINESTRING(4 2, 5 3), POLYGON((0 0, 3 0, 3 3,0 3, 0 0),(1 1, 2 1, 2 2, 1 2, 1 1)))", 4326));
         geometries.add(new TestGeometry(33, "GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION( MULTIPOINT(21 2, 25 5, 30 3), " +
-                "MULTIPOLYGON( ((10 20, 30 40, 44 50, 10 20)), ((5 0, 20 40, 30 34, 5 0)) ), " +
+                "MULTIPOLYGON( ((10 20, 30 40, 44 50, 10 20)), ((105 100, 120 140, 130 134, 105 100)) ), " +
                 "MULTILINESTRING((10.0 5.0, 20.0 15.0),( 25.0 30.0, 30.0 20.0)))", 4326));
+
+
+        //NULL Geometries
+        geometries.add(new TestGeometry(50, "POINT", "POINT EMPTY", 4326));
+        geometries.add(new TestGeometry(51, "LINESTRING", "LINESTRING EMPTY", 0));
+        geometries.add(new TestGeometry(52, "POLYGON", "POLYGON EMPTY", 0));
+        geometries.add(new TestGeometry(53, "MULTIPOINT", "MULTIPOINT EMPTY", 0));
+        geometries.add(new TestGeometry(54, "MULTILINESTRING", "MULTILINESTRING EMPTY", 0));
+        geometries.add(new TestGeometry(55, "MULTIPOLYGON", "MULTIPOLYGON EMPTY", 0));
+        geometries.add(new TestGeometry(56, "GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION EMPTY", 0));
 
 
         this.testGeometries = geometries;

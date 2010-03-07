@@ -52,7 +52,6 @@ abstract class AbstractEncoder<G extends Geometry> implements Encoder<G> {
         encodePoints(nativeGeom, coordinates);
         encodeFigures(nativeGeom, figures);
         encodeShapes(nativeGeom, shapes);
-
         return nativeGeom;
     }
 

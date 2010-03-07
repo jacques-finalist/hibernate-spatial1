@@ -30,7 +30,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-        <property name="hibernate.connection.url">jdbc:sqlserver://192.168.0.103:1433;databaseName=HBS</property>
+        <property name="hibernate.connection.url">jdbc:sqlserver://192.168.122.119:1433;databaseName=HBS</property>
         <property name="hibernate.connection.username">hbs</property>
         <property name="hibernate.connection.password">hbs</property>
 

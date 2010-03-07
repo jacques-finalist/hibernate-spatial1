@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,31 +23,59 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver.convertors;
+package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-
-import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Jan 24, 2010
- * Time: 5:34:40 PM
- * To change this template use File | Settings | File Templates.
+ * Test class used in unit testing.
  */
-public class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
+public class GeomEntity {
+
+    private int id;
+
+    private String type;
+
+    private Geometry geom;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Geometry getGeom() {
+        return geom;
+    }
+
+    public void setGeom(Geometry geom) {
+        this.geom = geom;
+    }
 
     @Override
-    protected OpenGisType getOpenGisType() {
-        return OpenGisType.GEOMETRYCOLLECTION;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GeomEntity geomEntity = (GeomEntity) o;
+
+        if (id != geomEntity.id) return false;
+
+        return true;
     }
 
-    protected GeometryCollection createGeometry(List<Geometry> geometries, boolean hasM) {
-        Geometry[] geomArray = geometries != null ? geometries.toArray(new Geometry[geometries.size()]) : null;
-        return getGeometryFactory().createGeometryCollection(geomArray);
+    @Override
+    public int hashCode() {
+        return id;
     }
-
-
 }

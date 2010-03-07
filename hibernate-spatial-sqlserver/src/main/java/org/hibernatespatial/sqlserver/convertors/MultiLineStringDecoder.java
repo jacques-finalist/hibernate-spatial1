@@ -41,11 +41,13 @@ class MultiLineStringDecoder extends AbstractGeometryCollectionDecoder<MultiLine
 
 
     @Override
-    protected MultiLineString createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries) {
-        if (nativeGeom.hasMValues()) {
-            return getGeometryFactory().createMultiMLineString(geometries.toArray(new MLineString[geometries.size()]));
+    protected MultiLineString createGeometry(List<Geometry> geometries, boolean hasM) {
+        if (hasM) {
+            MLineString[] mlAr = geometries != null ? geometries.toArray(new MLineString[geometries.size()]) : null;
+            return getGeometryFactory().createMultiMLineString(mlAr);
         }
-        return getGeometryFactory().createMultiLineString(geometries.toArray(new LineString[geometries.size()]));
+        LineString[] lAr = geometries != null ? geometries.toArray(new LineString[geometries.size()]) : null;
+        return getGeometryFactory().createMultiLineString(lAr);
     }
 
 }

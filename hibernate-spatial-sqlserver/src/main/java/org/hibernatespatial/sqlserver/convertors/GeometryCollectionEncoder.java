@@ -48,6 +48,10 @@ public class GeometryCollectionEncoder<T extends GeometryCollection> extends Abs
 
     @Override
     protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
+        if (geom.isEmpty()) {
+            shapes.add(new Shape(parentShapeIndex, -1, this.openGisType));
+            return;
+        }
         int thisShapeIndex = shapes.size();
         Shape thisShape = createShape(parentShapeIndex, figures);
         shapes.add(thisShape);

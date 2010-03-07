@@ -36,6 +36,10 @@ class LineStringEncoder extends AbstractEncoder<LineString> {
     @Override
     protected void encode(Geometry geom, int parentShapeIndex, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
         if (!(geom instanceof LineString)) throw new IllegalArgumentException("Require LineString geometry");
+        if (geom.isEmpty()) {
+            shapes.add(new Shape(parentShapeIndex, -1, OpenGisType.LINESTRING));
+            return;
+        }
         int figureOffset = figures.size();
         int pointOffset = coordinates.size();
         for (Coordinate coordinate : geom.getCoordinates()) {

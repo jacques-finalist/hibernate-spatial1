@@ -51,8 +51,17 @@ class PointEncoder extends AbstractEncoder<Point> {
 
         SqlServerGeometry sqlServerGeom = new SqlServerGeometry();
         sqlServerGeom.setSrid(geom.getSRID());
-        sqlServerGeom.setIsSinglePoint();
         sqlServerGeom.setIsValid();
+
+        if (geom.isEmpty()) {
+            sqlServerGeom.setNumberOfPoints(0);
+            sqlServerGeom.setNumberOfFigures(0);
+            sqlServerGeom.setNumberOfShapes(1);
+            sqlServerGeom.setShape(0, new Shape(-1, -1, OpenGisType.POINT));
+            return sqlServerGeom;
+        }
+
+        sqlServerGeom.setIsSinglePoint();
         sqlServerGeom.setNumberOfPoints(1);
         Coordinate coordinate = geom.getCoordinate();
         if (is3DPoint(coordinate)) {
@@ -70,6 +79,9 @@ class PointEncoder extends AbstractEncoder<Point> {
     @Override
     protected void encode(Geometry geom, int parentIdx, List<Coordinate> coordinates, List<Figure> figures, List<Shape> shapes) {
         if (!(geom instanceof Point)) throw new IllegalArgumentException("Require Point geometry");
+        if (geom.isEmpty()) {
+            shapes.add(new Shape(parentIdx, -1, OpenGisType.POINT));
+        }
         int pntOffset = coordinates.size();
         int figureOffset = figures.size();
         coordinates.add(geom.getCoordinate());

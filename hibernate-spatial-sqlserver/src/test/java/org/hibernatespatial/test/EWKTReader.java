@@ -627,7 +627,7 @@ public class EWKTReader {
     private LineString readLineStringText() throws IOException, ParseException {
 
         MCoordinate[] coords = getCoordinates();
-        if (this.hasM)
+        if (this.hasM != null && this.hasM)
             return ((MGeometryFactory) geometryFactory).createMLineString(coords);
         else
             return geometryFactory.createLineString(coords);
@@ -752,7 +752,7 @@ public class EWKTReader {
             }
         }
 
-        if (this.hasM == true) {
+        if (this.hasM != null && this.hasM == true) {
             MLineString[] mlines = (MLineString[]) lineStrings.toArray(new MLineString[lineStrings.size()]);
             return ((MGeometryFactory) geometryFactory).createMultiMLineString(mlines);
         } else {

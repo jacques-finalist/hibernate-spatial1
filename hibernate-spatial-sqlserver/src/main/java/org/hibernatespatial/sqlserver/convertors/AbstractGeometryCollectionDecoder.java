@@ -47,7 +47,7 @@ public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollec
 
     @Override
     protected T createNullGeometry() {
-        return createGeometry(null, (List<Geometry>) null);
+        return createGeometry((List<Geometry>) null, false);
     }
 
     @Override
@@ -65,10 +65,10 @@ public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollec
             Geometry geometry = decoder.createGeometry(nativeGeom, childIdx);
             geometries.add(geometry);
         }
-        return createGeometry(nativeGeom, geometries);
+        return createGeometry(geometries, nativeGeom.hasMValues());
     }
 
-    abstract protected T createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries);
+    abstract protected T createGeometry(List<Geometry> geometries, boolean hasM);
 
 
 }

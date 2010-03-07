@@ -1,4 +1,4 @@
-CREATE TABLE "HBS"."dbo"."geomtest"
+CREATE TABLE "HBS"."dbo"."geomentity"
 (
 id int PRIMARY KEY NOT NULL,
 type varchar(50),

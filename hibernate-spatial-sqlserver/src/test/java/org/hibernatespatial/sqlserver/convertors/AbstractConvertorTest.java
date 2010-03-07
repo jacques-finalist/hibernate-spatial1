@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.sqlserver.DataSourceUtils;
 import org.junit.BeforeClass;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class AbstractConvertorTest {
     Map<Integer, Geometry> expectedGeoms;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws SQLException {
         DataSourceUtils.deleteTestData();
         DataSourceUtils.insertTestData();
     }
@@ -83,7 +84,6 @@ public class AbstractConvertorTest {
         for (Integer id : decodedGeoms.keySet()) {
             Geometry expected = expectedGeoms.get(id);
             Geometry received = decodedGeoms.get(id);
-            if (expected == null) continue; //not all geometries can currently be parsed by WKTReader
             assertTrue("Wrong decoding for case " + id, expected.equalsExact(received));
         }
     }

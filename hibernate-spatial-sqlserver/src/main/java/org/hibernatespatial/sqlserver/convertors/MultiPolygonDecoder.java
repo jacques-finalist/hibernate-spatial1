@@ -40,8 +40,9 @@ public class MultiPolygonDecoder extends AbstractGeometryCollectionDecoder<Multi
     }
 
     @Override
-    protected MultiPolygon createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries) {
-        return getGeometryFactory().createMultiPolygon(geometries.toArray(new Polygon[geometries.size()]));
+    protected MultiPolygon createGeometry(List<Geometry> geometries, boolean hasM) {
+        Polygon[] polygons = geometries != null ? geometries.toArray(new Polygon[geometries.size()]) : null;
+        return getGeometryFactory().createMultiPolygon(polygons);
     }
 
 

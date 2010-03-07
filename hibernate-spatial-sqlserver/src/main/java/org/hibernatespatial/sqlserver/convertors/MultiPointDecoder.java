@@ -40,8 +40,9 @@ public class MultiPointDecoder extends AbstractGeometryCollectionDecoder<MultiPo
     }
 
     @Override
-    protected MultiPoint createGeometry(SqlServerGeometry nativeGeom, List<Geometry> geometries) {
-        return getGeometryFactory().createMultiPoint(geometries.toArray(new Point[geometries.size()]));
+    protected MultiPoint createGeometry(List<Geometry> geometries, boolean hasM) {
+        Point[] points = geometries != null ? geometries.toArray(new Point[geometries.size()]) : null;
+        return getGeometryFactory().createMultiPoint(points);
     }
 
 }

@@ -99,8 +99,11 @@ public class DataSourceUtils {
         return dataSource;
     }
 
+    public static Connection createConnection() throws SQLException {
+        return getDataSource().getConnection();
+    }
 
-    public static void deleteTestData() {
+    public static void deleteTestData() throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -110,11 +113,9 @@ public class DataSourceUtils {
                 LOGGER.info("Removing " + updateCount + " rows.");
             }
             pmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } finally {
             try {
-                cn.close();
+                if (cn != null) cn.close();
             } catch (SQLException e) {
                 // nothing to do
             }
@@ -122,7 +123,11 @@ public class DataSourceUtils {
     }
 
 
-    public static void insertTestData() {
+    //TODO -- differentiate between loading of invalid and valid data!!
+    // we need to be able to test what happens with invalid data for marshalling/unmarshalling
+    // but when testing relations/functions we must have only valid geoms.
+
+    public static void insertTestData() throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -134,11 +139,9 @@ public class DataSourceUtils {
             int[] insCounts = stmt.executeBatch();
             stmt.close();
             LOGGER.info("Loaded " + sum(insCounts) + " rows.");
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             try {
-                cn.close();
+                if (cn != null) cn.close();
             } catch (SQLException e) {
                 // nothing to do
             }
@@ -163,7 +166,7 @@ public class DataSourceUtils {
             e.printStackTrace();
         } finally {
             try {
-                cn.close();
+                if (cn != null) cn.close();
             } catch (SQLException e) {
                 // nothing we can do.
             }
@@ -171,8 +174,6 @@ public class DataSourceUtils {
         return map;
 
     }
-
-    // TODO -- extend JTS WKT Reader to handle MGeometries.
 
     public static Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
