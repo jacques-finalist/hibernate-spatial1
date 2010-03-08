@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ public class SQLServer2008GeometryUserType extends AbstractDBGeometryType {
         if (obj == null)
             return null;
         if (!(obj instanceof byte[])) {
-            throw new IllegalArgumentException("Expected byte array."); //TODO -- improve errorhandling
+            throw new IllegalArgumentException("Expected byte array.");
         }
         byte[] raw = (byte[]) obj;
         return Decoders.decode(raw);
@@ -51,7 +51,7 @@ public class SQLServer2008GeometryUserType extends AbstractDBGeometryType {
 
     public Object conv2DBGeometry(Geometry geom, Connection connection) {
         if (geom == null)
-            throw new IllegalArgumentException("Null geometry passed."); //TODO -- is this correct here?
+            throw new IllegalArgumentException("Null geometry passed.");
         return Encoders.encode(geom);
     }
 

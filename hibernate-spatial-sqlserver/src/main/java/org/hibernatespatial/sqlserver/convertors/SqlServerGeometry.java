@@ -133,9 +133,13 @@ class SqlServerGeometry {
         return getShape(child).parentOffset == parent;
     }
 
+    public boolean isEmptyShape(int shapeIndex) {
+        return getShape(shapeIndex).figureOffset == -1;
+    }
 
     public IndexRange getFiguresForShape(int shapeIndex) {
         int startIdx = getShape(shapeIndex).figureOffset;
+        if (startIdx == -1) return new IndexRange(-1, -1); //empty figures
         int endIdx = -1;
         int nextShapeIdx = shapeIndex + 1;
         if (nextShapeIdx == getNumShapes()) {

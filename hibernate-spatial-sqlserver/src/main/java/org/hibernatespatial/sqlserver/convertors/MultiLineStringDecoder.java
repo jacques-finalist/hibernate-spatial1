@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +28,16 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.hibernatespatial.mgeom.MLineString;
 
 import java.util.List;
 
 class MultiLineStringDecoder extends AbstractGeometryCollectionDecoder<MultiLineString> {
+
+    public MultiLineStringDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {

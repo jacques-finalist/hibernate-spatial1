@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@
 package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.hibernatespatial.HBSpatialExtension;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +41,16 @@ public class Decoders {
     final private static List<Decoder<? extends Geometry>> DECODERS = new ArrayList<Decoder<? extends Geometry>>();
 
     static {
+        MGeometryFactory factory = HBSpatialExtension.getDefaultGeomFactory();
+
         //Decoders
-        DECODERS.add(new PointDecoder());
-        DECODERS.add(new LineStringDecoder());
-        DECODERS.add(new PolygonDecoder());
-        DECODERS.add(new MultiLineStringDecoder());
-        DECODERS.add(new MultiPolygonDecoder());
-        DECODERS.add(new MultiPointDecoder());
-        DECODERS.add(new GeometryCollectionDecoder());
+        DECODERS.add(new PointDecoder(factory));
+        DECODERS.add(new LineStringDecoder(factory));
+        DECODERS.add(new PolygonDecoder(factory));
+        DECODERS.add(new MultiLineStringDecoder(factory));
+        DECODERS.add(new MultiPolygonDecoder(factory));
+        DECODERS.add(new MultiPointDecoder(factory));
+        DECODERS.add(new GeometryCollectionDecoder(factory));
     }
 
 

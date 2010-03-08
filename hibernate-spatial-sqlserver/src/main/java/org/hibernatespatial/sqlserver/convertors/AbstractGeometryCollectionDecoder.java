@@ -27,6 +27,7 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,10 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollection> extends AbstractDecoder<T> {
+
+    public AbstractGeometryCollectionDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {

@@ -4,7 +4,7 @@
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import java.util.List;
 
@@ -38,6 +39,10 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
+
+    public GeometryCollectionDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {

@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,17 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 /**
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
 class PointDecoder extends AbstractDecoder<Point> {
+
+    public PointDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {
@@ -49,6 +54,7 @@ class PointDecoder extends AbstractDecoder<Point> {
 
     @Override
     protected Point createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
+        if (nativeGeom.isEmptyShape(shapeIndex)) return createNullGeometry();
         int figureOffset = nativeGeom.getFiguresForShape(shapeIndex).start;
         int pntOffset = nativeGeom.getPointsForFigure(figureOffset).start;
         return createPoint(nativeGeom, pntOffset);

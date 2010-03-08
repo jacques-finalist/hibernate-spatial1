@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,13 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 public class PolygonDecoder extends AbstractDecoder<Polygon> {
+
+    public PolygonDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {
@@ -45,6 +50,7 @@ public class PolygonDecoder extends AbstractDecoder<Polygon> {
     }
 
     protected Polygon createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
+        if (nativeGeom.isEmptyShape(shapeIndex)) return createNullGeometry();
         //polygons consist of one exterior ring figure, and several interior ones.
         IndexRange figureRange = nativeGeom.getFiguresForShape(shapeIndex);
         LinearRing[] holes = new LinearRing[figureRange.length() - 1];

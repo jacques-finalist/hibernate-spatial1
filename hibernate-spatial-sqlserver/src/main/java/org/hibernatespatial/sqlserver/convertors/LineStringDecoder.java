@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,8 +29,13 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import org.hibernatespatial.mgeom.MCoordinate;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 
 class LineStringDecoder extends AbstractDecoder<LineString> {
+
+    public LineStringDecoder(MGeometryFactory factory) {
+        super(factory);
+    }
 
     @Override
     protected OpenGisType getOpenGisType() {
@@ -47,19 +52,19 @@ class LineStringDecoder extends AbstractDecoder<LineString> {
 
     @Override
     protected LineString createGeometry(SqlServerGeometry nativeGeom, int shapeIndex) {
+        if (nativeGeom.isEmptyShape(shapeIndex)) return createNullGeometry();
         int figureOffset = nativeGeom.getFiguresForShape(shapeIndex).start;
-        //linestring shapes have exactly one figure
         IndexRange pntIndexRange = nativeGeom.getPointsForFigure(figureOffset);
         return createLineString(nativeGeom, pntIndexRange);
     }
 
     protected LineString createLineString(SqlServerGeometry nativeGeom, IndexRange pntIndexRange) {
         Coordinate[] coordinates = nativeGeom.coordinateRange(pntIndexRange);
-        return createLineString(coordinates, nativeGeom);
+        return createLineString(coordinates, nativeGeom.hasMValues());
     }
 
-    private LineString createLineString(Coordinate[] coords, SqlServerGeometry nativeGeom) {
-        if (nativeGeom.hasMValues()) {
+    private LineString createLineString(Coordinate[] coords, boolean hasM) {
+        if (hasM) {
             return getGeometryFactory().createMLineString((MCoordinate[]) coords);
         } else {
             return getGeometryFactory().createLineString(coords);

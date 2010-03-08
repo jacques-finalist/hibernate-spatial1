@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,6 +81,7 @@ class PointEncoder extends AbstractEncoder<Point> {
         if (!(geom instanceof Point)) throw new IllegalArgumentException("Require Point geometry");
         if (geom.isEmpty()) {
             shapes.add(new Shape(parentIdx, -1, OpenGisType.POINT));
+            return;
         }
         int pntOffset = coordinates.size();
         int figureOffset = figures.size();
