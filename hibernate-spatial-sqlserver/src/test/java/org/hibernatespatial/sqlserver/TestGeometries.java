@@ -123,10 +123,10 @@ class TestGeometries implements List<TestGeometry> {
         //NULL Geometries
         geometries.add(new TestGeometry(50, "POINT", "POINT EMPTY", 4326));
         geometries.add(new TestGeometry(51, "LINESTRING", "LINESTRING EMPTY", 0));
-        geometries.add(new TestGeometry(52, "POLYGON", "POLYGON EMPTY", 0));
+        geometries.add(new TestGeometry(52, "POLYGON", "POLYGON EMPTY", 4326));
         geometries.add(new TestGeometry(53, "MULTIPOINT", "MULTIPOINT EMPTY", 0));
         geometries.add(new TestGeometry(54, "MULTILINESTRING", "MULTILINESTRING EMPTY", 0));
-        geometries.add(new TestGeometry(55, "MULTIPOLYGON", "MULTIPOLYGON EMPTY", 0));
+        geometries.add(new TestGeometry(55, "MULTIPOLYGON", "MULTIPOLYGON EMPTY", 4326));
         geometries.add(new TestGeometry(56, "GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION EMPTY", 0));
 
 

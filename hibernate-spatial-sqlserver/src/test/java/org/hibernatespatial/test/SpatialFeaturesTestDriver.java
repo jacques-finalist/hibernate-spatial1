@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.type.CustomType;
 import org.hibernatespatial.GeometryUserType;
@@ -144,27 +145,27 @@ public class SpatialFeaturesTestDriver {
     public void test_within() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getWithin(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, within(geom, :filter) from GeomEntity where within(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    private Map<String, Object> createFilterParams(String filterParamName, Geometry filterGeom) {
+    private Map<String, Object> createQueryParams(String filterParamName, Object value) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put(filterParamName, filterGeom);
+        params.put(filterParamName, value);
         return params;
     }
 
     public void test_equals() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getEquals(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, equals(geom, :filter) from GeomEntity where equals(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
     public void test_crosses() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getCrosses(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, crosses(geom, :filter) from GeomEntity where crosses(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
 
     }
@@ -172,28 +173,28 @@ public class SpatialFeaturesTestDriver {
     public void test_disjoint() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getDisjoint(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, disjoint(geom, :filter) from GeomEntity where disjoint(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
     public void test_intersects() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getIntersects(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, intersects(geom, :filter) from GeomEntity where intersects(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
     public void test_overlaps() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getOverlaps(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, overlaps(geom, :filter) from GeomEntity where overlaps(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
     public void test_touches() throws SQLException {
-        Map<Integer, Boolean> dbexpected = expectationsFactory.getTouches(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, touches(geom, :filter) from GeomEntity where touches(geom, :filter) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getTouches(expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
@@ -201,7 +202,7 @@ public class SpatialFeaturesTestDriver {
         String matrix = "T*T***T**";
         Map<Integer, Boolean> dbexpected = expectationsFactory.getRelate(expectationsFactory.getTestPolygon(), matrix);
         String hql = "SELECT id, relate(geom, :filter, :matrix) from GeomEntity where relate(geom, :filter, :matrix) = true and srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         params.put("matrix", matrix);
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
 
@@ -215,20 +216,54 @@ public class SpatialFeaturesTestDriver {
     public void test_distance() throws SQLException {
         Map<Integer, Double> dbexpected = expectationsFactory.getDistance(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, distance(geom, :filter) from GeomEntity where srid(geom) = 4326";
-        Map<String, Object> params = createFilterParams("filter", expectationsFactory.getTestPolygon());
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-//
-//    "SELECT buffer(e.geometry, 1) FROM PointEntity e WHERE e.id=1",
-//    "SELECT buffer(e.geometry, 1) FROM LineStringEntity e WHERE e.id=1",
-//    "SELECT buffer(e.geometry, 1) FROM PolygonEntity e WHERE e.id=1",
-//
-//    "SELECT convexhull(geomunion(e.geometry, :polygon)) FROM PolygonEntity e WHERE e.id=2",
-//    "SELECT intersection(e.geometry, :polygon) FROM PolygonEntity e WHERE e.id=2",
-//    "SELECT difference(e.geometry, :polygon) FROM PolygonEntity e WHERE e.id=2",
-//    "SELECT symdifference(e.geometry, :polygon) FROM PolygonEntity e WHERE e.id=2",
-//    "SELECT geomunion(e.geometry, :linestring) FROM LineStringEntity e WHERE e.id=2",
+    public void test_buffer() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getBuffer(Double.valueOf(1.0));
+        String hql = "SELECT id, buffer(geom, :distance) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("distance", Double.valueOf(1.0));
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+
+    }
+
+    public void test_convexhull() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getConvexHull(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, convexhull(geomunion(geom, :polygon)) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+
+    }
+
+    public void test_intersection() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getIntersection(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, intersection(geom, :polygon) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+    public void test_difference() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getDifference(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, difference(geom, :polygon) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+    public void test_symdifference() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getSymDifference(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, symdifference(geom, :polygon) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+    public void test_geomunion() throws SQLException {
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getGeomUnion(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, geomunion(geom, :polygon) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
 //
 //    "SELECT area(e.geometry) FROM PolygonEntity e WHERE e.id=2",
 //    "SELECT centroid(e.geometry) FROM PolygonEntity e WHERE e.id=1",
@@ -243,7 +278,6 @@ public class SpatialFeaturesTestDriver {
 
     private <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql, Map<String, Object> params) {
         Map<Integer, T> hsreceived = new HashMap<Integer, T>();
-        Geometry geom = expectationsFactory.getTestPolygon();
         doInSession(hql, hsreceived, params);
         compare(dbexpected, hsreceived);
     }
@@ -251,7 +285,7 @@ public class SpatialFeaturesTestDriver {
     private <T> void compare(Map<Integer, T> expected, Map<Integer, T> received) {
         for (Integer id : expected.keySet()) {
             LOGGER.debug("Case :" + id);
-            LOGGER.debug("expectationsFactory: " + expected.get(id));
+            LOGGER.debug("expected: " + expected.get(id));
             LOGGER.debug("received: " + received.get(id));
             compare(id, expected.get(id), received.get(id));
         }
@@ -272,8 +306,10 @@ public class SpatialFeaturesTestDriver {
                 compare(id, partExpected, partReceived);
             }
         } else if (expected instanceof Geometry) {
-            //TODO - apparent failure in case of empty geometries??
-            assertTrue("Failure on test for case " + id, ((Geometry) expected).equals((Geometry) received));
+            if (!(received instanceof Geometry))
+                fail("Expected geometry, received " + received.getClass().getCanonicalName());
+            if (!((Geometry) received).isEmpty() && !((Geometry) expected).isEmpty())
+                assertTrue("Failure on test for case " + id, ((Geometry) expected).equals((Geometry) received));
 
         } else {
             assertEquals("Failure on test for case " + id, expected, received);
@@ -282,12 +318,15 @@ public class SpatialFeaturesTestDriver {
 
     private <T> void doInSession(String hql, Map<Integer, T> result, Map<String, Object> params) {
         Session session = null;
+        Transaction tx = null;
         try {
             session = factory.openSession();
+            tx = session.beginTransaction();
             Query query = session.createQuery(hql);
             setParameters(params, query);
             addQueryResults(result, query);
         } finally {
+            if (tx != null) tx.rollback();
             if (session != null) session.close();
         }
     }

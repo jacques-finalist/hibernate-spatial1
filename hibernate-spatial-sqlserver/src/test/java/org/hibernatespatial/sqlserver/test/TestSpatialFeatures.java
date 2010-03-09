@@ -136,7 +136,7 @@ public class TestSpatialFeatures {
     }
 
     @Test
-    public void test_relates() throws SQLException {
+    public void test_relate() throws SQLException {
         delegate.test_relate();
     }
 
@@ -145,5 +145,33 @@ public class TestSpatialFeatures {
         delegate.test_distance();
     }
 
+    @Test
+    public void test_buffer() throws SQLException {
+        delegate.test_buffer();
+    }
 
+    @Test
+    public void test_convexhull() throws SQLException {
+        delegate.test_convexhull();
+    }
+
+    @Test
+    public void test_intersection() throws SQLException {
+        delegate.test_intersection();
+    }
+
+    @Test
+    public void test_difference() throws SQLException {
+        delegate.test_difference();
+    }
+
+    @Test
+    public void test_symdifference() throws SQLException {
+        delegate.test_symdifference();
+    }
+
+    @Test
+    public void test_geomunion() throws SQLException {
+        delegate.test_geomunion();
+    }
 }

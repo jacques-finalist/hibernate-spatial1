@@ -159,7 +159,53 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeDimensionSQL();
+    protected abstract NativeSQLStatement getNativeDimensionSQL();
+
+    public Map<Integer, Geometry> getBuffer(Double distance) throws SQLException {
+        return retrieveExpected(createNativeBufferStatement(distance), true);
+    }
+
+    /**
+     * Returns the native SQL statement corresponding to the HQL statement:
+     * "SELECT id, distance(geom, :filter) from GeomEntity where srid(geom) = 4326"
+     *
+     * @param distance
+     * @return
+     */
+    protected abstract NativeSQLStatement createNativeBufferStatement(Double distance);
+
+
+    public Map<Integer, Geometry> getConvexHull(Geometry geom) throws SQLException {
+        return retrieveExpected(createConvexHullStatement(geom), true);
+    }
+
+    protected abstract NativeSQLStatement createConvexHullStatement(Geometry geom);
+
+
+    public Map<Integer, Geometry> getIntersection(Geometry geom) throws SQLException {
+        return retrieveExpected(createIntersectionStatement(geom), true);
+    }
+
+    protected abstract NativeSQLStatement createIntersectionStatement(Geometry geom);
+
+    public Map<Integer, Geometry> getDifference(Geometry geom) throws SQLException {
+        return retrieveExpected(createDifferenceStatement(geom), true);
+    }
+
+    protected abstract NativeSQLStatement createDifferenceStatement(Geometry geom);
+
+    public Map<Integer, Geometry> getSymDifference(Geometry geom) throws SQLException {
+        return retrieveExpected(createSymDifferenceStatement(geom), true);
+    }
+
+    protected abstract NativeSQLStatement createSymDifferenceStatement(Geometry geom);
+
+    public Map<Integer, Geometry> getGeomUnion(Geometry geom) throws SQLException {
+        return retrieveExpected(createGeomUnionStatement(geom), true);
+    }
+
+    protected abstract NativeSQLStatement createGeomUnionStatement(Geometry geom);
+
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -167,7 +213,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeAsTextSQL();
+    protected abstract NativeSQLStatement getNativeAsTextSQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -175,7 +221,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeSridSQL();
+    protected abstract NativeSQLStatement getNativeSridSQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -183,7 +229,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeIsSimpleSQL();
+    protected abstract NativeSQLStatement getNativeIsSimpleSQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -191,7 +237,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeIsemptyQL();
+    protected abstract NativeSQLStatement getNativeIsemptyQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -199,7 +245,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeBoundarySQL();
+    protected abstract NativeSQLStatement getNativeBoundarySQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -207,7 +253,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeEnvelopeSQL();
+    protected abstract NativeSQLStatement getNativeEnvelopeSQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -215,7 +261,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getNativeAsBinarySQL();
+    protected abstract NativeSQLStatement getNativeAsBinarySQL();
 
     /**
      * Returns the SQL statement corresponding to the HQL statement:
@@ -223,10 +269,14 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract String getGeometryTypeSQL();
+    protected abstract NativeSQLStatement getGeometryTypeSQL();
 
 
     protected abstract Geometry decode(Object o);
+
+    public abstract Polygon getTestPolygon();
+
+    public abstract String getTestPolygonWKT();
 
     /**
      * Returns a Wrapper for the HQL statement
@@ -242,15 +292,6 @@ public abstract class AbstractExpectationsFactory {
 
     protected abstract NativeSQLStatement createNativeDisjointStatement(Geometry geom);
 
-
-    public abstract Polygon getTestPolygon();
-
-    public abstract String getTestPolygonWKT();
-
-
-    private <T> Map<Integer, T> retrieveExpected(String sql, boolean expectGeometry) throws SQLException {
-        return retrieveExpected(createFromNativeSQLText(sql), expectGeometry);
-    }
 
     private <T> Map<Integer, T> retrieveExpected(NativeSQLStatement nativeSQLStatement, boolean expectGeometry) throws SQLException {
         PreparedStatement preparedStatement = null;
@@ -276,7 +317,7 @@ public abstract class AbstractExpectationsFactory {
         }
     }
 
-    private NativeSQLStatement createFromNativeSQLText(final String sql) {
+    protected NativeSQLStatement createNativeSQLStatement(final String sql) {
         return new NativeSQLStatement() {
             public PreparedStatement prepare(Connection connection) throws SQLException {
                 return connection.prepareStatement(sql);
@@ -295,6 +336,20 @@ public abstract class AbstractExpectationsFactory {
             }
         };
     }
+
+    protected NativeSQLStatement createNativeSQLStatement(final String sql, final Object[] params) {
+        return new NativeSQLStatement() {
+            public PreparedStatement prepare(Connection connection) throws SQLException {
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                int i = 1;
+                for (Object param : params) {
+                    pstmt.setObject(i++, param);
+                }
+                return pstmt;
+            }
+        };
+    }
+
 
     protected int numPlaceHoldersInSQL(String sql) {
         return sql.replaceAll("[^?]", "").length();

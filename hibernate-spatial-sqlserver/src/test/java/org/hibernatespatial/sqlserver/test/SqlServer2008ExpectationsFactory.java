@@ -47,48 +47,78 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
 
 
     @Override
-    protected String getNativeDimensionSQL() {
-        return "select t.id, t.geom.STDimension() from GeomTest t";
+    protected NativeSQLStatement getNativeDimensionSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STDimension() from GeomTest t");
     }
 
     @Override
-    protected String getNativeAsTextSQL() {
-        return "select t.id, t.geom.STAsText() from GeomTest t";
+    protected NativeSQLStatement createNativeBufferStatement(Double distance) {
+        return createNativeSQLStatement("select t.id, t.geom.STBuffer(?) from GeomTest t where t.geom.STSrid = 4326", new Object[]{distance});
     }
 
     @Override
-    protected String getNativeSridSQL() {
-        return "select t.id, t.geom.STSrid from GeomTest t";
+    protected NativeSQLStatement createConvexHullStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STUnion(geometry::STGeomFromText(?, 4326)).STConvexHull() from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected String getNativeIsSimpleSQL() {
-        return "select t.id, t.geom.STIsSimple() from GeomTest t";
+    protected NativeSQLStatement createIntersectionStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STIntersection(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected String getNativeIsemptyQL() {
-        return "select t.id, t.geom.STIsEmpty() from GeomTest t";
+    protected NativeSQLStatement createDifferenceStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STDifference(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected String getNativeBoundarySQL() {
-        return "select t.id, t.geom.STBoundary() from GeomTest t";
+    protected NativeSQLStatement createSymDifferenceStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STSymDifference(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected String getNativeEnvelopeSQL() {
-        return "select t.id, t.geom.STEnvelope() from GeomTest t";
+    protected NativeSQLStatement createGeomUnionStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STUnion(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected String getNativeAsBinarySQL() {
-        return "select t.id, t.geom.STAsBinary() from GeomTest t";
+    protected NativeSQLStatement getNativeAsTextSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STAsText() from GeomTest t");
     }
 
     @Override
-    protected String getGeometryTypeSQL() {
-        return "select t.id, t.geom.STGeometryType() from GeomTest t";
+    protected NativeSQLStatement getNativeSridSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STSrid from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getNativeIsSimpleSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STIsSimple() from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getNativeIsemptyQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STIsEmpty() from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getNativeBoundarySQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STBoundary() from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getNativeEnvelopeSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STEnvelope() from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getNativeAsBinarySQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STAsBinary() from GeomTest t");
+    }
+
+    @Override
+    protected NativeSQLStatement getGeometryTypeSQL() {
+        return createNativeSQLStatement("select t.id, t.geom.STGeometryType() from GeomTest t");
     }
 
     @Override
