@@ -27,7 +27,6 @@ package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import org.hibernatespatial.sqlserver.DataSourceUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -298,7 +297,7 @@ public abstract class AbstractExpectationsFactory {
         Connection cn = null;
         Map<Integer, T> expected = new HashMap<Integer, T>();
         try {
-            cn = DataSourceUtils.createConnection();
+            cn = createConnection();
             preparedStatement = nativeSQLStatement.prepare(cn);
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
@@ -316,6 +315,8 @@ public abstract class AbstractExpectationsFactory {
             if (cn != null) cn.close();
         }
     }
+
+    protected abstract Connection createConnection() throws SQLException;
 
     protected NativeSQLStatement createNativeSQLStatement(final String sql) {
         return new NativeSQLStatement() {

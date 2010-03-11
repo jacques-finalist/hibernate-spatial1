@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,17 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver;
+package org.hibernatespatial.test;
 
-class TestGeometry {
+/**
+ * Created by IntelliJ IDEA.
+ * User: maesenka
+ * Date: Mar 11, 2010
+ * Time: 8:42:48 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public interface SQLExpressionTemplate {
 
-    final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', Geometry::STGeomFromText('%s', %d))";
-    final String wkt;
-    final int id;
-    final int srid;
-    final String type;
-
-    TestGeometry(int id, String type, String wkt, int srid) {
-        this.wkt = wkt;
-        this.id = id;
-        this.type = type;
-        this.srid = srid;
-    }
-
-    public String toSql() {
-        return String.format(SQL_TEMPLATE, id, type, wkt, srid);
-    }
-
+    public String toInsertSql(TestObject testObject);
 
 }
-

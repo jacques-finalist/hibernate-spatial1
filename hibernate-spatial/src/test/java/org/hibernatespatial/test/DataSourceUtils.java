@@ -1,10 +1,10 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
  *
- * Copyright © 2009 Geovise BVBA
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,12 +23,11 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver;
+package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.hibernatespatial.test.EWKTReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,20 +49,25 @@ public class DataSourceUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtils.class);
 
-    private static TestGeometries testGeometries;
-    private static Properties properties;
-    private static DataSource dataSource;
+    private final String propertyFile;
+    private final SQLExpressionTemplate sqlExpressionTemplate;
 
-    static {
+    private TestObjects testObjects;
+    private Properties properties;
+    private DataSource dataSource;
+
+    public DataSourceUtils(String propertyFile, SQLExpressionTemplate sqlExpressionTemplate) {
+        this.propertyFile = propertyFile;
+        this.sqlExpressionTemplate = sqlExpressionTemplate;
         readProperties();
         createBasicDataSource();
         loadTestGeometries();
     }
 
-    private static void readProperties() {
+    private void readProperties() {
         InputStream is = null;
         try {
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("hibernate-spatial-sqlsever-test.properties");
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile);
             properties = new Properties();
             properties.load(is);
         } catch (IOException e) {
@@ -77,12 +81,13 @@ public class DataSourceUtils {
         }
     }
 
-    private static void createBasicDataSource() {
+    private void createBasicDataSource() {
         String url = properties.getProperty("jdbcUrl");
         String user = properties.getProperty("dbUsername");
         String pwd = properties.getProperty("dbPassword");
+        String driverName = properties.getProperty("driver");
         BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        bds.setDriverClassName(driverName);
         bds.setUrl(url);
         bds.setUsername(user);
         bds.setPassword(pwd);
@@ -90,20 +95,20 @@ public class DataSourceUtils {
     }
 
 
-    private static void loadTestGeometries() {
-        testGeometries = new TestGeometries();
-        testGeometries.prepare();
+    private void loadTestGeometries() {
+        testObjects = new TestObjects();
+        testObjects.prepare();
     }
 
-    public static DataSource getDataSource() {
+    public DataSource getDataSource() {
         return dataSource;
     }
 
-    public static Connection createConnection() throws SQLException {
+    public Connection createConnection() throws SQLException {
         return getDataSource().getConnection();
     }
 
-    public static void deleteTestData() throws SQLException {
+    public void deleteTestData() throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -122,19 +127,18 @@ public class DataSourceUtils {
         }
     }
 
-
-    //TODO -- differentiate between loading of invalid and valid data!!
     // we need to be able to test what happens with invalid data for marshalling/unmarshalling
     // but when testing relations/functions we must have only valid geoms.
 
-    public static void insertTestData() throws SQLException {
+    public void insertTestData() throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
             Statement stmt = cn.createStatement();
-            for (TestGeometry testGeometry : testGeometries) {
-                LOGGER.debug("adding stmt: " + testGeometry.toSql());
-                stmt.addBatch(testGeometry.toSql());
+            for (TestObject testObject : testObjects) {
+                String sql = sqlExpressionTemplate.toInsertSql(testObject);
+                LOGGER.debug("adding stmt: " + sql);
+                stmt.addBatch(sql);
             }
             int[] insCounts = stmt.executeBatch();
             stmt.close();
@@ -148,8 +152,8 @@ public class DataSourceUtils {
         }
     }
 
-    public static Map<Integer, byte[]> rawByteArrays(String type) {
-        Map<Integer, byte[]> map = new HashMap<Integer, byte[]>();
+    public Map<Integer, Object> rawDbObjects(String type) {
+        Map<Integer, Object> map = new HashMap<Integer, Object>();
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -158,8 +162,8 @@ public class DataSourceUtils {
             ResultSet results = pstmt.executeQuery();
             while (results.next()) {
                 Integer id = results.getInt(1);
-                byte[] bytes = results.getBytes(2);
-                map.put(id, bytes);
+                Object obj = results.getObject(2);
+                map.put(id, obj);
             }
 
         } catch (SQLException e) {
@@ -175,15 +179,15 @@ public class DataSourceUtils {
 
     }
 
-    public static Map<Integer, Geometry> expectedGeoms(String type) {
+    public Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
         EWKTReader parser = new EWKTReader();
-        for (TestGeometry testGeometry : testGeometries) {
-            if (testGeometry.type.equalsIgnoreCase(type)) {
+        for (TestObject testObject : testObjects) {
+            if (testObject.type.equalsIgnoreCase(type)) {
                 try {
-                    result.put(testGeometry.id, parser.read(testGeometry.wkt));
+                    result.put(testObject.id, parser.read(testObject.wkt));
                 } catch (ParseException e) {
-                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testGeometry.id, testGeometry.wkt));
+                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testObject.id, testObject.wkt));
                     throw new RuntimeException(e);
                 }
             }

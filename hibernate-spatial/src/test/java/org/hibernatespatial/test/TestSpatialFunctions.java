@@ -54,14 +54,14 @@ import static org.junit.Assert.*;
  * Time: 2:04:49 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SpatialFeaturesTestDriver {
+public class TestSpatialFunctions {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SpatialFeaturesTestDriver.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TestSpatialFunctions.class);
 
     private static SessionFactory factory;
     private final AbstractExpectationsFactory expectationsFactory;
 
-    public SpatialFeaturesTestDriver(AbstractExpectationsFactory expectationsFactory) {
+    public TestSpatialFunctions(AbstractExpectationsFactory expectationsFactory) {
         this.expectationsFactory = expectationsFactory;
     }
 
