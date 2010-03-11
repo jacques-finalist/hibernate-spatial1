@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -43,7 +43,6 @@ import java.util.Properties;
  * <p>Unit test support class.</p>
  *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public class DataSourceUtils {
 
@@ -52,16 +51,30 @@ public class DataSourceUtils {
     private final String propertyFile;
     private final SQLExpressionTemplate sqlExpressionTemplate;
 
-    private TestObjects testObjects;
+    private TestGeometries testGeometries;
     private Properties properties;
     private DataSource dataSource;
 
+    /**
+     * Constructor for the DataSourceUtils object.
+     * <p/>
+     * <p>The following entities are required in the property file:
+     * <il>
+     * <li> jdbcUrl: jdbc connection URL</li>
+     * <li> dbUsername: username for the database</li>
+     * <li> dbPassword: password for the database</li>
+     * <li> driver: fully-qualified class name for the JDBC Driver</li>
+     * </il>
+     *
+     * @param propertyFile          properties file for the database properties
+     * @param sqlExpressionTemplate SQLExpressionTemplate object that generates SQL statements for this database
+     */
     public DataSourceUtils(String propertyFile, SQLExpressionTemplate sqlExpressionTemplate) {
         this.propertyFile = propertyFile;
         this.sqlExpressionTemplate = sqlExpressionTemplate;
         readProperties();
         createBasicDataSource();
-        loadTestGeometries();
+        loadTestObjects();
     }
 
     private void readProperties() {
@@ -94,20 +107,40 @@ public class DataSourceUtils {
         dataSource = bds;
     }
 
-
-    private void loadTestGeometries() {
-        testObjects = new TestObjects();
-        testObjects.prepare();
+    /**
+     * loads the test objects
+     * <p/>
+     * TODO -- make the source of the TestGeometries configurable.
+     */
+    private void loadTestObjects() {
+        testGeometries = new TestGeometries();
+        testGeometries.prepare();
     }
 
+    /**
+     * Returns a DataSource for the configured database.
+     *
+     * @return a DataSource
+     */
     public DataSource getDataSource() {
         return dataSource;
     }
 
+    /**
+     * Returns a JDBC connection to the database
+     *
+     * @return a JDBC Connection object
+     * @throws SQLException
+     */
     public Connection createConnection() throws SQLException {
         return getDataSource().getConnection();
     }
 
+    /**
+     * Delete all test data from the database
+     *
+     * @throws SQLException
+     */
     public void deleteTestData() throws SQLException {
         Connection cn = null;
         try {
@@ -127,16 +160,18 @@ public class DataSourceUtils {
         }
     }
 
-    // we need to be able to test what happens with invalid data for marshalling/unmarshalling
-    // but when testing relations/functions we must have only valid geoms.
-
+    /**
+     * Insert all test data in the database
+     *
+     * @throws SQLException
+     */
     public void insertTestData() throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
             Statement stmt = cn.createStatement();
-            for (TestObject testObject : testObjects) {
-                String sql = sqlExpressionTemplate.toInsertSql(testObject);
+            for (TestGeometry testGeometry : testGeometries) {
+                String sql = sqlExpressionTemplate.toInsertSql(testGeometry);
                 LOGGER.debug("adding stmt: " + sql);
                 stmt.addBatch(sql);
             }
@@ -152,6 +187,12 @@ public class DataSourceUtils {
         }
     }
 
+    /**
+     * Return the geometries of the test objects as raw (i.e. undecoded) objects from the database.
+     *
+     * @param type type of geometry
+     * @return map of identifier, undecoded geometry object
+     */
     public Map<Integer, Object> rawDbObjects(String type) {
         Map<Integer, Object> map = new HashMap<Integer, Object>();
         Connection cn = null;
@@ -179,15 +220,23 @@ public class DataSourceUtils {
 
     }
 
+    /**
+     * Returns the JTS geometries that are expected of a decoding of the test object's geometry.
+     * <p/>
+     * <p>This method reads the WKT of the test objects and returns the result.</p>
+     *
+     * @param type type of geometry
+     * @return map of identifier and JTS geometry
+     */
     public Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
         EWKTReader parser = new EWKTReader();
-        for (TestObject testObject : testObjects) {
-            if (testObject.type.equalsIgnoreCase(type)) {
+        for (TestGeometry testGeometry : testGeometries) {
+            if (testGeometry.type.equalsIgnoreCase(type)) {
                 try {
-                    result.put(testObject.id, parser.read(testObject.wkt));
+                    result.put(testGeometry.id, parser.read(testGeometry.wkt));
                 } catch (ParseException e) {
-                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testObject.id, testObject.wkt));
+                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testGeometry.id, testGeometry.wkt));
                     throw new RuntimeException(e);
                 }
             }

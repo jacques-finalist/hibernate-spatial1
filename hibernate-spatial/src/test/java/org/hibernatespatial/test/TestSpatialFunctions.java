@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -48,11 +48,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Feb 21, 2010
- * Time: 2:04:49 PM
- * To change this template use File | Settings | File Templates.
+ * @author Karel Maesen, Geovise BVBA
  */
 public class TestSpatialFunctions {
 
@@ -86,7 +82,7 @@ public class TestSpatialFunctions {
 
 
     public void test_dimension() throws SQLException {
-        Map<Integer, Integer> dbexpected = expectationsFactory.getExpectedDimension();
+        Map<Integer, Integer> dbexpected = expectationsFactory.getDimension();
         String hql = "SELECT id, dimension(geom) FROM GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
@@ -264,25 +260,19 @@ public class TestSpatialFunctions {
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-//
-//    "SELECT area(e.geometry) FROM PolygonEntity e WHERE e.id=2",
-//    "SELECT centroid(e.geometry) FROM PolygonEntity e WHERE e.id=1",
-//    "SELECT pointonsurface(e.geometry) FROM PolygonEntity e WHERE e.id=2",
-
-
     private <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql) {
         Map<Integer, T> hsreceived = new HashMap<Integer, T>();
         doInSession(hql, hsreceived, null);
         compare(dbexpected, hsreceived);
     }
 
-    private <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql, Map<String, Object> params) {
+    protected <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql, Map<String, Object> params) {
         Map<Integer, T> hsreceived = new HashMap<Integer, T>();
         doInSession(hql, hsreceived, params);
         compare(dbexpected, hsreceived);
     }
 
-    private <T> void compare(Map<Integer, T> expected, Map<Integer, T> received) {
+    protected <T> void compare(Map<Integer, T> expected, Map<Integer, T> received) {
         for (Integer id : expected.keySet()) {
             LOGGER.debug("Case :" + id);
             LOGGER.debug("expected: " + expected.get(id));
@@ -291,8 +281,7 @@ public class TestSpatialFunctions {
         }
     }
 
-
-    private void compare(Integer id, Object expected, Object received) {
+    protected void compare(Integer id, Object expected, Object received) {
         if (expected instanceof byte[]) {
             assertArrayEquals("Failure on test for case " + id, (byte[]) expected, (byte[]) received);
 

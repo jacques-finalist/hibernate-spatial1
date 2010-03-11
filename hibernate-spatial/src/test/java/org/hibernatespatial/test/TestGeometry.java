@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -25,7 +25,12 @@
 
 package org.hibernatespatial.test;
 
-public class TestObject {
+/**
+ * A <code>TestGeometry</code> captures the information necessary to build a test geometry.
+ *
+ * @author Karel Maesen, Geovise BVBA
+ */
+public class TestGeometry {
 
 
     final public String wkt;
@@ -33,7 +38,7 @@ public class TestObject {
     final public int srid;
     final public String type;
 
-    TestObject(int id, String type, String wkt, int srid) {
+    TestGeometry(int id, String type, String wkt, int srid) {
         this.wkt = wkt;
         this.id = id;
         this.type = type;

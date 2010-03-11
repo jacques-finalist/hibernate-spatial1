@@ -26,14 +26,19 @@
 package org.hibernatespatial.test;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Mar 11, 2010
- * Time: 8:42:48 PM
- * To change this template use File | Settings | File Templates.
+ * <code>SQLExpressoinTemplate</code>s generate database-specific
+ * SQL statements for a given <code>TestGeometry</code> instance.
+ *
+ * @author Karel Maesen, Geovise BVBA
  */
 public interface SQLExpressionTemplate {
 
-    public String toInsertSql(TestObject testObject);
+    /**
+     * Returns an insert SQL statement for the specified <code>TestGeometry</code>
+     *
+     * @param testGeometry
+     * @return an insert SQL for testGeometry
+     */
+    public String toInsertSql(TestGeometry testGeometry);
 
 }

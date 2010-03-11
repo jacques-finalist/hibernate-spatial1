@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -30,13 +30,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Feb 21, 2010
- * Time: 6:37:40 PM
- * To change this template use File | Settings | File Templates.
+ * <code>NativeSQLStatement</code>s can instantiate a
+ * database-specific  <code>PreparedStatement</code> for
+ * some database query or operation.
+ *
+ * @author Karel Maesen, Geovise BVBA
  */
 public interface NativeSQLStatement {
 
+    /**
+     * create a PreparedStatement from the specified connection
+     *
+     * @param connection Connection to the database.
+     * @return
+     * @throws SQLException
+     */
     public PreparedStatement prepare(Connection connection) throws SQLException;
 }
