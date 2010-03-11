@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -26,7 +26,8 @@
 package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.hibernatespatial.sqlserver.DataSourceUtils;
+import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.junit.BeforeClass;
 
 import java.sql.SQLException;
@@ -42,25 +43,27 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractConvertorTest {
 
+    private final static DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
+
     Map<Integer, Geometry> decodedGeoms;
-    Map<Integer, byte[]> rawResults;
+    Map<Integer, Object> rawResults;
     Map<Integer, byte[]> encodedGeoms;
     Map<Integer, Geometry> expectedGeoms;
 
     @BeforeClass
     public static void beforeClass() throws SQLException {
-        DataSourceUtils.deleteTestData();
-        DataSourceUtils.insertTestData();
+        dataSourceUtils.deleteTestData();
+        dataSourceUtils.insertTestData();
     }
 
 
     public void doDecoding(OpenGisType type) {
-        rawResults = DataSourceUtils.rawByteArrays(type.toString());
-        expectedGeoms = DataSourceUtils.expectedGeoms(type.toString());
+        rawResults = dataSourceUtils.rawDbObjects(type.toString());
+        expectedGeoms = dataSourceUtils.expectedGeoms(type.toString());
         decodedGeoms = new HashMap<Integer, Geometry>();
 
         for (Integer id : rawResults.keySet()) {
-            Geometry geometry = Decoders.decode(rawResults.get(id));
+            Geometry geometry = Decoders.decode((byte[]) rawResults.get(id));
             decodedGeoms.put(id, geometry);
         }
     }
@@ -76,7 +79,7 @@ public class AbstractConvertorTest {
 
     public void test_encoding() {
         for (Integer id : encodedGeoms.keySet()) {
-            assertTrue("Wrong encoding for case " + id, Arrays.equals(rawResults.get(id), encodedGeoms.get(id)));
+            assertTrue("Wrong encoding for case " + id, Arrays.equals((byte[]) rawResults.get(id), encodedGeoms.get(id)));
         }
     }
 

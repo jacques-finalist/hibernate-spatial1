@@ -23,34 +23,19 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver.convertors;
+package org.hibernatespatial.sqlserver;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.hibernatespatial.test.SQLExpressionTemplate;
+import org.hibernatespatial.test.TestGeometry;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Jan 24, 2010
- * Time: 5:33:19 PM
- * To change this template use File | Settings | File Templates.
+ * @author Karel Maesen, Geovise BVBA
  */
-public class GeometryCollectionConvertorTest extends AbstractConvertorTest {
+public class SQLServerExpressionTemplate implements SQLExpressionTemplate {
 
-    @Before
-    public void setUp() {
-        doDecoding(OpenGisType.GEOMETRYCOLLECTION);
-        doEncoding();
+    final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', Geometry::STGeomFromText('%s', %d))";
+
+    public String toInsertSql(TestGeometry testGeometry) {
+        return String.format(SQL_TEMPLATE, testGeometry.id, testGeometry.type, testGeometry.wkt, testGeometry.srid);
     }
-
-    @Test
-    public void test_encoding() {
-        super.test_encoding();
-    }
-
-    @Test
-    public void test_decoding() {
-        super.test_decoding();
-    }
-
 }

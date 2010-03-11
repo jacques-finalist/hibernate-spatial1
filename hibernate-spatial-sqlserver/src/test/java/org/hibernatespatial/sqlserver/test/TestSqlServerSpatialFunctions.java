@@ -25,8 +25,9 @@
 
 package org.hibernatespatial.sqlserver.test;
 
-import org.hibernatespatial.sqlserver.DataSourceUtils;
-import org.hibernatespatial.test.SpatialFeaturesTestDriver;
+import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
+import org.hibernatespatial.test.DataSourceUtils;
+import org.hibernatespatial.test.TestSpatialFunctions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,24 +36,26 @@ import java.sql.SQLException;
 /**
  * Test the spatial functions
  */
-public class TestSpatialFeatures {
+public class TestSqlServerSpatialFunctions {
+
+    private final static DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
 
     private SqlServer2008ExpectationsFactory expected;
-    private SpatialFeaturesTestDriver delegate;
+    private TestSpatialFunctions delegate;
+
 
     @BeforeClass
     public static void beforeClass() throws Exception {
 
-        //TODO -- give 'expected' a chance to load its preferred set of test geometries
-        DataSourceUtils.deleteTestData();
+        dataSourceUtils.deleteTestData();
         //NO INVALID GEOMETRIES ALLOWED!!
-        DataSourceUtils.insertTestData();
-        SpatialFeaturesTestDriver.setUpBeforeClass();
+        dataSourceUtils.insertTestData();
+        TestSpatialFunctions.setUpBeforeClass();
     }
 
-    public TestSpatialFeatures() {
+    public TestSqlServerSpatialFunctions() {
         expected = new SqlServer2008ExpectationsFactory();
-        delegate = new SpatialFeaturesTestDriver(expected);
+        delegate = new TestSpatialFunctions(expected);
     }
 
     @Test

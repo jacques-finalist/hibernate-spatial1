@@ -29,9 +29,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
 import org.hibernatespatial.sqlserver.convertors.Decoders;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 
 /**
@@ -45,6 +50,11 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
 
     private final static String TEST_POLYGON_WKT = "POLYGON((0 0, 50 0, 100 100, 0 100, 0 0))";
 
+    private final DataSourceUtils dataSourceUtils;
+
+    public SqlServer2008ExpectationsFactory() {
+        dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
+    }
 
     @Override
     protected NativeSQLStatement getNativeDimensionSQL() {
@@ -82,42 +92,42 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     }
 
     @Override
-    protected NativeSQLStatement getNativeAsTextSQL() {
+    protected NativeSQLStatement createNativeAsTextStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STAsText() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeSridSQL() {
+    protected NativeSQLStatement createNativeSridStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STSrid from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeIsSimpleSQL() {
+    protected NativeSQLStatement createNativeIsSimpleStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STIsSimple() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeIsemptyQL() {
+    protected NativeSQLStatement createNativeIsEmptyStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STIsEmpty() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeBoundarySQL() {
+    protected NativeSQLStatement createNativeBoundaryStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STBoundary() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeEnvelopeSQL() {
+    protected NativeSQLStatement createNativeEnvelopeStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STEnvelope() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getNativeAsBinarySQL() {
+    protected NativeSQLStatement createNativeAsBinaryStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STAsBinary() from GeomTest t");
     }
 
     @Override
-    protected NativeSQLStatement getGeometryTypeSQL() {
+    protected NativeSQLStatement createGeometryTypeStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STGeometryType() from GeomTest t");
     }
 
@@ -151,6 +161,11 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
                 geom.toText());
     }
 
+    @Override
+    protected Connection createConnection() throws SQLException {
+        return dataSourceUtils.createConnection();
+    }
+
 
     @Override
     protected NativeSQLStatement createNativeIntersectsStatement(Geometry geom) {
@@ -171,7 +186,7 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     }
 
     @Override
-    protected NativeSQLStatement createNativeRelatesStatement(Geometry geom, String matrix) {
+    protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
         String sql = "select t.id, t.geom.STRelate(geometry::STGeomFromText(?, 4326), '" + matrix + "' ) from GeomTest t where t.geom.STRelate(geometry::STGeomFromText(?, 4326), '" + matrix + "') = 'true' and t.geom.STSrid = 4326";
         return createNativeSQLStatementAllWKTParams(sql, geom.toText());
     }
@@ -194,10 +209,5 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
         }
     }
 
-    @Override
-    public String getTestPolygonWKT() {
-        return TEST_POLYGON_WKT;
-
-    }
 
 }
