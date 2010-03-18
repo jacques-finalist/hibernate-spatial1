@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -28,202 +28,204 @@
  */
 package org.hibernatespatial;
 
+import org.hibernate.HibernateException;
+import org.hibernate.type.CustomType;
+import org.hibernate.usertype.ParameterizedType;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.hibernate.HibernateException;
-import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.usertype.UserType;
-
 /**
  * This class ensures that Hibernate can work with
  * the JTS <code>Geometry</code> type.
- * 
+ * <p/>
  * To properly convert <code>Geometry</code> objects to database specific
  * wrapper objects, acces is needed to a spatially enabled database dialect.
  * This dialect can be specified as a parameter to the type. If no parameter is
  * supplied, the default Dialect will be used (set in HBSpatialExtension).
- * 
+ *
  * @author Karel Maesen
- * 
  */
 public class GeometryUserType implements UserType, ParameterizedType, Serializable {
 
-	private SpatialDialect spatialDialect = null;
+    private SpatialDialect spatialDialect = null;
 
-	private UserType delegate = null;
+    private UserType delegate = null;
 
-	public static String DIALECT_PARAM_NAME = "dialect";
+    public static String DIALECT_PARAM_NAME = "dialect";
 
-	private void configure(Properties properties) {
-		if (properties == null) {
-			spatialDialect = HBSpatialExtension.getDefaultSpatialDialect();
-		} else {
-			spatialDialect = HBSpatialExtension.createSpatialDialect(properties
-					.getProperty(DIALECT_PARAM_NAME));
-		}
-		if (spatialDialect == null) {
-			throw new HibernateSpatialException(
-					"No spatial Dialect could be created");
-		}
-		delegate = spatialDialect.getGeometryUserType();
-		if (delegate instanceof ParameterizedType){
-			((ParameterizedType)delegate).setParameterValues(properties);
-		}
-	}
+    public final static CustomType TYPE = new CustomType(GeometryUserType.class, null);
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
-	 *      java.lang.Object)
-	 */
-	public Object assemble(Serializable arg0, Object arg1)
-			throws HibernateException {
-		return delegate.assemble(arg0, arg1);
-	}
+    private void configure(Properties properties) {
+        if (properties == null) {
+            spatialDialect = HBSpatialExtension.getDefaultSpatialDialect();
+        } else {
+            spatialDialect = HBSpatialExtension.createSpatialDialect(properties
+                    .getProperty(DIALECT_PARAM_NAME));
+        }
+        if (spatialDialect == null) {
+            throw new HibernateSpatialException(
+                    "No spatial Dialect could be created");
+        }
+        delegate = spatialDialect.getGeometryUserType();
+        if (delegate instanceof ParameterizedType) {
+            ((ParameterizedType) delegate).setParameterValues(properties);
+        }
+    }
 
-	/**
-	 * @param arg0
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
-	 */
-	public Object deepCopy(Object arg0) throws HibernateException {
-		return delegate.deepCopy(arg0);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
+     *      java.lang.Object)
+     */
+    public Object assemble(Serializable arg0, Object arg1)
+            throws HibernateException {
+        return delegate.assemble(arg0, arg1);
+    }
 
-	/**
-	 * @param arg0
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
-	 */
-	public Serializable disassemble(Object arg0) throws HibernateException {
-		return delegate.disassemble(arg0);
-	}
+    /**
+     * @param arg0
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
+     */
+    public Object deepCopy(Object arg0) throws HibernateException {
+        return delegate.deepCopy(arg0);
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
-	 *      java.lang.Object)
-	 */
-	public boolean equals(Object arg0, Object arg1) throws HibernateException {
-		return delegate.equals(arg0, arg1);
-	}
+    /**
+     * @param arg0
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
+     */
+    public Serializable disassemble(Object arg0) throws HibernateException {
+        return delegate.disassemble(arg0);
+    }
 
-	/**
-	 * @param obj
-	 * @return
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		return delegate.equals(obj);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
+     *      java.lang.Object)
+     */
+    public boolean equals(Object arg0, Object arg1) throws HibernateException {
+        return delegate.equals(arg0, arg1);
+    }
 
-	/**
-	 * @return
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return delegate.hashCode();
-	}
+    /**
+     * @param obj
+     * @return
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        return delegate.equals(obj);
+    }
 
-	/**
-	 * @param arg0
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
-	 */
-	public int hashCode(Object arg0) throws HibernateException {
-		return delegate.hashCode(arg0);
-	}
+    /**
+     * @return
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return delegate.hashCode();
+    }
 
-	/**
-	 * @return
-	 * @see org.hibernate.usertype.UserType#isMutable()
-	 */
-	public boolean isMutable() {
-		return delegate.isMutable();
-	}
+    /**
+     * @param arg0
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
+     */
+    public int hashCode(Object arg0) throws HibernateException {
+        return delegate.hashCode(arg0);
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @return
-	 * @throws HibernateException
-	 * @throws SQLException
-	 * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
-	 *      java.lang.String[], java.lang.Object)
-	 */
-	public Object nullSafeGet(ResultSet arg0, String[] arg1, Object arg2)
-			throws HibernateException, SQLException {
-		return delegate.nullSafeGet(arg0, arg1, arg2);
-	}
+    /**
+     * @return
+     * @see org.hibernate.usertype.UserType#isMutable()
+     */
+    public boolean isMutable() {
+        return delegate.isMutable();
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @throws HibernateException
-	 * @throws SQLException
-	 * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
-	 *      java.lang.Object, int)
-	 */
-	public void nullSafeSet(PreparedStatement arg0, Object arg1, int arg2)
-			throws HibernateException, SQLException {
-		delegate.nullSafeSet(arg0, arg1, arg2);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @return
+     * @throws HibernateException
+     * @throws SQLException
+     * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
+     *      java.lang.String[], java.lang.Object)
+     */
+    public Object nullSafeGet(ResultSet arg0, String[] arg1, Object arg2)
+            throws HibernateException, SQLException {
+        return delegate.nullSafeGet(arg0, arg1, arg2);
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 * @param arg2
-	 * @return
-	 * @throws HibernateException
-	 * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public Object replace(Object arg0, Object arg1, Object arg2)
-			throws HibernateException {
-		return delegate.replace(arg0, arg1, arg2);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @throws HibernateException
+     * @throws SQLException
+     * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
+     *      java.lang.Object, int)
+     */
+    public void nullSafeSet(PreparedStatement arg0, Object arg1, int arg2)
+            throws HibernateException, SQLException {
+        delegate.nullSafeSet(arg0, arg1, arg2);
+    }
 
-	/**
-	 * @return
-	 * @see org.hibernate.usertype.UserType#returnedClass()
-	 */
-	public Class returnedClass() {
-		return delegate.returnedClass();
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @return
+     * @throws HibernateException
+     * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
+     *      java.lang.Object, java.lang.Object)
+     */
+    public Object replace(Object arg0, Object arg1, Object arg2)
+            throws HibernateException {
+        return delegate.replace(arg0, arg1, arg2);
+    }
 
-	/**
-	 * @return
-	 * @see org.hibernate.usertype.UserType#sqlTypes()
-	 */
-	public int[] sqlTypes() {
-		return delegate.sqlTypes();
-	}
+    /**
+     * @return
+     * @see org.hibernate.usertype.UserType#returnedClass()
+     */
+    public Class returnedClass() {
+        return delegate.returnedClass();
+    }
 
-	/**
-	 * @return
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return delegate.toString();
-	}
+    /**
+     * @return
+     * @see org.hibernate.usertype.UserType#sqlTypes()
+     */
+    public int[] sqlTypes() {
+        return delegate.sqlTypes();
+    }
 
-	public void setParameterValues(Properties properties) {
-		configure(properties);
-	}
+    /**
+     * @return
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return delegate.toString();
+    }
+
+    public void setParameterValues(Properties properties) {
+        configure(properties);
+    }
 
 }
