@@ -35,12 +35,14 @@
 		<dependency>
 			<groupId>org.postgis</groupId>
 			<artifactId>postgis-jdbc</artifactId>
-			<version>1.1.6</version>
+            <scope>provided</scope>
+			<version>[1.1.6,)</version>
 		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>8.1-407.jdbc3</version>
+            <scope>provided</scope>
+			<version>[8.1-407.jdbc3,)</version>
 		</dependency>
 	</dependencies>
 </project>
