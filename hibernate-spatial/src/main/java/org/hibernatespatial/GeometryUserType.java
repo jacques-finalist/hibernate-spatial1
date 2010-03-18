@@ -61,7 +61,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
     public final static CustomType TYPE = new CustomType(GeometryUserType.class, null);
 
     private void configure(Properties properties) {
-        if (properties == null) {
+        if (properties == null || properties.getProperty(DIALECT_PARAM_NAME) == null) {
             spatialDialect = HBSpatialExtension.getDefaultSpatialDialect();
         } else {
             spatialDialect = HBSpatialExtension.createSpatialDialect(properties
