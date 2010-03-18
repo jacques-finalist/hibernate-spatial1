@@ -35,7 +35,8 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.0.5</version>
+            <scope>provided</scope>
+			<version>[5.0.5,)</version>
 		</dependency>
 	</dependencies>
 </project>
