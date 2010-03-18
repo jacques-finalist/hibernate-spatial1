@@ -1,246 +1,310 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ $Id:$
+  ~
+  ~ This file is part of Hibernate Spatial, an extension to the
+  ~ hibernate ORM solution for geographic data.
+  ~
+  ~ Copyright © 2007-2010 Geovise BVBA
+  ~
+  ~ This library is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU Lesser General Public
+  ~ License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or (at your option) any later version.
+  ~
+  ~ This library is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this library; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ For more information, visit: http://www.hibernatespatial.org/
+  -->
+
 <!--  $Id$ -->
 <project>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.hibernatespatial</groupId>
-	<artifactId>hibernate-spatial-maven</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>Hibernate Spatial</name>
-	<description>
-		This is the Maven parent project for all Hibernate Spatial
-		Extension Modules. The main module is Hibernate Spatial, which
-		provides the core extension classes. The other modules are the
-		dialect providers for the Oracle 10g and Postgresql geographic
-		data support. For more information on how to use Spatial
-		Hibernate, go to the Hibernate Spatial site.
-	</description>
-	<url>http://www.hibernatespatial.org/maven</url>
-	<packaging>pom</packaging>
-	<modules>
-		<module>../hibernate-spatial</module>
-		<module>../hibernate-spatial-postgis</module>
-    		<module>../hibernate-spatial-oracle</module>
-	 	<module>../hibernate-spatial-mysql</module>
-	</modules>
-	<repositories>
-		<repository>
-		<id>GeoTools repo</id>
-		<url>http://maven.geotools.fr/repository</url>
-		</repository>
-	</repositories>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.hibernatespatial</groupId>
+    <artifactId>hibernate-spatial-maven</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Hibernate Spatial</name>
+    <description>
+        This is the Maven parent project for all Hibernate Spatial
+        Extension Modules. The main module is Hibernate Spatial, which
+        provides the core extension classes. The other modules are the
+        dialect providers for the Oracle 10g and Postgresql geographic
+        data support. For more information on how to use Spatial
+        Hibernate, go to the Hibernate Spatial site.
+    </description>
+    <url>http://www.hibernatespatial.org/maven</url>
+    <packaging>pom</packaging>
+    <modules>
+        <module>../hibernate-spatial</module>
+        <module>../hibernate-spatial-postgis</module>
+        <module>../hibernate-spatial-oracle</module>
+        <module>../hibernate-spatial-mysql</module>
+        <module>../hibernate-spatial-sqlserver</module>
+    </modules>
+    <repositories>
+        <repository>
+            <id>OSGEO</id>
+            <url>http://download.osgeo.org/webdav/geotools</url>
+        </repository>
+        <repository>
+            <id>JBoss repo</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
 
-			<!--  We skip the unit tests when building and packaging because it
-				it requires specific test set-up.  
-			-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<scm>
-		<connection>
-			scm:svn:http://www.hibernatespatial.org/svn/hibernate-spatial/trunk/hibernate-spatial-maven
-		</connection>
-		<developerConnection>
-			scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
-		</developerConnection>
-		<url>
-			<![CDATA[ http://www.hibernatespatial.org/websvn/listing.php?repname=hibernate-spatial&path=/trunk/${project.artifactId}/rev=0&sc=0]]>
-		</url>
-	</scm>
-	
-	<issueManagement>
-		<system>JIRA</system>
-		<url>http://www.hibernatespatial.org/jira/browse/HIBSPA</url>
-	</issueManagement>
-	
-	<mailingLists>
+            <!--  We skip the unit tests when building and packaging because it
+                   it requires specific test set-up.
+               -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <!-- generate source artefacts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-		<mailingList>
-			<name>hibernatespatial-dev</name>
-			<subscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
-			</subscribe>
-			<unsubscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
-			</unsubscribe>
-			<archive>
-				http://www.hibernatespatial.org/pipermail/hibernatespatial-dev/
-			</archive>
-		</mailingList>
+        </plugins>
 
-		<mailingList>
-			<name>hibernatespatial-users</name>
-			<subscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
-			</subscribe>
-			<unsubscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
-			</unsubscribe>
+    </build>
+    <scm>
+        <connection>
+            scm:svn:http://www.hibernatespatial.org/svn/hibernate-spatial/trunk/hibernate-spatial-maven
+        </connection>
+        <developerConnection>
+            scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
+        </developerConnection>
+        <url>
+            <![CDATA[ http://www.hibernatespatial.org/websvn/listing.php?repname=hibernate-spatial&path=/trunk/${project.artifactId}/rev=0&sc=0]]>
+        </url>
+    </scm>
 
-			<archive>
-				http://www.hibernatespatial.org/pipermail/hibernatespatial-users/
-			</archive>
-		</mailingList>
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://www.hibernatespatial.org/jira/browse/HIBSPA</url>
+    </issueManagement>
 
-		<mailingList>
-			<name>hibernatespatial-announce</name>
-			<subscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
-			</subscribe>
-			<unsubscribe>
-				http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
-			</unsubscribe>
+    <mailingLists>
 
-			<archive>
-				http://www.hibernatespatial.org/pipermail/hibernatespatial-announce
-			</archive>
-		</mailingList>
-	</mailingLists>
+        <mailingList>
+            <name>hibernatespatial-dev</name>
+            <subscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
+            </subscribe>
+            <unsubscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-dev
+            </unsubscribe>
+            <archive>
+                http://www.hibernatespatial.org/pipermail/hibernatespatial-dev/
+            </archive>
+        </mailingList>
 
-	<licenses>
-		<license>
-			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
-			<url>http://www.gnu.org/licenses/lgpl.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<organization>
-		<name>hibernatespatial.org</name>
-		<url>http://www.hibernatespatial.org/</url>
-	</organization>
-	<dependencies>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.3.1.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-			<version>1.8</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.6.ga</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.4.2</version>
-			<scope>test</scope>
-		</dependency>
+        <mailingList>
+            <name>hibernatespatial-users</name>
+            <subscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
+            </subscribe>
+            <unsubscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-users
+            </unsubscribe>
 
-	</dependencies>
+            <archive>
+                http://www.hibernatespatial.org/pipermail/hibernatespatial-users/
+            </archive>
+        </mailingList>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<!--  Keep javadoc in modules.
-					<configuration>
-					<aggregate>true</aggregate>
-					</configuration> 
-				-->
-			</plugin>
-			<!-- 
-				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				</plugin>
-			-->
-		</plugins>
-	</reporting>
+        <mailingList>
+            <name>hibernatespatial-announce</name>
+            <subscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
+            </subscribe>
+            <unsubscribe>
+                http://www.hibernatespatial.org/cgi-bin/mailman/listinfo/hibernatespatial-announce
+            </unsubscribe>
 
-	<distributionManagement>
-		<site>
-			<id>Hibernate Spatial site</id>
-			<name>Hibernate Spatial</name>
-			<url>
-				scp://www.hibernatespatial.org/var/www/www.hibernatespatial.org/
-			</url>
-		</site>
+            <archive>
+                http://www.hibernatespatial.org/pipermail/hibernatespatial-announce
+            </archive>
+        </mailingList>
+    </mailingLists>
 
-		<!-- use the following if you're not using a snapshot version. -->
-		<repository>
-			<id>hibernatespatial</id>
-			<name>Hibernate Spatial Maven Repo</name>
-			<url>
-				scp://www.hibernatespatial.org/var/maven/repository/
-			</url>
-		</repository>
-		<!-- use the following if you are using a snapshot version. -->
-		<snapshotRepository>
-			<id>hibernatespatial</id>
-			<name>Hibernate Spatial Maven Repo</name>
-			<url>
-				scp://www.hibernatespatial.org/var/maven/repository/
-			</url>
-		</snapshotRepository>
+    <licenses>
+        <license>
+            <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>hibernatespatial.org</name>
+        <url>http://www.hibernatespatial.org/</url>
+    </organization>
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.2.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.11.0.GA</version>
+        </dependency>
 
-	</distributionManagement>
-	<developers>
-		<developer>
-			<id>maesenka</id>
-			<name>Karel Maesen</name>
-			<email>karel@geovise.com</email>
-			<roles>
-				<role>Project Lead</role>
-				<role>Committer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>jandm</id>
-			<name>Jan De Moerlose</name>
-			<email>janDM@dfc.be</email>
-			<roles>
-				<role>Contributor</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>pieterdg</id>
-			<name>Pieter De Graef</name>
-			<email>pieter@dfc.be</email>
-			<roles>
-				<role>Contributor</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>AcreeTom</id>
-			<name>Tom Acree</name>
-			<email></email>
-			<roles>
-				<role>Contributor</role>
-			</roles>
-		</developer>
-	</developers>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.4.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <scope>test</scope>
+            <version>1.2.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+
+            <!--<configuration>-->
+            <!--<aggregate>true</aggregate>-->
+            <!--</configuration> -->
+
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-idea-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+        <site>
+            <id>Hibernate Spatial site</id>
+            <name>Hibernate Spatial</name>
+            <url>
+                scp://www.hibernatespatial.org/var/www/www.hibernatespatial.org/
+            </url>
+        </site>
+
+        <!-- use the following if you're not using a snapshot version. -->
+        <repository>
+            <id>hibernatespatial</id>
+            <name>Hibernate Spatial Maven Repo</name>
+            <url>
+                scp://www.hibernatespatial.org/var/maven/repository/
+            </url>
+        </repository>
+        <!-- use the following if you are using a snapshot version. -->
+        <snapshotRepository>
+            <id>hibernatespatial</id>
+            <name>Hibernate Spatial Maven Repo</name>
+            <url>
+                scp://www.hibernatespatial.org/var/maven/repository/
+            </url>
+        </snapshotRepository>
+
+    </distributionManagement>
+    <developers>
+        <developer>
+            <id>maesenka</id>
+            <name>Karel Maesen</name>
+            <email>karel@geovise.com</email>
+            <roles>
+                <role>Project Lead</role>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jandm</id>
+            <name>Jan De Moerlose</name>
+            <email>janDM@dfc.be</email>
+            <roles>
+                <role>Contributor</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>pieterdg</id>
+            <name>Pieter De Graef</name>
+            <email>pieter@dfc.be</email>
+            <roles>
+                <role>Contributor</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>AcreeTom</id>
+            <name>Tom Acree</name>
+            <email></email>
+            <roles>
+                <role>Contributor</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>MartinSteinwender</id>
+            <name>Martin Steinwender</name>
+            <email></email>
+            <roles>
+                <role>Contributor</role>
+            </roles>
+        </developer>
+    </developers>
 
 
 </project>
