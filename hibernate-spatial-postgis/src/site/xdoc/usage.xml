@@ -48,7 +48,7 @@
             <source>
                 ...
                 &lt;property name="hibernate.dialect"&gt;
-                org.hibernatespatial.postgis.PostgisDialect
+                    org.hibernatespatial.postgis.PostgisDialect
                 &lt;/property&gt;
                 ...
             </source>
@@ -61,10 +61,10 @@
             <source>
                 ...
                 &lt;property name="geometry"&gt;
-                &lt;type name="org.hibernatespatial.GeometryUserType"&gt;
-                &lt;param name="dialect"&gt;postgis&lt;/param&gt;
-                &lt;/type&gt;
-                &lt;column name="geom" /&gt;
+                    &lt;type name="org.hibernatespatial.GeometryUserType"&gt;
+                        &lt;param name="dialect"&gt;postgis&lt;/param&gt;
+                    &lt;/type&gt;
+                    &lt;column name="geom" /&gt;
                 &lt;/property&gt;
                 ...
             </source>
