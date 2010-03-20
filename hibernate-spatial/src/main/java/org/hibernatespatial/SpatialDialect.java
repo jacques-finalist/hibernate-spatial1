@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -32,85 +32,77 @@ import org.hibernate.usertype.UserType;
 
 /**
  * @author Karel Maesen
- * 
- * Describes the features of a spatially enabled dialect.
- * 
+ *         <p/>
+ *         Describes the features of a spatially enabled dialect.
  */
 public interface SpatialDialect {
 
-	/**
-	 * Returns the SQL fragment for the SQL WHERE-clause when parsing
-	 * <code>org.walkonweb.spatial.criterion.SpatialRelateExpression</code>s
-	 * into prepared statements.
-	 * 
-	 * If useFilter is specified, then a two-stage spatial query model is
-	 * assumed (first stage using only spatial index; second stage performing
-	 * exact comparisons between geometries). The returned SQL-fragement in that
-	 * case should contains two input parameters. The first for setting the
-	 * filter geometry, the second for the test geometry.
-	 * 
-	 * @param columnName
-	 *            The name of the geometry-typed column to which the relation is
-	 *            applied
-	 * @param spatialRelation
-	 *            The type of spatial relation (as defined in
-	 *            <code>org.walkonweb.spatial.SpatialRelation</code>).
-	 * @param useFilter
-	 *            If true, the SpatialRelateExpression uses two-stage query
-	 *            model
-	 * @return - SQL fragment for use in the SQL WHERE-clause.
-	 */
-	public String getSpatialRelateSQL(String columnName, int spatialRelation,
-			boolean useFilter);
+    /**
+     * Returns the SQL fragment for the SQL WHERE-clause when parsing
+     * <code>org.hibernatespatial.criterion.SpatialRelateExpression</code>s
+     * into prepared statements.
+     * <p/>
+     * If useFilter is specified, then a two-stage spatial query model is
+     * assumed (first stage using only spatial index; second stage performing
+     * exact comparisons between geometries). The returned SQL-fragement in that
+     * case should contains two input parameters. The first for setting the
+     * filter geometry, the second for the test geometry.
+     *
+     * @param columnName      The name of the geometry-typed column to which the relation is
+     *                        applied
+     * @param spatialRelation The type of spatial relation (as defined in
+     *                        <code>org.walkonweb.spatial.SpatialRelation</code>).
+     * @param useFilter       If true, the SpatialRelateExpression uses two-stage query
+     *                        model
+     * @return - SQL fragment for use in the SQL WHERE-clause.
+     */
+    public String getSpatialRelateSQL(String columnName, int spatialRelation,
+                                      boolean useFilter);
 
-	/**
-	 * Returns the SQL fragment for the SQL WHERE-expression when parsing
-	 * <code>org.walkonweb.spatial.criterion.SpatialFilterExpression</code>s
-	 * into prepared statements.
-	 * 
-	 * 
-	 * @param columnName-
-	 *            the name of the geometry-typed column to which the filter is
-	 *            be applied.
-	 * @return
-	 */
-	public String getSpatialFilterExpression(String columnName);
+    /**
+     * Returns the SQL fragment for the SQL WHERE-expression when parsing
+     * <code>org.hibernatespatial.criterion.SpatialFilterExpression</code>s
+     * into prepared statements.
+     *
+     * @param columnName- the name of the geometry-typed column to which the filter is
+     *                    be applied.
+     * @return
+     */
+    public String getSpatialFilterExpression(String columnName);
 
-	/**
-	 * @return an instance of the Geometry Usertype that this dialect provides
-	 */
-	public UserType getGeometryUserType();
+    /**
+     * @return an instance of the Geometry Usertype that this dialect provides
+     */
+    public UserType getGeometryUserType();
 
-	/**
-	 * @param columnName
-	 *            the name of the Geometry property
-	 * @param aggregation
-	 *            the type of <code>SpatialAggregate</code>
-	 * @return the SQL fragment for the projection
-	 */
-	public String getSpatialAggregateSQL(String columnName, int aggregation);
+    /**
+     * @param columnName  the name of the Geometry property
+     * @param aggregation the type of <code>SpatialAggregate</code>
+     * @return the SQL fragment for the projection
+     */
+    public String getSpatialAggregateSQL(String columnName, int aggregation);
 
-	/**
-	 * Returns the name of the native database type for storing geometries.
-	 * 
-	 * @return type name
-	 */
-	public String getDbGeometryTypeName();
+    /**
+     * Returns the name of the native database type for storing geometries.
+     *
+     * @return type name
+     */
+    public String getDbGeometryTypeName();
 
-	/**
-	 * Does this dialect support explicit two-phase filtering when filtering on
-	 * spatial relations?
-	 * 
-	 * In two-phase filtering you can form a SQL WHERE-expression that searches
-	 * for matching objects in two phases. A first phase performs a quick
-	 * bounding box search for neighbouring objects. The second phase calculates
-	 * the precise spatial relation between the test object and the results of
-	 * the first phase.
-	 * 
-	 * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL
-	 * don't.
-	 * 
-	 * @return
-	 */
+    /**
+     * Does this dialect support explicit two-phase filtering when filtering on
+     * spatial relations?
+     * <p/>
+     * In two-phase filtering you can form a SQL WHERE-expression that searches
+     * for matching objects in two phases. A first phase performs a quick
+     * bounding box search for neighbouring objects. The second phase calculates
+     * the precise spatial relation between the test object and the results of
+     * the first phase.
+     * <p/>
+     * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL
+     * don't.
+     *
+     * @return
+     */
 	public boolean isTwoPhaseFiltering();
 }

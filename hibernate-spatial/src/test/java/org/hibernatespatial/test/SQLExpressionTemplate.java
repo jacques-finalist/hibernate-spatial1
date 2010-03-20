@@ -27,18 +27,18 @@ package org.hibernatespatial.test;
 
 /**
  * <code>SQLExpressoinTemplate</code>s generate database-specific
- * SQL statements for a given <code>TestGeometry</code> instance.
+ * SQL statements for a given <code>TestDataElement</code> instance.
  *
  * @author Karel Maesen, Geovise BVBA
  */
 public interface SQLExpressionTemplate {
 
     /**
-     * Returns an insert SQL statement for the specified <code>TestGeometry</code>
+     * Returns an insert SQL statement for the specified <code>TestDataElement</code>
      *
-     * @param testGeometry
-     * @return an insert SQL for testGeometry
+     * @param testDataElement
+     * @return an insert SQL for testDataElement
      */
-    public String toInsertSql(TestGeometry testGeometry);
+    public String toInsertSql(TestDataElement testDataElement);
 
 }

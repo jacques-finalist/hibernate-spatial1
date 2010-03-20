@@ -26,13 +26,11 @@
 package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.type.CustomType;
 import org.hibernatespatial.GeometryUserType;
 import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.cfg.HSConfiguration;
@@ -281,24 +279,15 @@ public class TestSpatialFunctions {
         }
     }
 
+
     protected void compare(Integer id, Object expected, Object received) {
         if (expected instanceof byte[]) {
             assertArrayEquals("Failure on test for case " + id, (byte[]) expected, (byte[]) received);
 
-        } else if (expected instanceof GeometryCollection) {
-            if (!(received instanceof GeometryCollection)) fail();
-            GeometryCollection expectedCollection = (GeometryCollection) expected;
-            GeometryCollection receivedCollection = (GeometryCollection) received;
-            for (int partIndex = 0; partIndex < expectedCollection.getNumGeometries(); partIndex++) {
-                Geometry partExpected = expectedCollection.getGeometryN(partIndex);
-                Geometry partReceived = receivedCollection.getGeometryN(partIndex);
-                compare(id, partExpected, partReceived);
-            }
         } else if (expected instanceof Geometry) {
             if (!(received instanceof Geometry))
-                fail("Expected geometry, received " + received.getClass().getCanonicalName());
-            if (!((Geometry) received).isEmpty() && !((Geometry) expected).isEmpty())
-                assertTrue("Failure on test for case " + id, ((Geometry) expected).equals((Geometry) received));
+                fail("Expected a Geometry, but received an object of type " + received.getClass().getCanonicalName());
+            assertTrue("Failure on test for case " + id, GeometryEquality.test((Geometry) expected, (Geometry) received));
 
         } else {
             assertEquals("Failure on test for case " + id, expected, received);
@@ -334,7 +323,7 @@ public class TestSpatialFunctions {
         for (String param : params.keySet()) {
             Object value = params.get(param);
             if (value instanceof Geometry) {
-                query.setParameter(param, value, new CustomType(GeometryUserType.class, null));
+                query.setParameter(param, value, GeometryUserType.TYPE);
             } else {
                 query.setParameter(param, value);
             }

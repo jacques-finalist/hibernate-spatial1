@@ -26,11 +26,11 @@
 package org.hibernatespatial.test;
 
 /**
- * A <code>TestGeometry</code> captures the information necessary to build a test geometry.
+ * A <code>TestDataElement</code> captures the information necessary to build a test geometry.
  *
  * @author Karel Maesen, Geovise BVBA
  */
-public class TestGeometry {
+public class TestDataElement {
 
 
     final public String wkt;
@@ -38,7 +38,7 @@ public class TestGeometry {
     final public int srid;
     final public String type;
 
-    TestGeometry(int id, String type, String wkt, int srid) {
+    TestDataElement(int id, String type, String wkt, int srid) {
         this.wkt = wkt;
         this.id = id;
         this.type = type;

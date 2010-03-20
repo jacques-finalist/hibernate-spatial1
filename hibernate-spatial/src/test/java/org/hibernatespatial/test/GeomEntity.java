@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -26,6 +26,7 @@
 package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
 
 /**
  * Test class used in unit testing.
@@ -60,6 +61,17 @@ public class GeomEntity {
 
     public void setGeom(Geometry geom) {
         this.geom = geom;
+    }
+
+    public static GeomEntity createFrom(TestDataElement element) throws ParseException {
+        EWKTReader reader = new EWKTReader();
+        GeomEntity result = new GeomEntity();
+        result.setId(element.id);
+        Geometry geom = reader.read(element.wkt);
+        geom.setSRID(element.srid);
+        result.setGeom(geom);
+        result.setType(element.type);
+        return result;
     }
 
     @Override

@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -28,208 +28,105 @@
  */
 package org.hibernatespatial.criterion;
 
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import org.hibernate.criterion.Criterion;
 import org.hibernatespatial.SpatialRelation;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  * Static Factory Class for creating spatial criterion types.
- * 
+ * <p/>
  * <p>
  * The criterion types created by this class implement the spatial query
  * expressions of the OpenGIS Simple Features Specification for SQL, Revision
  * 1.1.
- * 
+ * <p/>
  * In addition, it provides for a simple spatial <code>filter</code> that
  * works mostly using the spatial index. This corresponds to the Oracle
  * Spatial's "SDO_FILTER" function, or the "&&" operator of PostGIS.
  * </p>
- * 
+ *
  * @author Karel Maesen
- * 
  */
 public class SpatialRestrictions {
 
-	SpatialRestrictions() {
-	}
-	
-	public static SpatialRelateExpression eq(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.EQUALS);
-	}
-	
+    SpatialRestrictions() {
+    }
 
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #eq(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression eq(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.EQUALS);
-	}
+    public static SpatialRelateExpression eq(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.EQUALS);
+    }
 
-	public static SpatialRelateExpression within(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.WITHIN);
-	}
-	
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #within(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression within(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.WITHIN);
-	}
 
-	public static SpatialRelateExpression contains(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.CONTAINS);
-	}
-	
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #contains(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression contains(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.CONTAINS);
-	}
+    public static SpatialRelateExpression within(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.WITHIN);
+    }
 
-	
-	public static SpatialRelateExpression crosses(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.CROSSES);
-	}
-	
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #crosses(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression crosses(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.CROSSES);
-	}
-	
-	public static SpatialRelateExpression disjoint(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, null, value,
-				SpatialRelation.DISJOINT);
-	}
+    public static SpatialRelateExpression contains(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.CONTAINS);
+    }
 
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #disjoint(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression disjoint(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.DISJOINT);
-	}
-	
-	public static SpatialRelateExpression intersects(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.INTERSECTS);
-	}
+    public static SpatialRelateExpression crosses(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.CROSSES);
+    }
 
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #intersects(String propertyName, Geometry value)}
-	 */
-	@Deprecated public static SpatialRelateExpression intersects(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.INTERSECTS);
-	}
+    public static SpatialRelateExpression disjoint(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, null, value,
+                SpatialRelation.DISJOINT);
+    }
 
-	public static SpatialRelateExpression overlaps(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.OVERLAPS);
-	}
-	
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #overlaps(String propertyName, Geometry value)}
-	 */	
-	@Deprecated public static SpatialRelateExpression overlaps(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.OVERLAPS);
-	}
+    public static SpatialRelateExpression intersects(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.INTERSECTS);
+    }
 
-	public static SpatialRelateExpression touches(String propertyName, Geometry value) {
-		return new SpatialRelateExpression(propertyName, value, value,
-				SpatialRelation.TOUCHES);
-	}
-	
-	/**
-	 *@deprecated As of release 1.0-M2, replaced by {@link #touches(String propertyName, Geometry value)}
-	 */	
-	@Deprecated public static SpatialRelateExpression touches(String propertyName,
-			Geometry filter, Geometry value) {
-		return new SpatialRelateExpression(propertyName, filter, value,
-				SpatialRelation.TOUCHES);
-	}
+    public static SpatialRelateExpression overlaps(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.OVERLAPS);
+    }
 
-	public static SpatialFilter filter(String propertyName, Geometry filter) {
-		return new SpatialFilter(propertyName, filter);
-	}
+    public static SpatialRelateExpression touches(String propertyName, Geometry value) {
+        return new SpatialRelateExpression(propertyName, value, value,
+                SpatialRelation.TOUCHES);
+    }
 
-	public static SpatialFilter filter(String propertyName, Envelope envelope,
-			int SRID) {
-		return new SpatialFilter(propertyName, envelope, SRID);
-	}
+    public static SpatialFilter filter(String propertyName, Geometry filter) {
+        return new SpatialFilter(propertyName, filter);
+    }
 
-	public static Criterion spatialRestriction(int relation,
-			String propertyName, Geometry value) {
-		switch (relation) {
-		case SpatialRelation.CONTAINS:
-			return contains(propertyName, value);
-		case SpatialRelation.CROSSES:
-			return crosses(propertyName, value);
-		case SpatialRelation.DISJOINT:
-			return disjoint(propertyName,value);
-		case SpatialRelation.INTERSECTS:
-			return intersects(propertyName, value);
-		case SpatialRelation.EQUALS:
-			return eq(propertyName, value);
-		case SpatialRelation.FILTER:
-			return filter(propertyName, value);
-		case SpatialRelation.OVERLAPS:
-			return overlaps(propertyName,value);
-		case SpatialRelation.TOUCHES:
-			return touches(propertyName, value);
-		case SpatialRelation.WITHIN:
-			return within(propertyName, value);
-		default:
-			throw new IllegalArgumentException(
-					"Non-existant spatial relation passed.");
-		}
-	}
-	
-	@Deprecated public static Criterion spatialRestriction(int relation,
-			String propertyName, Geometry filter, Geometry value) {
-		switch (relation) {
-		case SpatialRelation.CONTAINS:
-			return contains(propertyName, filter, value);
-		case SpatialRelation.CROSSES:
-			return crosses(propertyName, filter, value);
-		case SpatialRelation.DISJOINT:
-			return disjoint(propertyName, filter, value);
-		case SpatialRelation.INTERSECTS:
-			return intersects(propertyName, filter, value);
-		case SpatialRelation.EQUALS:
-			return eq(propertyName, filter, value);
-		case SpatialRelation.FILTER:
-			return filter(propertyName, value);
-		case SpatialRelation.OVERLAPS:
-			return overlaps(propertyName, filter, value);
-		case SpatialRelation.TOUCHES:
-			return touches(propertyName, filter, value);
-		case SpatialRelation.WITHIN:
-			return within(propertyName, filter, value);
-		default:
-			throw new IllegalArgumentException(
-					"Non-existant spatial relation passed.");
-		}
-	}
+    public static SpatialFilter filter(String propertyName, Envelope envelope,
+                                       int SRID) {
+        return new SpatialFilter(propertyName, envelope, SRID);
+    }
 
+    public static Criterion spatialRestriction(int relation,
+                                               String propertyName, Geometry value) {
+        switch (relation) {
+            case SpatialRelation.CONTAINS:
+                return contains(propertyName, value);
+            case SpatialRelation.CROSSES:
+                return crosses(propertyName, value);
+            case SpatialRelation.DISJOINT:
+                return disjoint(propertyName, value);
+            case SpatialRelation.INTERSECTS:
+                return intersects(propertyName, value);
+            case SpatialRelation.EQUALS:
+                return eq(propertyName, value);
+            case SpatialRelation.FILTER:
+                return filter(propertyName, value);
+            case SpatialRelation.OVERLAPS:
+                return overlaps(propertyName, value);
+            case SpatialRelation.TOUCHES:
+                return touches(propertyName, value);
+            case SpatialRelation.WITHIN:
+                return within(propertyName, value);
+            default:
+                throw new IllegalArgumentException(
+                        "Non-existant spatial relation passed.");
+        }
+    }
 }

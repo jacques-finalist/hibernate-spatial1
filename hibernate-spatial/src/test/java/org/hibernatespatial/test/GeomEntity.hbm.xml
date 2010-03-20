@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ $Id:$
+  ~ $Id$
   ~
   ~ This file is part of Hibernate Spatial, an extension to the
   ~ hibernate ORM solution for geographic data.
@@ -30,7 +30,7 @@
 <hibernate-mapping>
     <class name="org.hibernatespatial.test.GeomEntity" table="GEOMTEST">
         <id name="id" type="int">
-            <generator class="increment"/>
+            <generator class="assigned"/>
         </id>
         <property name="type" type="string">
             <column name="type" length="50"/>

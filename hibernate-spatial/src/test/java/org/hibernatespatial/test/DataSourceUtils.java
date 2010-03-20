@@ -46,14 +46,17 @@ import java.util.Properties;
  */
 public class DataSourceUtils {
 
+    public final static String TEST_POLYGON_WKT = "POLYGON((0 0, 50 0, 100 100, 0 100, 0 0))";
+
     private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtils.class);
 
     private final String propertyFile;
     private final SQLExpressionTemplate sqlExpressionTemplate;
 
-    private TestGeometries testGeometries;
+    private TestData testData;
     private Properties properties;
     private DataSource dataSource;
+    private static final String TEST_DATA_SET = "dataset";
 
     /**
      * Constructor for the DataSourceUtils object.
@@ -110,11 +113,16 @@ public class DataSourceUtils {
     /**
      * loads the test objects
      * <p/>
-     * TODO -- make the source of the TestGeometries configurable.
      */
     private void loadTestObjects() {
-        testGeometries = new TestGeometries();
-        testGeometries.prepare();
+        testData = TestData.fromFile(properties.getProperty(TEST_DATA_SET));
+    }
+
+    /**
+     * Return the test data set
+     */
+    public TestData getTestData() {
+        return this.testData;
     }
 
     /**
@@ -150,6 +158,7 @@ public class DataSourceUtils {
                 int updateCount = pmt.getUpdateCount();
                 LOGGER.info("Removing " + updateCount + " rows.");
             }
+            cn.commit();
             pmt.close();
         } finally {
             try {
@@ -166,12 +175,16 @@ public class DataSourceUtils {
      * @throws SQLException
      */
     public void insertTestData() throws SQLException {
+        insertTestData(testData);
+    }
+
+    public void insertTestData(TestData testData) throws SQLException {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
             Statement stmt = cn.createStatement();
-            for (TestGeometry testGeometry : testGeometries) {
-                String sql = sqlExpressionTemplate.toInsertSql(testGeometry);
+            for (TestDataElement testDataElement : testData) {
+                String sql = sqlExpressionTemplate.toInsertSql(testDataElement);
                 LOGGER.debug("adding stmt: " + sql);
                 stmt.addBatch(sql);
             }
@@ -231,12 +244,12 @@ public class DataSourceUtils {
     public Map<Integer, Geometry> expectedGeoms(String type) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
         EWKTReader parser = new EWKTReader();
-        for (TestGeometry testGeometry : testGeometries) {
-            if (testGeometry.type.equalsIgnoreCase(type)) {
+        for (TestDataElement testDataElement : testData) {
+            if (testDataElement.type.equalsIgnoreCase(type)) {
                 try {
-                    result.put(testGeometry.id, parser.read(testGeometry.wkt));
+                    result.put(testDataElement.id, parser.read(testDataElement.wkt));
                 } catch (ParseException e) {
-                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testGeometry.id, testGeometry.wkt));
+                    System.out.println(String.format("Parsing WKT fails for case %d : %s", testDataElement.id, testDataElement.wkt));
                     throw new RuntimeException(e);
                 }
             }
