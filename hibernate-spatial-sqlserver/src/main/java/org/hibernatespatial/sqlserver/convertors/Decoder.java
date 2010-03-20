@@ -28,6 +28,9 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
+ * A <code>Decoder</code> implementation can decode
+ * native database objects to geometries of type T.
+ *
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */

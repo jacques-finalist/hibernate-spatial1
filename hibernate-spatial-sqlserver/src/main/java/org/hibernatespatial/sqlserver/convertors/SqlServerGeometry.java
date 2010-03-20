@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,6 +32,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
+ * A <code>SqlServerGeometry</code> represents the native SQL Server database object.
+ * <p/>
+ * <p>Instances are created by deserializing the byte array returned in the JDBC result set.
+ * They present the structure of the SQL Server Geometry object as specified by <TODO: add reference>.
+ *
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
@@ -68,7 +73,7 @@ class SqlServerGeometry {
     }
 
 
-    public static byte[] store(SqlServerGeometry sqlServerGeom) {
+    public static byte[] serialize(SqlServerGeometry sqlServerGeom) {
         int capacity = sqlServerGeom.calculateCapacity();
         ByteBuffer buffer = ByteBuffer.allocate(capacity);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -95,7 +100,7 @@ class SqlServerGeometry {
         if (sqlServerGeom.isSingleLineSegment() || sqlServerGeom.isSinglePoint())
             return buffer.array();
 
-        //in all other cases, we continue to store shapes and figures
+        //in all other cases, we continue to serialize shapes and figures
         buffer.putInt(sqlServerGeom.getNumFigures());
         for (int i = 0; i < sqlServerGeom.getNumFigures(); i++) {
             sqlServerGeom.getFigure(i).store(buffer);
@@ -109,7 +114,7 @@ class SqlServerGeometry {
         return buffer.array();
     }
 
-    public static SqlServerGeometry load(byte[] bytes) {
+    public static SqlServerGeometry deserialize(byte[] bytes) {
         SqlServerGeometry result = new SqlServerGeometry(bytes);
         result.parse();
         return result;

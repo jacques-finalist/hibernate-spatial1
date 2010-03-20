@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -34,10 +34,12 @@ import java.sql.Connection;
 import java.sql.Types;
 
 /**
+ * The <code>GeometryUserType</code> for Microsoft SQL Server (2008).
+ *
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
-public class SQLServer2008GeometryUserType extends AbstractDBGeometryType {
+public class SQLServerGeometryUserType extends AbstractDBGeometryType {
 
     public Geometry convert2JTS(Object obj) {
         if (obj == null)

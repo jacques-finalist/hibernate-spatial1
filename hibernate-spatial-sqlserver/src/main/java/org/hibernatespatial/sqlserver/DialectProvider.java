@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -29,6 +29,8 @@ import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.spi.SpatialDialectProvider;
 
 /**
+ * A <code>SpatialDialectProvider</code> for SQL Server (2008).
+ *
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
@@ -36,14 +38,14 @@ public class DialectProvider implements SpatialDialectProvider {
 
 
     public SpatialDialect createSpatialDialect(String dialect) {
-        return new SQLServer2008SpatialDialect();
+        return new SQLServerSpatialDialect();
     }
 
     public SpatialDialect getDefaultDialect() {
-        return new SQLServer2008SpatialDialect();
+        return new SQLServerSpatialDialect();
     }
 
     public String[] getSupportedDialects() {
-        return new String[]{SQLServer2008SpatialDialect.class.getCanonicalName()};
+        return new String[]{SQLServerSpatialDialect.class.getCanonicalName()};
     }
 }

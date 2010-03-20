@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -23,37 +23,23 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver.test;
+package org.hibernatespatial.sqlserver;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
-import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
 import org.hibernatespatial.sqlserver.convertors.Decoders;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
-import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Feb 21, 2010
- * Time: 2:06:18 PM
- * To change this template use File | Settings | File Templates.
+ * Implementation of an <code>AbstractExpectationsFactory</code>
+ * for Microsoft SQL Server (2008).
  */
-public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactory {
+public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
 
-    private final static String TEST_POLYGON_WKT = "POLYGON((0 0, 50 0, 100 100, 0 100, 0 0))";
 
-    private final DataSourceUtils dataSourceUtils;
-
-    public SqlServer2008ExpectationsFactory() {
-        dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
+    public SqlServerExpectationsFactory() {
+        super("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
     }
 
     @Override
@@ -67,27 +53,27 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     }
 
     @Override
-    protected NativeSQLStatement createConvexHullStatement(Geometry geom) {
+    protected NativeSQLStatement createNativeConvexHullStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STUnion(geometry::STGeomFromText(?, 4326)).STConvexHull() from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected NativeSQLStatement createIntersectionStatement(Geometry geom) {
+    protected NativeSQLStatement createNativeIntersectionStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STIntersection(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected NativeSQLStatement createDifferenceStatement(Geometry geom) {
+    protected NativeSQLStatement createNativeDifferenceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STDifference(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected NativeSQLStatement createSymDifferenceStatement(Geometry geom) {
+    protected NativeSQLStatement createNativeSymDifferenceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STSymDifference(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
-    protected NativeSQLStatement createGeomUnionStatement(Geometry geom) {
+    protected NativeSQLStatement createNativeGeomUnionStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STUnion(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
 
@@ -127,7 +113,7 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     }
 
     @Override
-    protected NativeSQLStatement createGeometryTypeStatement() {
+    protected NativeSQLStatement createNativeGeometryTypeStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STGeometryType() from GeomTest t");
     }
 
@@ -156,21 +142,26 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     }
 
     @Override
+    protected NativeSQLStatement createNativeContainsStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STContains(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STContains(geometry::STGeomFromText(?, 4326)) = 'true' and t.geom.STSrid = 4326",
+                geom.toText());
+    }
+
+    @Override
     protected NativeSQLStatement createNativeDisjointStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STDisjoint(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STDisjoint(geometry::STGeomFromText(?, 4326)) = 'true' and t.geom.STSrid = 4326",
                 geom.toText());
     }
 
     @Override
-    protected Connection createConnection() throws SQLException {
-        return dataSourceUtils.createConnection();
-    }
-
-
-    @Override
     protected NativeSQLStatement createNativeIntersectsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STIntersects(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STIntersects(geometry::STGeomFromText(?, 4326)) = 'true' and t.geom.STSrid = 4326",
                 geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeFilterStatement(Geometry geom) {
+        return createNativeSQLStatementAllWKTParams("select t.id, t.geom.Filter(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.Filter(geometry::STGeomFromText(?, 4326)) = 1 and t.geom.STSrid = 4326", geom.toText());
     }
 
     @Override
@@ -195,19 +186,5 @@ public class SqlServer2008ExpectationsFactory extends AbstractExpectationsFactor
     protected NativeSQLStatement createNativeDistanceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STDistance(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STSrid = 4326", geom.toText());
     }
-
-
-    @Override
-    public Polygon getTestPolygon() {
-        WKTReader reader = new WKTReader();
-        try {
-            Polygon polygon = (Polygon) reader.read(TEST_POLYGON_WKT);
-            polygon.setSRID(getTestSrid());
-            return polygon;
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
 }

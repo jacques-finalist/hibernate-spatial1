@@ -23,9 +23,8 @@
  * For more information, visit: http://www.hibernatespatial.org/
  */
 
-package org.hibernatespatial.sqlserver.test;
+package org.hibernatespatial.sqlserver;
 
-import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
 import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.TestSpatialFunctions;
 import org.junit.BeforeClass;
@@ -40,7 +39,7 @@ public class TestSqlServerSpatialFunctions {
 
     private final static DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
 
-    private SqlServer2008ExpectationsFactory expected;
+    private SqlServerExpectationsFactory expected;
     private TestSpatialFunctions delegate;
 
 
@@ -54,7 +53,7 @@ public class TestSqlServerSpatialFunctions {
     }
 
     public TestSqlServerSpatialFunctions() {
-        expected = new SqlServer2008ExpectationsFactory();
+        expected = new SqlServerExpectationsFactory();
         delegate = new TestSpatialFunctions(expected);
     }
 

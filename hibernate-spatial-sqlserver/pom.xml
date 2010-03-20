@@ -35,13 +35,10 @@
         <dependency>
             <groupId>com.microsoft</groupId>
             <artifactId>sqljdbc</artifactId>
-            <version>2.0</version>
+            <scope>provided</scope>
+            <version>[2.0,)</version>
         </dependency>
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.2.2</version>
-        </dependency>
+
     </dependencies>
 
 </project>

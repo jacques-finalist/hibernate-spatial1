@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -62,12 +62,24 @@ public class Decoders {
         throw new IllegalArgumentException("No decoder for type " + object.openGisType());
     }
 
+    /**
+     * Decodes the SQL Server Geometry object to its JTS Geometry instance
+     *
+     * @param raw
+     * @return
+     */
     public static Geometry decode(byte[] raw) {
-        SqlServerGeometry sqlServerGeom = SqlServerGeometry.load(raw);
+        SqlServerGeometry sqlServerGeom = SqlServerGeometry.deserialize(raw);
         Decoder decoder = decoderFor(sqlServerGeom);
         return decoder.decode(sqlServerGeom);
     }
 
+    /**
+     * Returns the decoder capable of decoding an object of the specified OpenGisType
+     *
+     * @param type OpenGisType for which a decoder is returned
+     * @return
+     */
     public static Decoder<? extends Geometry> decoderFor(OpenGisType type) {
         for (Decoder<? extends Geometry> decoder : DECODERS) {
             if (decoder.accepts(type))

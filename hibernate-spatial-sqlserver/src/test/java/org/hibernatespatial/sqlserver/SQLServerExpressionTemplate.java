@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -26,7 +26,7 @@
 package org.hibernatespatial.sqlserver;
 
 import org.hibernatespatial.test.SQLExpressionTemplate;
-import org.hibernatespatial.test.TestGeometry;
+import org.hibernatespatial.test.TestDataElement;
 
 /**
  * @author Karel Maesen, Geovise BVBA
@@ -35,7 +35,7 @@ public class SQLServerExpressionTemplate implements SQLExpressionTemplate {
 
     final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', Geometry::STGeomFromText('%s', %d))";
 
-    public String toInsertSql(TestGeometry testGeometry) {
-        return String.format(SQL_TEMPLATE, testGeometry.id, testGeometry.type, testGeometry.wkt, testGeometry.srid);
+    public String toInsertSql(TestDataElement testDataElement) {
+        return String.format(SQL_TEMPLATE, testDataElement.id, testDataElement.type, testDataElement.wkt, testDataElement.srid);
     }
 }

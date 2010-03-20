@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -34,16 +34,18 @@ import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.SpatialRelation;
 
 /**
+ * The <code>SpatialDialect</code> for Microsoft SQL Server (2008).
+ *
  * @author Karel Maesen, Martin Steinwender.
  *         Date: Nov 2, 2009
  */
-public class SQLServer2008SpatialDialect extends SQLServerDialect implements SpatialDialect {
+public class SQLServerSpatialDialect extends SQLServerDialect implements SpatialDialect {
 
     public final static String SHORT_NAME = "sql2008";
 
     public final static String COLUMN_TYPE = "GEOMETRY";
 
-    public SQLServer2008SpatialDialect() {
+    public SQLServerSpatialDialect() {
         super();
         registerColumnType(java.sql.Types.ARRAY, COLUMN_TYPE);
 
@@ -51,7 +53,7 @@ public class SQLServer2008SpatialDialect extends SQLServerDialect implements Spa
         // (spec_simplefeatures_sql_99-04.pdf)
 
         // CustomType for GeometryUserType
-        CustomType geomType = new CustomType(SQLServer2008GeometryUserType.class, null);
+        CustomType geomType = new CustomType(SQLServerGeometryUserType.class, null);
 
         // section 2.1.1.1
         // Registerfunction calls for registering geometry functions:
@@ -154,7 +156,7 @@ public class SQLServer2008SpatialDialect extends SQLServerDialect implements Spa
      */
 
     public UserType getGeometryUserType() {
-        return new SQLServer2008GeometryUserType();
+        return new SQLServerGeometryUserType();
     }
 
     /* (non-Javadoc)
@@ -163,6 +165,11 @@ public class SQLServer2008SpatialDialect extends SQLServerDialect implements Spa
 
     public String getSpatialAggregateSQL(String columnName, int aggregation) {
         throw new UnsupportedOperationException("No spatial aggregate SQL functions.");
+    }
+
+
+    public String getHavingSridSQL(String columnName) {
+        return columnName + ".STSrid = (?)";
     }
 
     /* (non-Javadoc)
