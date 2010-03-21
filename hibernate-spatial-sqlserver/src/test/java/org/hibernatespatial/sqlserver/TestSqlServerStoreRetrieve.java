@@ -57,7 +57,7 @@ public class TestSqlServerStoreRetrieve {
 
     @Test
     public void test_load_retrieve() throws ParseException {
-        delegate.test_load_retrieve();
+        delegate.test_store_retrieve();
     }
 
 }
