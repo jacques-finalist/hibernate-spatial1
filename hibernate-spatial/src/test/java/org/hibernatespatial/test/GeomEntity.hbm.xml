@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ $Id$
+  ~ $Id: GeomEntity.hbm.xml 181 2010-03-20 17:24:18Z maesenka $
   ~
   ~ This file is part of Hibernate Spatial, an extension to the
   ~ hibernate ORM solution for geographic data.
