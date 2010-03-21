@@ -164,6 +164,14 @@ public class TestSpatialFunctions {
 
     }
 
+    public void test_contains() throws SQLException {
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getContains(expectationsFactory.getTestPolygon());
+        String hql = "SELECT id, contains(geom, :filter) from GeomEntity where contains(geom, :filter) = true and srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+
     public void test_disjoint() throws SQLException {
         Map<Integer, Boolean> dbexpected = expectationsFactory.getDisjoint(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, disjoint(geom, :filter) from GeomEntity where disjoint(geom, :filter) = true and srid(geom) = 4326";

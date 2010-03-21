@@ -30,6 +30,7 @@ import com.vividsolutions.jts.io.ParseException;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.cfg.HSConfiguration;
@@ -97,27 +98,39 @@ public class TestStoreRetrieve {
                 Geometry retrievedGeometry = retrievedEntity.getGeom();
                 GeomEntity storedEntity = stored.get(retrievedEntity.getId());
                 Geometry storedGeometry = storedEntity.getGeom();
-                assertTrue(GeometryEquality.test(storedGeometry, retrievedGeometry));
+                String msg = createFailureMessage(storedEntity.getId(), storedGeometry, retrievedGeometry);
+                assertTrue(msg, GeometryEquality.test(storedGeometry, retrievedGeometry));
             }
         } finally {
             factory.getCurrentSession().getTransaction().rollback();
         }
     }
 
-    private void storeTestObjects(Map<Integer, GeomEntity> stored) {
-        try {
-            Session session = factory.getCurrentSession();
-            session.beginTransaction();
-            for (TestDataElement element : testData) {
-                GeomEntity entity = GeomEntity.createFrom(element);
-                stored.put(entity.getId(), entity);
-                session.save(entity);
-            }
-            factory.getCurrentSession().getTransaction().commit();
-        } catch (Exception e) {
-            factory.getCurrentSession().getTransaction().rollback();
-        }
+    private String createFailureMessage(int id, Geometry storedGeometry, Geometry retrievedGeometry) {
+        return String.format("Equality test failed for %d.\nExpected: %s\nReceived:%s", id, storedGeometry.toText(), retrievedGeometry.toText());
     }
 
+    private void storeTestObjects(Map<Integer, GeomEntity> stored) {
+        GeomEntity entity = null;
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = factory.openSession();
+            // Every test instance is committed seperately
+            // to improve feedback in case of test failure
+            for (TestDataElement element : testData) {
+                tx = session.beginTransaction();
+                entity = GeomEntity.createFrom(element);
+                stored.put(entity.getId(), entity);
+                session.save(entity);
+                tx.commit();
+            }
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Failed storing test object with id:" + entity.getId(), e);
+        } finally {
+            if (session != null) session.close();
+        }
+    }
 
 }
