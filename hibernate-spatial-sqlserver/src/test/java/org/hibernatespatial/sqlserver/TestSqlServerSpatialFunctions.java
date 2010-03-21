@@ -113,6 +113,11 @@ public class TestSqlServerSpatialFunctions {
     }
 
     @Test
+    public void test_contains() throws SQLException {
+        delegate.test_contains();
+    }
+
+    @Test
     public void test_crosses() throws SQLException {
         delegate.test_crosses();
     }
