@@ -30,7 +30,9 @@ package org.hibernatespatial.postgis;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import org.hibernatespatial.AbstractDBGeometryType;
+import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MGeometry;
 import org.hibernatespatial.mgeom.MLineString;
@@ -319,10 +321,16 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
     //Postgis treats every empty geometry as an empty geometrycollection
 
     private Geometry forceEmptyToGeometryCollection(Geometry jtsGeom) {
-        if (jtsGeom.isEmpty()) {
-            jtsGeom = jtsGeom.getFactory().createGeometryCollection(null);
+        Geometry forced = jtsGeom;
+        if (forced.isEmpty()) {
+            GeometryFactory factory = jtsGeom.getFactory();
+            if (factory == null) {
+                factory = HBSpatialExtension.getDefaultGeomFactory();
+            }
+            forced = factory.createGeometryCollection(null);
+            forced.setSRID(jtsGeom.getSRID());
         }
-        return jtsGeom;
+        return forced;
     }
 
     private MultiPolygon convertJTSMultiPolygon(
@@ -442,7 +450,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
         }
         GeometryCollection gc = new GeometryCollection(pgCollections);
         gc.setSrid(collection.getSRID());
-		return gc;
-	}
+        return gc;
+    }
 
 }

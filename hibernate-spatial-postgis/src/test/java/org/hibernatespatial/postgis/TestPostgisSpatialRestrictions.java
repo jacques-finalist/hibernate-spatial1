@@ -30,8 +30,6 @@ import org.hibernatespatial.test.TestData;
 import org.hibernatespatial.test.TestSpatialRestrictions;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
@@ -42,7 +40,6 @@ import java.sql.SQLException;
  */
 public class TestPostgisSpatialRestrictions {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(TestPostgisSpatialRestrictions.class);
     private final static DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-postgis-test.properties", new PostgisExpressionTemplate());
 
     private PostgisExpectationsFactory expected;
