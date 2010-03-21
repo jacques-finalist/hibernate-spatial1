@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,15 +22,22 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.postgis.test;
 
-import org.hibernatespatial.test.model.DataGenerator;
+package org.hibernatespatial.postgis;
 
-public class GenerateData {
+import org.hibernatespatial.test.SQLExpressionTemplate;
+import org.hibernatespatial.test.TestDataElement;
 
-	public static void main(String[] args) {
-		DataGenerator generator = new DataGenerator();
-		generator.generate();
-	}
+/**
+ * The template for postgis insert SQL
+ *
+ * @Author Karel Maesen, Geovise BVBA
+ */
+public class PostgisExpressionTemplate implements SQLExpressionTemplate {
 
+    final String SQL_TEMPLATE = "insert into geomtest values (%d, '%s', GeomFromText('%s', %d))";
+
+    public String toInsertSql(TestDataElement testDataElement) {
+        return String.format(SQL_TEMPLATE, testDataElement.id, testDataElement.type, testDataElement.wkt, testDataElement.srid);
+    }
 }
