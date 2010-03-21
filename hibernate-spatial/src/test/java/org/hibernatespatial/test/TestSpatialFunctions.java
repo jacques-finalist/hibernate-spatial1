@@ -54,9 +54,15 @@ public class TestSpatialFunctions {
 
     private static SessionFactory factory;
     private final AbstractExpectationsFactory expectationsFactory;
+    private final GeometryEquality geometryEquality;
+
+    public TestSpatialFunctions(AbstractExpectationsFactory expectationsFactory, GeometryEquality geometryEquality) {
+        this.expectationsFactory = expectationsFactory;
+        this.geometryEquality = geometryEquality;
+    }
 
     public TestSpatialFunctions(AbstractExpectationsFactory expectationsFactory) {
-        this.expectationsFactory = expectationsFactory;
+        this(expectationsFactory, new GeometryEquality());
     }
 
     public static void setUpBeforeClass() throws Exception {
@@ -295,10 +301,14 @@ public class TestSpatialFunctions {
         } else if (expected instanceof Geometry) {
             if (!(received instanceof Geometry))
                 fail("Expected a Geometry, but received an object of type " + received.getClass().getCanonicalName());
-            assertTrue("Failure on test for case " + id, GeometryEquality.test((Geometry) expected, (Geometry) received));
+            assertTrue("Failure on test for case " + id, geometryEquality.test((Geometry) expected, (Geometry) received));
 
         } else {
-            assertEquals("Failure on test for case " + id, expected, received);
+            if (expected instanceof Long) {
+                assertEquals("Failure on test for case " + id, ((Long) expected).intValue(), received);
+            } else {
+                assertEquals("Failure on test for case " + id, expected, received);
+            }
         }
     }
 

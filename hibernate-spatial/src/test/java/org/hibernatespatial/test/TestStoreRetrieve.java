@@ -42,8 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * This test class verifies whether the <code>Geometry</code>s retrieved
@@ -54,9 +53,11 @@ public class TestStoreRetrieve {
     private static Logger LOGGER = LoggerFactory.getLogger(TestStoreRetrieve.class);
     private final TestData testData;
     private final DataSourceUtils dataSourceUtils;
+    private final GeometryEquality geometryEquality;
     private final SessionFactory factory;
 
-    public TestStoreRetrieve(DataSourceUtils dataSourceUtils, TestData testData) {
+    public TestStoreRetrieve(DataSourceUtils dataSourceUtils, TestData testData, GeometryEquality geometryEquality) {
+        this.geometryEquality = geometryEquality;
         this.testData = testData;
         this.dataSourceUtils = dataSourceUtils;
         LOGGER.info("Setting up Hibernate");
@@ -77,14 +78,23 @@ public class TestStoreRetrieve {
 
     }
 
+    public TestStoreRetrieve(DataSourceUtils dataSourceUtils, TestData testData) {
+        this(dataSourceUtils, testData, new GeometryEquality());
+    }
+
     public void setUp() throws SQLException {
         dataSourceUtils.deleteTestData();
     }
 
-    public void test_load_retrieve() throws ParseException {
+    public void test_store_retrieve() throws ParseException {
         Map<Integer, GeomEntity> stored = new HashMap<Integer, GeomEntity>();
         storeTestObjects(stored);
         retrieveAndCompare(stored);
+    }
+
+    public void test_store_retrieve_null_geometry() {
+        storeNullGeometry();
+        retrieveNullGeometry();
     }
 
     private void retrieveAndCompare(Map<Integer, GeomEntity> stored) {
@@ -99,7 +109,7 @@ public class TestStoreRetrieve {
                 GeomEntity storedEntity = stored.get(retrievedEntity.getId());
                 Geometry storedGeometry = storedEntity.getGeom();
                 String msg = createFailureMessage(storedEntity.getId(), storedGeometry, retrievedGeometry);
-                assertTrue(msg, GeometryEquality.test(storedGeometry, retrievedGeometry));
+                assertTrue(msg, geometryEquality.test(storedGeometry, retrievedGeometry));
             }
         } finally {
             factory.getCurrentSession().getTransaction().rollback();
@@ -107,7 +117,9 @@ public class TestStoreRetrieve {
     }
 
     private String createFailureMessage(int id, Geometry storedGeometry, Geometry retrievedGeometry) {
-        return String.format("Equality test failed for %d.\nExpected: %s\nReceived:%s", id, storedGeometry.toText(), retrievedGeometry.toText());
+        String expectedText = (storedGeometry != null ? storedGeometry.toText() : "NULL");
+        String retrievedText = (retrievedGeometry != null ? retrievedGeometry.toText() : "NULL");
+        return String.format("Equality test failed for %d.\nExpected: %s\nReceived:%s", id, expectedText, retrievedText);
     }
 
     private void storeTestObjects(Map<Integer, GeomEntity> stored) {
@@ -133,4 +145,38 @@ public class TestStoreRetrieve {
         }
     }
 
+    private void storeNullGeometry() {
+        GeomEntity entity = null;
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = factory.openSession();
+            tx = session.beginTransaction();
+            entity = new GeomEntity();
+            entity.setId(1);
+            entity.setType("NULL OBJECT");
+            session.save(entity);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Failed storing test object with id:" + entity.getId(), e);
+        } finally {
+            if (session != null) session.close();
+        }
+    }
+
+
+    private void retrieveNullGeometry() {
+        try {
+            Session session = factory.getCurrentSession();
+            session.beginTransaction();
+            Criteria criteria = session.createCriteria(GeomEntity.class);
+            List<GeomEntity> retrieved = criteria.list();
+            assertEquals("Expected exactly one result", 1, retrieved.size());
+            GeomEntity entity = retrieved.get(0);
+            assertNull(entity.getGeom());
+        } finally {
+            factory.getCurrentSession().getTransaction().rollback();
+        }
+    }
 }

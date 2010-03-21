@@ -141,7 +141,9 @@ public class DataSourceUtils {
      * @throws SQLException
      */
     public Connection createConnection() throws SQLException {
-        return getDataSource().getConnection();
+        Connection cn = getDataSource().getConnection();
+        cn.setAutoCommit(false);
+        return cn;
     }
 
     /**
@@ -153,7 +155,8 @@ public class DataSourceUtils {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
-            PreparedStatement pmt = cn.prepareStatement("delete from geomtest");
+            cn.setAutoCommit(false);
+            PreparedStatement pmt = cn.prepareStatement("delete from GEOMTEST");
             if (!pmt.execute()) {
                 int updateCount = pmt.getUpdateCount();
                 LOGGER.info("Removing " + updateCount + " rows.");
@@ -182,6 +185,7 @@ public class DataSourceUtils {
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
+            cn.setAutoCommit(false);
             Statement stmt = cn.createStatement();
             for (TestDataElement testDataElement : testData) {
                 String sql = sqlExpressionTemplate.toInsertSql(testDataElement);
@@ -189,6 +193,7 @@ public class DataSourceUtils {
                 stmt.addBatch(sql);
             }
             int[] insCounts = stmt.executeBatch();
+            cn.commit();
             stmt.close();
             LOGGER.info("Loaded " + sum(insCounts) + " rows.");
         } finally {

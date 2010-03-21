@@ -29,15 +29,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Mar 20, 2010
- * Time: 5:22:31 PM
- * To change this template use File | Settings | File Templates.
+ * This class tests for the equality between geometries.
+ * <p/>
+ * The notion of geometric equality can differ slightly between
+ * spatial databases.
  */
 public class GeometryEquality {
 
-    public static boolean test(Geometry geom1, Geometry geom2) {
+    public boolean test(Geometry geom1, Geometry geom2) {
         if (geom1 == null) return geom2 == null;
         if (geom1.isEmpty()) return geom2.isEmpty();
         if (geom1 instanceof GeometryCollection) {
@@ -51,7 +50,18 @@ public class GeometryEquality {
             }
             return true;
         } else {
-            return geom1.equals(geom2);
+            return testSimpleGeometryEquality(geom1, geom2);
         }
+    }
+
+    /**
+     * Test whether two geometries, not of type GeometryCollection are equal.
+     *
+     * @param geom1
+     * @param geom2
+     * @return
+     */
+    protected boolean testSimpleGeometryEquality(Geometry geom1, Geometry geom2) {
+        return geom1.equals(geom2);
     }
 }

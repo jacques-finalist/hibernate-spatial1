@@ -49,6 +49,13 @@ import java.util.Map;
  */
 public abstract class AbstractExpectationsFactory {
 
+    public final static int INTEGER = 1;
+    public final static int DOUBLE = 2;
+    public final static int GEOMETRY = 3;
+    public final static int STRING = 4;
+    public final static int BOOLEAN = 5;
+    public final static int OBJECT = -1;
+
     private final static int TEST_SRID = 4326;
 
     private final DataSourceUtils dataSourceUtils;
@@ -79,7 +86,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Integer> getDimension() throws SQLException {
-        return retrieveExpected(getNativeDimensionSQL(), false);
+        return retrieveExpected(getNativeDimensionSQL(), INTEGER);
     }
 
     /**
@@ -89,7 +96,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, String> getAsText() throws SQLException {
-        return retrieveExpected(createNativeAsTextStatement(), false);
+        return retrieveExpected(createNativeAsTextStatement(), STRING);
 
     }
 
@@ -101,7 +108,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, byte[]> getAsBinary() throws SQLException {
-        return retrieveExpected(createNativeAsBinaryStatement(), false);
+        return retrieveExpected(createNativeAsBinaryStatement(), OBJECT);
     }
 
     /**
@@ -111,7 +118,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, String> getGeometryType() throws SQLException {
-        return retrieveExpected(createNativeGeometryTypeStatement(), false);
+        return retrieveExpected(createNativeGeometryTypeStatement(), STRING);
     }
 
     /**
@@ -121,7 +128,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Integer> getSrid() throws SQLException {
-        return retrieveExpected(createNativeSridStatement(), false);
+        return retrieveExpected(createNativeSridStatement(), INTEGER);
     }
 
     /**
@@ -131,7 +138,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getIsSimple() throws SQLException {
-        return retrieveExpected(createNativeIsSimpleStatement(), false);
+        return retrieveExpected(createNativeIsSimpleStatement(), BOOLEAN);
     }
 
     /**
@@ -141,7 +148,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getIsEmpty() throws SQLException {
-        return retrieveExpected(createNativeIsEmptyStatement(), false);
+        return retrieveExpected(createNativeIsEmptyStatement(), BOOLEAN);
     }
 
     /**
@@ -151,7 +158,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getBoundary() throws SQLException {
-        return retrieveExpected(createNativeBoundaryStatement(), true);
+        return retrieveExpected(createNativeBoundaryStatement(), GEOMETRY);
     }
 
     /**
@@ -161,7 +168,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getEnvelope() throws SQLException {
-        return retrieveExpected(createNativeEnvelopeStatement(), true);
+        return retrieveExpected(createNativeEnvelopeStatement(), GEOMETRY);
     }
 
     /**
@@ -172,7 +179,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getWithin(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeWithinStatement(geom), false);
+        return retrieveExpected(createNativeWithinStatement(geom), BOOLEAN);
     }
 
     /**
@@ -183,7 +190,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getEquals(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeEqualsStatement(geom), false);
+        return retrieveExpected(createNativeEqualsStatement(geom), BOOLEAN);
     }
 
     /**
@@ -194,14 +201,14 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getCrosses(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeCrossesStatement(geom), false);
+        return retrieveExpected(createNativeCrossesStatement(geom), BOOLEAN);
     }
 
     /**
      * Returns the expected results of the contains operator
      */
     public Map<Integer, Boolean> getContains(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeContainsStatement(geom), false);
+        return retrieveExpected(createNativeContainsStatement(geom), BOOLEAN);
     }
 
     /**
@@ -212,7 +219,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getDisjoint(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeDisjointStatement(geom), false);
+        return retrieveExpected(createNativeDisjointStatement(geom), BOOLEAN);
     }
 
     /**
@@ -223,7 +230,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getIntersects(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeIntersectsStatement(geom), false);
+        return retrieveExpected(createNativeIntersectsStatement(geom), BOOLEAN);
     }
 
     /**
@@ -234,7 +241,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getTouches(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeTouchesStatement(geom), false);
+        return retrieveExpected(createNativeTouchesStatement(geom), BOOLEAN);
     }
 
     /**
@@ -245,7 +252,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getOverlaps(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeOverlapsStatement(geom), false);
+        return retrieveExpected(createNativeOverlapsStatement(geom), BOOLEAN);
     }
 
     /**
@@ -257,7 +264,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Boolean> getRelate(Geometry geom, String matrix) throws SQLException {
-        return retrieveExpected(createNativeRelateStatement(geom, matrix), false);
+        return retrieveExpected(createNativeRelateStatement(geom, matrix), BOOLEAN);
     }
 
     /**
@@ -267,7 +274,7 @@ public abstract class AbstractExpectationsFactory {
      * @return
      */
     public Map<Integer, Boolean> getFilter(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeFilterStatement(geom), false);
+        return retrieveExpected(createNativeFilterStatement(geom), BOOLEAN);
     }
 
     /**
@@ -278,7 +285,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Double> getDistance(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeDistanceStatement(geom), false);
+        return retrieveExpected(createNativeDistanceStatement(geom), DOUBLE);
     }
 
     /**
@@ -289,7 +296,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getBuffer(Double distance) throws SQLException {
-        return retrieveExpected(createNativeBufferStatement(distance), true);
+        return retrieveExpected(createNativeBufferStatement(distance), GEOMETRY);
     }
 
     /**
@@ -300,7 +307,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getConvexHull(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeConvexHullStatement(geom), true);
+        return retrieveExpected(createNativeConvexHullStatement(geom), GEOMETRY);
     }
 
     /**
@@ -311,7 +318,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getIntersection(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeIntersectionStatement(geom), true);
+        return retrieveExpected(createNativeIntersectionStatement(geom), GEOMETRY);
     }
 
     /**
@@ -322,7 +329,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getDifference(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeDifferenceStatement(geom), true);
+        return retrieveExpected(createNativeDifferenceStatement(geom), GEOMETRY);
     }
 
     /**
@@ -334,7 +341,7 @@ public abstract class AbstractExpectationsFactory {
      */
 
     public Map<Integer, Geometry> getSymDifference(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeSymDifferenceStatement(geom), true);
+        return retrieveExpected(createNativeSymDifferenceStatement(geom), GEOMETRY);
     }
 
     /**
@@ -345,7 +352,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Geometry> getGeomUnion(Geometry geom) throws SQLException {
-        return retrieveExpected(createNativeGeomUnionStatement(geom), true);
+        return retrieveExpected(createNativeGeomUnionStatement(geom), GEOMETRY);
     }
 
     /**
@@ -607,7 +614,7 @@ public abstract class AbstractExpectationsFactory {
         }
     }
 
-    protected <T> Map<Integer, T> retrieveExpected(NativeSQLStatement nativeSQLStatement, boolean expectGeometry) throws SQLException {
+    protected <T> Map<Integer, T> retrieveExpected(NativeSQLStatement nativeSQLStatement, int type) throws SQLException {
         PreparedStatement preparedStatement = null;
         Connection cn = null;
         Map<Integer, T> expected = new HashMap<Integer, T>();
@@ -617,11 +624,28 @@ public abstract class AbstractExpectationsFactory {
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 int id = results.getInt(1);
-                if (expectGeometry) {
-                    expected.put(id, (T) decode(results.getObject(2)));
-                } else {
-                    T val = (T) results.getObject(2);
-                    expected.put(id, val);
+                switch (type) {
+                    case GEOMETRY:
+                        expected.put(id, (T) decode(results.getObject(2)));
+                        break;
+                    case STRING:
+                        expected.put(id, (T) results.getString(2));
+                        break;
+                    case INTEGER:
+                        expected.put(id, (T) Long.valueOf(results.getLong(2)));
+                        break;
+                    case DOUBLE:
+                        Double value = Double.valueOf(results.getDouble(2));
+                        if (results.wasNull())
+                            value = null; //this is required because SQL Server converts automatically null to 0.0
+                        expected.put(id, (T) value);
+                        break;
+                    case BOOLEAN:
+                        expected.put(id, (T) Boolean.valueOf(results.getBoolean(2)));
+                        break;
+                    default:
+                        T val = (T) results.getObject(2);
+                        expected.put(id, val);
                 }
             }
             return expected;
