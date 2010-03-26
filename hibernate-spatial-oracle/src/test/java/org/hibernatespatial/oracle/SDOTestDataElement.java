@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,15 +22,25 @@
  *
  * For more information, visit: http://www.hibernatespatial.org/
  */
-package org.hibernatespatial.oracle.test;
 
-import org.hibernatespatial.test.model.DataGenerator;
+package org.hibernatespatial.oracle;
 
-public class GenerateData {
+import org.hibernatespatial.test.TestDataElement;
 
-	public static void main(String[] args) {
-		DataGenerator generator = new DataGenerator();
-		generator.generate();
-	}
+/**
+ * A specialised subclass for SDO_GEOMETRY test objects
+ * <p/>
+ * Oracle 10g WKT support is limited to 2D geometries, and there is
+ * no method of specifying SRID. That is why we here add the equivalent SDO expression
+ * that can be used by the TestData
+ */
+public class SDOTestDataElement extends TestDataElement {
+
+    public final String sdo;
+
+    public SDOTestDataElement(int id, String type, String wkt, int srid, String sdo) {
+        super(id, type, wkt, srid);
+        this.sdo = sdo;
+    }
 
 }
