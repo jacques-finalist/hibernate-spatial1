@@ -43,7 +43,7 @@ public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
-    protected NativeSQLStatement getNativeDimensionSQL() {
+    protected NativeSQLStatement createNativeDimensionSQL() {
         return createNativeSQLStatement("select t.id, t.geom.STDimension() from GeomTest t");
     }
 
