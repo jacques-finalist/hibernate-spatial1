@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -85,7 +85,7 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
-    protected NativeSQLStatement getNativeDimensionSQL() {
+    protected NativeSQLStatement createNativeDimensionSQL() {
         return createNativeSQLStatement("select id, dimension(geom) from GEOMTEST");
     }
 
