@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Implements OGC function dimension for HQL.
  */
-public class GetDimensionFunction extends SDOObjectMethod {
+class GetDimensionFunction extends SDOObjectMethod {
 
     GetDimensionFunction() {
         super("Get_Dims", Hibernate.INTEGER);
