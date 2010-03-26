@@ -84,6 +84,7 @@ public class DataSourceUtils {
         InputStream is = null;
         try {
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile);
+            if (is == null) throw new RuntimeException(String.format("File %s not found on classpath.", propertyFile));
             properties = new Properties();
             properties.load(is);
         } catch (IOException e) {
@@ -202,6 +203,32 @@ public class DataSourceUtils {
             } catch (SQLException e) {
                 // nothing to do
             }
+        }
+    }
+
+    /**
+     * Executes a SQL statement.
+     * <p/>
+     * This is used e.g. to drop/create a spatial index, or update the
+     * geometry metadata statements.
+     *
+     * @param sql the (native) SQL Statement to execute
+     * @throws SQLException
+     */
+    public void executeStatement(String sql) throws SQLException {
+        Connection cn = null;
+        try {
+            cn = getDataSource().getConnection();
+            cn.setAutoCommit(false);
+            PreparedStatement statement = cn.prepareStatement(sql);
+            statement.execute();
+            cn.commit();
+            statement.close();
+        } finally {
+            try {
+                if (cn != null) cn.close();
+            } catch (SQLException e) {
+            } //do nothing.
         }
     }
 

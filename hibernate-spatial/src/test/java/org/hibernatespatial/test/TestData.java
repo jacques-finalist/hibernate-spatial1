@@ -25,13 +25,11 @@
 
 package org.hibernatespatial.test;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A <code>TestData</code> instance is a list object
@@ -45,9 +43,10 @@ public class TestData implements List<TestDataElement> {
     private List<TestDataElement> testDataElements;
     private InputStream in;
 
-    private TestData(List<TestDataElement> testDataElements) {
-        this.testDataElements = testDataElements;
+    protected TestData() {
     }
+
+    ;
 
     public int size() {
         return testDataElements.size();
@@ -150,38 +149,15 @@ public class TestData implements List<TestDataElement> {
     }
 
     public static TestData fromFile(String fileName) {
-        if (fileName == null) throw new RuntimeException("Null test data file specified.");
-        List<TestDataElement> testDataElements = new ArrayList<TestDataElement>();
-        SAXReader reader = new SAXReader();
-        try {
-            Document document = reader.read(getInputStream(fileName));
-            addDataElements(document, testDataElements);
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        }
-        return new TestData(testDataElements);
+        TestDataReader reader = new TestDataReader();
+        return fromFile(fileName, reader);
     }
 
-    private static void addDataElements(Document document, List<TestDataElement> testDataElements) {
-        Element root = document.getRootElement();
-        for (Iterator it = root.elementIterator(); it.hasNext();) {
-            Element element = (Element) it.next();
-            addDataElement(element, testDataElements);
-        }
+    public static TestData fromFile(String fileName, TestDataReader reader) {
+        List<TestDataElement> elements = reader.read(fileName);
+        TestData testData = new TestData();
+        testData.testDataElements = elements;
+        return testData;
     }
 
-    private static void addDataElement(Element element, List<TestDataElement> testDataElements) {
-        int id = Integer.valueOf(element.selectSingleNode("id").getText());
-        String type = element.selectSingleNode("type").getText();
-        String wkt = element.selectSingleNode("wkt").getText();
-        int srid = Integer.valueOf(element.selectSingleNode("srid").getText());
-        TestDataElement testDataElement = new TestDataElement(id, type, wkt, srid);
-        testDataElements.add(testDataElement);
-    }
-
-    private static InputStream getInputStream(String fileName) {
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-        if (is == null) throw new RuntimeException(String.format("File %s not found on classpath.", fileName));
-        return is;
-    }
 }

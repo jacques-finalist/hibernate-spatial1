@@ -98,20 +98,22 @@ public class TestStoreRetrieve {
     }
 
     private void retrieveAndCompare(Map<Integer, GeomEntity> stored) {
+        int id = -1;
         try {
             Session session = factory.getCurrentSession();
             session.beginTransaction();
-            Criteria criteria = session.createCriteria(GeomEntity.class);
-            List<GeomEntity> retrieved = criteria.list();
-            assertEquals(stored.size(), retrieved.size());
-            for (GeomEntity retrievedEntity : retrieved) {
+            for (GeomEntity storedEntity : stored.values()) {
+                id = storedEntity.getId();
+                GeomEntity retrievedEntity = (GeomEntity) session.get(GeomEntity.class, id);
                 Geometry retrievedGeometry = retrievedEntity.getGeom();
-                GeomEntity storedEntity = stored.get(retrievedEntity.getId());
                 Geometry storedGeometry = storedEntity.getGeom();
                 String msg = createFailureMessage(storedEntity.getId(), storedGeometry, retrievedGeometry);
                 assertTrue(msg, geometryEquality.test(storedGeometry, retrievedGeometry));
             }
-        } finally {
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Failure on case: %d", id), e);
+        }
+        finally {
             factory.getCurrentSession().getTransaction().rollback();
         }
     }
@@ -123,23 +125,24 @@ public class TestStoreRetrieve {
     }
 
     private void storeTestObjects(Map<Integer, GeomEntity> stored) {
-        GeomEntity entity = null;
         Session session = null;
         Transaction tx = null;
+        int id = -1;
         try {
             session = factory.openSession();
             // Every test instance is committed seperately
             // to improve feedback in case of test failure
             for (TestDataElement element : testData) {
+                id = element.id;
                 tx = session.beginTransaction();
-                entity = GeomEntity.createFrom(element);
+                GeomEntity entity = GeomEntity.createFrom(element);
                 stored.put(entity.getId(), entity);
                 session.save(entity);
                 tx.commit();
             }
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            throw new RuntimeException("Failed storing test object with id:" + entity.getId(), e);
+            throw new RuntimeException("Failed storing test object with id:" + id, e);
         } finally {
             if (session != null) session.close();
         }

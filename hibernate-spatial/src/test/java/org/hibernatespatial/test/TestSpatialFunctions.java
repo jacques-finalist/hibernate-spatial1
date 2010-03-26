@@ -272,7 +272,7 @@ public class TestSpatialFunctions {
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    private <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql) {
+    public <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql) {
         Map<Integer, T> hsreceived = new HashMap<Integer, T>();
         doInSession(hql, hsreceived, null);
         compare(dbexpected, hsreceived);

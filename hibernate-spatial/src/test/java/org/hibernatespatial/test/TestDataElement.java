@@ -38,7 +38,7 @@ public class TestDataElement {
     final public int srid;
     final public String type;
 
-    TestDataElement(int id, String type, String wkt, int srid) {
+    protected TestDataElement(int id, String type, String wkt, int srid) {
         this.wkt = wkt;
         this.id = id;
         this.type = type;

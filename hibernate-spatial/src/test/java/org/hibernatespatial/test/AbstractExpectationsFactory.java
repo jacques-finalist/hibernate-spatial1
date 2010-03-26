@@ -30,10 +30,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +56,7 @@ public abstract class AbstractExpectationsFactory {
     private final static int TEST_SRID = 4326;
 
     private final DataSourceUtils dataSourceUtils;
+    private static final int MAX_BYTE_LEN = 1024;
 
     public AbstractExpectationsFactory(String propertiesFile, SQLExpressionTemplate sqlExpressionTemplate) {
         this.dataSourceUtils = new DataSourceUtils(propertiesFile, sqlExpressionTemplate);
@@ -86,7 +84,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     public Map<Integer, Integer> getDimension() throws SQLException {
-        return retrieveExpected(getNativeDimensionSQL(), INTEGER);
+        return retrieveExpected(createNativeDimensionSQL(), INTEGER);
     }
 
     /**
@@ -415,7 +413,7 @@ public abstract class AbstractExpectationsFactory {
      *
      * @return the SQL String
      */
-    protected abstract NativeSQLStatement getNativeDimensionSQL();
+    protected abstract NativeSQLStatement createNativeDimensionSQL();
 
     /**
      * Returns a statement corresponding to the HQL statement:
@@ -645,6 +643,11 @@ public abstract class AbstractExpectationsFactory {
                         break;
                     default:
                         T val = (T) results.getObject(2);
+                        //this code is a hack to deal with Oracle Spatial that returns Blob's for asWKB() function
+                        //TODO -- clean up
+                        if (val instanceof Blob) {
+                            val = (T) ((Blob) val).getBytes(1, MAX_BYTE_LEN);
+                        }
                         expected.put(id, val);
                 }
             }

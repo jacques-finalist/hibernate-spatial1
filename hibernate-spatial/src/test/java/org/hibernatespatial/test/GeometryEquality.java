@@ -25,8 +25,10 @@
 
 package org.hibernatespatial.test;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.hibernatespatial.mgeom.MCoordinate;
 
 /**
  * This class tests for the equality between geometries.
@@ -62,6 +64,33 @@ public class GeometryEquality {
      * @return
      */
     protected boolean testSimpleGeometryEquality(Geometry geom1, Geometry geom2) {
-        return geom1.equals(geom2);
+        //return geom1.equals(geom2);
+        return testTypeAndVertexEquality(geom1, geom2);
+    }
+
+    protected boolean testTypeAndVertexEquality(Geometry geom1, Geometry geom2) {
+        if (!geom1.getGeometryType().equals(geom2.getGeometryType())) return false;
+        if (geom1.getNumGeometries() != geom2.getNumGeometries()) return false;
+        if (geom1.getNumPoints() != geom2.getNumPoints()) return false;
+        Coordinate[] coordinates1 = geom1.getCoordinates();
+        Coordinate[] coordinates2 = geom2.getCoordinates();
+        for (int i = 0; i < coordinates1.length; i++) {
+            Coordinate c1 = coordinates1[i];
+            Coordinate c2 = coordinates2[i];
+            if (!testCoordinateEquality(c1, c2)) return false;
+        }
+        return true;
+    }
+
+    private boolean testCoordinateEquality(Coordinate c1, Coordinate c2) {
+        if (c1 instanceof MCoordinate) {
+            if (!(c1 instanceof MCoordinate)) return false;
+            MCoordinate mc1 = (MCoordinate) c1;
+            MCoordinate mc2 = (MCoordinate) c2;
+            if (!Double.isNaN(mc1.m) && mc1.m != mc2.m) return false;
+        }
+        if (!Double.isNaN(c1.z) && c1.z != c2.z) return false;
+        return c1.x == c2.x && c1.y == c2.y;
     }
 }
+
