@@ -412,13 +412,18 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
         pgPoint.srid = point.getSRID();
         pgPoint.x = point.getX();
         pgPoint.y = point.getY();
-        if (new Double(point.getCoordinate().z).isNaN()) {
+        Coordinate coordinate = point.getCoordinate();
+        if (Double.isNaN(coordinate.z)) {
             pgPoint.dimension = 2;
         } else {
-            pgPoint.z = point.getCoordinate().z;
+            pgPoint.z = coordinate.z;
             pgPoint.dimension = 3;
         }
         pgPoint.haveMeasure = false;
+        if (coordinate instanceof MCoordinate && !Double.isNaN(((MCoordinate) coordinate).m)) {
+            pgPoint.m = ((MCoordinate) coordinate).m;
+            pgPoint.haveMeasure = true;
+        }
         return pgPoint;
     }
 

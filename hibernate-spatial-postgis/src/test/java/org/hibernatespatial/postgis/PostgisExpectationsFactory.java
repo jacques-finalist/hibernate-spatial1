@@ -84,7 +84,7 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
-    protected NativeSQLStatement getNativeDimensionSQL() {
+    protected NativeSQLStatement createNativeDimensionSQL() {
         return createNativeSQLStatement("select id, dimension(geom) from geomtest");
     }
 
