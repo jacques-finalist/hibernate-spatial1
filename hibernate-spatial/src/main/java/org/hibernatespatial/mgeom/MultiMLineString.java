@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
- *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,9 +61,17 @@ public class MultiMLineString extends MultiLineString implements MGeometry {
         if (this.isEmpty()) {
             return;
         }
-        int mdir = ((MLineString) this.geometries[0]).getMeasureDirection();
+        int mdir = MGeometry.CONSTANT;
+        for (int i = 0; i < this.geometries.length; i++) {
+            MLineString ml = (MLineString) this.geometries[0];
+            if (!ml.isEmpty()) {
+                mdir = ml.getMeasureDirection();
+                break;
+            }
+        }
         for (int i = 0; i < this.geometries.length; i++) {
             MLineString ml = (MLineString) this.geometries[i];
+            if (ml.isEmpty()) continue;
             // check whether mlinestrings are all pointing in same direction,
             // and
             // are monotone

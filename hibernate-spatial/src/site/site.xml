@@ -1,46 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ $Id:$
+  ~
+  ~ This file is part of Hibernate Spatial, an extension to the
+  ~ hibernate ORM solution for geographic data.
+  ~
+  ~ Copyright © 2007-2010 Geovise BVBA
+  ~
+  ~ This library is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU Lesser General Public
+  ~ License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or (at your option) any later version.
+  ~
+  ~ This library is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this library; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ For more information, visit: http://www.hibernatespatial.org/
+  -->
+
 <project name="Hibernate Spatial">
-  
-  <bannerLeft>
-    <name>Hibernate Spatial</name>
-    <href>http://www.hibernatespatial.org/</href>
-  </bannerLeft>
 
-  <skin>
-    <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-default-skin</artifactId>
-  </skin>
+    <bannerLeft>
+        <name>Hibernate Spatial</name>
+        <href>http://www.hibernatespatial.org/</href>
+    </bannerLeft>
 
-  <publishDate format="yyyy MMM dd" />
-  
-  <body>
-  
-  	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="Road Map" href="roadmap.html"/>
-    </menu>
-    <menu name="Getting Hibernate Spatial" inherit="top">
-    	<item name="Releases" href="download.html"/>
-    	<item name="Sources" href="source-repository.html"/>
-    	<item name="License" href="license.html"/>
-    	<item name="Source code insight" 
-    		href="insight.html"/>
-    </menu>
-	<menu name="Documentation" inherit="top">
-	  <item name="Tutorial" href="tutorial.html"/>
-  	  <item name="Maven Quick Start" href="mavenquick.html"/>
-      <item name="Configuring providers" href="providers.html"/>
-      <item name="Getting Help" href="gettinghelp.html"/> 
-      <item name="JavaDocs" href="apidocs/index.html"/>     
-    </menu>
-    
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-default-skin</artifactId>
+    </skin>
 
-    <menu name="Providers" inherit="top">
-    	<item name="Oracle10g" href="hibernate-spatial-oracle"/>
-    	<item name="Postgresql" href="hibernate-spatial-postgis"/>    
-    	<item name="MySQL" href="hibernate-spatial-mysql"/>	
-    </menu>
-    
-  </body>
+    <publishDate format="yyyy MMM dd"/>
+
+    <body>
+
+        <menu name="Overview" inherit="top">
+            <item name="Introduction" href="index.html"/>
+            <item name="Usage" href="usage.html"/>
+            <item name="Road Map" href="roadmap.html"/>
+        </menu>
+        <menu name="Getting Hibernate Spatial" inherit="top">
+            <item name="Releases" href="download.html"/>
+            <item name="Sources" href="source-repository.html"/>
+            <item name="License" href="license.html"/>
+            <item name="Source code insight"
+                  href="insight.html"/>
+        </menu>
+        <menu name="Documentation" inherit="top">
+            <item name="Tutorial" href="tutorial.html"/>
+            <item name="Maven Quick Start" href="mavenquick.html"/>
+            <item name="Configuring providers" href="providers.html"/>
+            <item name="Getting Help" href="gettinghelp.html"/>
+            <item name="JavaDocs" href="apidocs/index.html"/>
+        </menu>
+
+
+        <menu name="Providers" inherit="top">
+            <item name="Oracle10g" href="hibernate-spatial-oracle"/>
+            <item name="Postgresql" href="hibernate-spatial-postgis"/>
+            <item name="Microsft SQL Server" href="hibernate-spatial-sqlserver"/>
+            <item name="MySQL" href="hibernate-spatial-mysql"/>
+        </menu>
+
+    </body>
 </project>

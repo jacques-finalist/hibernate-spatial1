@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,25 +25,24 @@
 package org.hibernatespatial;
 
 /**
- * Spatial Analysis types.
- * 
+ * The spatial analysis functions defined in the OGC SFS specification.
+ *
  * @author Karel Maesen
- * 
  */
 public interface SpatialAnalysis {
 
-	public static int DISTANCE = 1;
+    public static int DISTANCE = 1;
 
-	public static int BUFFER = 2;
+    public static int BUFFER = 2;
 
-	public static int CONVEXHULL = 3;
+    public static int CONVEXHULL = 3;
 
-	public static int INTERSECTION = 4;
+    public static int INTERSECTION = 4;
 
-	public static int UNION = 5;
+    public static int UNION = 5;
 
-	public static int DIFFERENCE = 6;
+    public static int DIFFERENCE = 6;
 
-	public static int SYMDIFFERENCE = 7;
+    public static int SYMDIFFERENCE = 7;
 
 }

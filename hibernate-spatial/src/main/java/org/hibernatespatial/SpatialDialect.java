@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
- *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,9 +27,9 @@ package org.hibernatespatial;
 import org.hibernate.usertype.UserType;
 
 /**
+ * Describes the features of a spatially enabled dialect.
+ *
  * @author Karel Maesen
- *         <p/>
- *         Describes the features of a spatially enabled dialect.
  */
 public interface SpatialDialect {
 

@@ -1,13 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +25,12 @@
 package org.hibernatespatial;
 
 /**
- * @author Karel Maesen
+ * Enumeration of types of Spatial Aggregation
  *
+ * @author Karel Maesen
  */
 public interface SpatialAggregate {
 
-	public static final int EXTENT = 1;
+    public static final int EXTENT = 1;
 
 }

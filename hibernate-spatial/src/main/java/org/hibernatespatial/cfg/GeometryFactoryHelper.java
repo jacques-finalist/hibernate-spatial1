@@ -1,13 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,56 +24,61 @@
  */
 package org.hibernatespatial.cfg;
 
-import java.util.Map;
-
+import com.vividsolutions.jts.geom.PrecisionModel;
+import org.hibernatespatial.mgeom.MGeometryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hibernatespatial.mgeom.MGeometryFactory;
 
-import com.vividsolutions.jts.geom.PrecisionModel;
+import java.util.Map;
 
+/**
+ * Factory for creating a <code>GeometryFactory</code> given a map of
+ * configuration parameters.
+ *
+ * @author Karel Maesen, Geovise BVBA
+ */
 public class GeometryFactoryHelper {
 
-	private static Logger logger = LoggerFactory.getLogger(GeometryFactoryHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(GeometryFactoryHelper.class);
 
-	public static MGeometryFactory createGeometryFactory(Map map) {
+    public static MGeometryFactory createGeometryFactory(Map map) {
 
-		if (map == null) {
-			return new MGeometryFactory();
-		}
-		String precisionModelName = null;
-		Double scale = null;
-		if (map.containsKey(HSProperty.PRECISION_MODEL.toString())) {
-			precisionModelName = (String) map.get(HSProperty.PRECISION_MODEL
-					.toString());
-		}
-		if (map.containsKey(HSProperty.PRECISION_MODEL_SCALE.toString())) {
-			scale = Double.parseDouble(((String) map
-					.get(HSProperty.PRECISION_MODEL_SCALE.toString())));
-		}
-		if (scale != null && !scale.isNaN() && precisionModelName != null
-				&& precisionModelName.equalsIgnoreCase("FIXED")) {
-			return new MGeometryFactory(new PrecisionModel(scale));
-		}
-		if (precisionModelName == null) {
-			return new MGeometryFactory();
-		}
-		if (precisionModelName.equalsIgnoreCase("FIXED")) {
-			return new MGeometryFactory(
-					new PrecisionModel(PrecisionModel.FIXED));
-		}
-		if (precisionModelName.equalsIgnoreCase("FLOATING")) {
-			return new MGeometryFactory(new PrecisionModel(
-					PrecisionModel.FLOATING));
-		}
-		if (precisionModelName.equalsIgnoreCase("FLOATING_SINGLE")) {
-			return new MGeometryFactory(new PrecisionModel(
-					PrecisionModel.FLOATING_SINGLE));
-		}
-		logger.warn("Configured for PrecisionModel: " + precisionModelName
-				+ " but don't know how to instantiate.");
-		logger.warn("Reverting to default GeometryModel");
-		return new MGeometryFactory();
-	}
+        if (map == null) {
+            return new MGeometryFactory();
+        }
+        String precisionModelName = null;
+        Double scale = null;
+        if (map.containsKey(HSProperty.PRECISION_MODEL.toString())) {
+            precisionModelName = (String) map.get(HSProperty.PRECISION_MODEL
+                    .toString());
+        }
+        if (map.containsKey(HSProperty.PRECISION_MODEL_SCALE.toString())) {
+            scale = Double.parseDouble(((String) map
+                    .get(HSProperty.PRECISION_MODEL_SCALE.toString())));
+        }
+        if (scale != null && !scale.isNaN() && precisionModelName != null
+                && precisionModelName.equalsIgnoreCase("FIXED")) {
+            return new MGeometryFactory(new PrecisionModel(scale));
+        }
+        if (precisionModelName == null) {
+            return new MGeometryFactory();
+        }
+        if (precisionModelName.equalsIgnoreCase("FIXED")) {
+            return new MGeometryFactory(
+                    new PrecisionModel(PrecisionModel.FIXED));
+        }
+        if (precisionModelName.equalsIgnoreCase("FLOATING")) {
+            return new MGeometryFactory(new PrecisionModel(
+                    PrecisionModel.FLOATING));
+        }
+        if (precisionModelName.equalsIgnoreCase("FLOATING_SINGLE")) {
+            return new MGeometryFactory(new PrecisionModel(
+                    PrecisionModel.FLOATING_SINGLE));
+        }
+        logger.warn("Configured for PrecisionModel: " + precisionModelName
+                + " but don't know how to instantiate.");
+        logger.warn("Reverting to default GeometryModel");
+        return new MGeometryFactory();
+    }
 
 }

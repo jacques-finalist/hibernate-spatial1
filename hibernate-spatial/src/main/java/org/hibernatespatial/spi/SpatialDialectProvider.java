@@ -1,14 +1,10 @@
-/**
- * $Id$
+/*
+ * $Id:$
  *
- * This file is part of Hibernate Spatial, an extension to the 
- * hibernate ORM solution for geographic data. 
- *  
- * Copyright © 2007 Geovise BVBA
- * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
+ * This file is part of Hibernate Spatial, an extension to the
+ * hibernate ORM solution for geographic data.
  *
- * This work was partially supported by the European Commission, 
- * under the 6th Framework Programme, contract IST-2-004688-STP.
+ * Copyright © 2007-2010 Geovise BVBA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,44 +28,43 @@ import org.hibernatespatial.SpatialDialect;
 
 /**
  * Interface that is implemented by a SpatialDialect Provider.
- * 
+ * <p/>
  * A <class>SpatialDialectProvider</class> creates a SpatialDialect for one or
  * more database systems. These databases are identified by a dialect string.
  * Usually this is the fully qualified class name of a
  * <code>org.hibernate.dialect.Dialect</code> or <code>SpatialDialect</code>
  * implementation
- * 
- * @author Karel Maesen
+ *
+ * @author Karel Maesen, Geovise BVBA
  */
 
 public interface SpatialDialectProvider {
 
-	/**
-	 * create Spatial Dialect with the provided name.
-	 * 
-	 * @param dialect
-	 *            Name of the dialect to create.
-	 * @return a SpatialDialect
-	 */
-	public SpatialDialect createSpatialDialect(String dialect);
+    /**
+     * create Spatial Dialect with the provided name.
+     *
+     * @param dialect Name of the dialect to create.
+     * @return a SpatialDialect
+     */
+    public SpatialDialect createSpatialDialect(String dialect);
 
-	/**
-	 * Returns the default dialect for this provider.
-	 * 
-	 * @return The Default Dialect provided by the implementation.
-	 * 
-	 * Implementations should never return null for this method.
-	 */
-	public SpatialDialect getDefaultDialect();
+    /**
+     * Returns the default dialect for this provider.
+     *
+     * @return The Default Dialect provided by the implementation.
+     *         <p/>
+     *         Implementations should never return null for this method.
+     */
+    public SpatialDialect getDefaultDialect();
 
-	/**
-	 * Returns the Dialect names
-	 * 
-	 * This method must return the canonical class names of the Spatialdialect
-	 * implementations that this provider provides.
-	 * 
-	 * @return array of dialect names.
-	 */
-	public String[] getSupportedDialects();
+    /**
+     * Returns the Dialect names
+     * <p/>
+     * This method must return the canonical class names of the Spatialdialect
+     * implementations that this provider provides.
+     *
+     * @return array of dialect names.
+     */
+    public String[] getSupportedDialects();
 
 }
