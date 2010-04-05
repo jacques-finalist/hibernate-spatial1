@@ -31,7 +31,7 @@
     </properties>
     <body>
         <section name="Hibernate Spatial Releases">
-            <subsection name="Release 1.0 (2010-03-31)">
+            <subsection name="Release 1.0 (2010-04-05)">
 
                 <h4>Bug
                 </h4>
@@ -198,7 +198,7 @@
                     </td>
                     <td>
                         <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0/hibernate-spatial-sqlserver-1.0.jar.md5">
+                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.0/hibernate-spatial-sqlserver-1.0.jar.md5">
                             hibernate-spatial-sqlserver-1.0.jar.md5
                         </a>
                     </td>

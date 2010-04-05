@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<properties>
-		<author>Karel Maesen</author>
-		<title>Getting Help</title>
-	</properties>
+    <properties>
+        <author>Karel Maesen</author>
+        <title>Getting Help</title>
+    </properties>
 
-	<body>
-		<section name="Getting Help">
-			<p>
-			If you have any questions about Hibernate Spatial, the best place to look are the <a href="mail-lists.html">mailing lists.</a>  The list Hibernatespatial-users is intended for
-			users of Hibernate, and the most active. This list is also archived on Nabble (<a href="http://www.nabble.com/Hibernate-Spatial---Users-f27246.html">goto forum</a>). To post messages to the list, you will need to register. 
+    <body>
+        <section name="Getting Help">
+            <p>
+                If you have any questions about Hibernate Spatial, the best place to look are the
+                <a href="mail-lists.html">mailing lists.</a>
+                The list Hibernatespatial-users is intended for
+                users of Hibernate, and is the most active. To post messages to the list, you will need to register.
+            </p>
+            <p>
+                The mailing list is archived on Nabble (<a
+                    href="http://n2.nabble.com/Hibernate-Spatial-Users-f1140994.html">goto forum</a>). The archive is
+                read-only, so posting messages there won't work.
+            </p>
+            <p>To submit bug reports, request new features, or suggest improvements you should use<a
+                    href="http://www.hibernatespatial.org/jira/browse/HIBSPA">the issue management system</a>.
+            </p>
 
-			</p>
-			<p>To submit bug reports, request new features, or suggest improvements you should use <a href="http://www.hibernatespatial.org/jira/browse/HIBSPA">our issue management system</a>.
-			</p>
-
-		</section>
-	</body>
+        </section>
+    </body>
 </document>

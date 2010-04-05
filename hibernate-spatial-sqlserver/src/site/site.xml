@@ -3,7 +3,7 @@
 <project name="Hibernate Spatial Microsoft SQL provider">
 
     <bannerLeft>
-        <name>Hibernate Spatial Postgis Provider</name>
+        <name>Hibernate Spatial Microsoft SQL Server Provider</name>
         <href>http://www.hibernatespatial.org/hibernate-spatial-sqlserver/index.html</href>
     </bannerLeft>
 

@@ -19,6 +19,7 @@
         <menu name="Overview" inherit="top">
             <item name="Introduction" href="index.html"/>
             <item name="Usage" href="usage.html"/>
+            <item name="JavaDoc" href="apidocs/index.html"/>
         </menu>
 
 
