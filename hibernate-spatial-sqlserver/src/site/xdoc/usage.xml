@@ -21,11 +21,13 @@
                 the following snippet.
             </p>
             <source>
-                ...
-                &lt;property name="hibernate.dialect"&gt;
-                org.hibernatespatial.sqlserver.SQLServerSpatialDialect
-                &lt;/property&gt;
-                ...
+<![CDATA[
+    ...
+    <property name="hibernate.dialect">
+        org.hibernatespatial.sqlserver.SQLServerSpatialDialect
+    </property>
+    ...
+]]>
             </source>
 
             <p>
@@ -34,14 +36,16 @@
                 dialect for the Geometry valued properties.
             </p>
             <source>
-                ...
-                &lt;property name="geometry"&gt;
-                &lt;type name="org.hibernatespatial.GeometryUserType"&gt;
-                &lt;param name="dialect"&gt;sqlserver&lt;/param&gt;
-                &lt;/type&gt;
-                &lt;column name="geom" /&gt;
-                &lt;/property&gt;
-                ...
+ <![CDATA[
+    ...
+    <property name="geometry">
+        <type name="org.hibernatespatial.GeometryUserType">
+            <param name="dialect">sqlserver</param>
+        </type>
+        <column name="geom"/>
+    </property>
+    ...
+]]>
             </source>
         </section>
 
