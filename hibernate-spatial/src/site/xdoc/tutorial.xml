@@ -61,138 +61,138 @@
                     to<code>event</code>.
                 </p>
                 <source>
-                    mvn archetype:generate
-                    [INFO] Scanning for projects...
-                    [INFO] Searching repository for plugin with prefix: 'archetype'.
-                    [INFO] ------------------------------------------------------------------------
-                    [INFO] Building Maven Default Project
-                    [INFO] task-segment: [archetype:generate] (aggregator-style)
-                    [INFO] ------------------------------------------------------------------------
-                    [INFO] Preparing archetype:generate
-                    [INFO] No goals needed for project - skipping
-                    [INFO] Setting property: classpath.resource.loader.class =>
-                    'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
-                    [INFO] Setting property: velocimacro.messages.on => 'false'.
-                    [INFO] Setting property: resource.loader => 'classpath'.
-                    [INFO] Setting property: resource.manager.logwhenfound => 'false'.
-                    [INFO] [archetype:generate {execution: default-cli}]
-                    Choose archetype:
-                    1: internal -> appfuse-basic-jsf (AppFuse archetype for creating a web application with Hibernate,
-                    Spring and JSF)
-                    2: internal -> appfuse-basic-spring (AppFuse archetype for creating a web application with
-                    Hibernate, Spring and Spring MVC)
-                    3: internal -> appfuse-basic-struts (AppFuse archetype for creating a web application with
-                    Hibernate, Spring and Struts 2)
-                    4: internal -> appfuse-basic-tapestry (AppFuse archetype for creating a web application with
-                    Hibernate, Spring and Tapestry 4)
-                    5: internal -> appfuse-core (AppFuse archetype for creating a jar application with Hibernate and
-                    Spring and XFire)
-                    6: internal -> appfuse-modular-jsf (AppFuse archetype for creating a modular application with
-                    Hibernate, Spring and JSF)
-                    7: internal -> appfuse-modular-spring (AppFuse archetype for creating a modular application with
-                    Hibernate, Spring and Spring MVC)
-                    8: internal -> appfuse-modular-struts (AppFuse archetype for creating a modular application with
-                    Hibernate, Spring and Struts 2)
-                    9: internal -> appfuse-modular-tapestry (AppFuse archetype for creating a modular application with
-                    Hibernate, Spring and Tapestry 4)
-                    10: internal -> maven-archetype-j2ee-simple (A simple J2EE Java application)
-                    11: internal -> maven-archetype-marmalade-mojo (A Maven plugin development project using marmalade)
-                    12: internal -> maven-archetype-mojo (A Maven Java plugin development project)
-                    13: internal -> maven-archetype-portlet (A simple portlet application)
-                    14: internal -> maven-archetype-profiles ()
-                    15: internal -> maven-archetype-quickstart ()
-                    16: internal -> maven-archetype-site-simple (A simple site generation project)
-                    17: internal -> maven-archetype-site (A more complex site project)
-                    18: internal -> maven-archetype-webapp (A simple Java web application)
-                    19: internal -> struts2-archetype-starter (A starter Struts 2 application with Sitemesh, DWR, and
-                    Spring)
-                    20: internal -> struts2-archetype-blank (A minimal Struts 2 application)
-                    21: internal -> struts2-archetype-portlet (A minimal Struts 2 application that can be deployed as a
-                    portlet)
-                    22: internal -> struts2-archetype-dbportlet (A starter Struts 2 portlet that demonstrates a simple
-                    CRUD interface with db backing)
-                    23: internal -> struts2-archetype-plugin (A Struts 2 plugin)
-                    24: internal -> shale-archetype-blank (A blank Shale web application with JSF)
-                    25: internal -> maven-adf-archetype (Archetype to ease the burden of creating a new application
-                    based with ADF)
-                    26: internal -> data-app (A new Databinder application with sources and resources.)
-                    27: internal -> jini-service-archetype (Archetype for Jini service project creation)
-                    28: internal -> softeu-archetype-seam (JSF+Facelets+Seam Archetype)
-                    29: internal -> softeu-archetype-seam-simple (JSF+Facelets+Seam (no persistence) Archetype)
-                    30: internal -> softeu-archetype-jsf (JSF+Facelets Archetype)
-                    31: internal -> jpa-maven-archetype (JPA application)
-                    32: internal -> spring-osgi-bundle-archetype (Spring-OSGi archetype)
-                    33: internal -> confluence-plugin-archetype (Atlassian Confluence plugin archetype)
-                    34: internal -> maven-archetype-har (Hibernate Archive)
-                    35: internal -> maven-archetype-sar (JBoss Service Archive)
-                    36: internal -> wicket-archetype-quickstart (A simple Apache Wicket project)
-                    Choose a number:
-                    (1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/33/34/35/36)
-                    15: :
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Define value for groupId: : org.hibernatespatial.tutorials
-                    Define value for artifactId: : event-tutorial
-                    Define value for version: 1.0-SNAPSHOT: :
-                    Define value for package: : event
-                    Confirm properties configuration:
-                    groupId: org.hibernatespatial.tutorials
-                    artifactId: event-tutorial
-                    version: 1.0-SNAPSHOT
-                    package: event
-                    Y: : Y
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    Downloading:
-                    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
-                    [INFO] ----------------------------------------------------------------------------
-                    [INFO] Using following parameters for creating OldArchetype: maven-archetype-quickstart:1.0
-                    [INFO] ----------------------------------------------------------------------------
-                    [INFO] Parameter: groupId, Value: org.hibernatespatial.tutorials
-                    [INFO] Parameter: packageName, Value: event
-                    [INFO] Parameter: package, Value: event
-                    [INFO] Parameter: artifactId, Value: event-tutorial
-                    [INFO] Parameter: basedir, Value: /home/test
-                    [INFO] Parameter: version, Value: 1.0-SNAPSHOT
-                    [INFO] ********************* End of debug info from resources from generated POM
-                    ***********************
-                    [INFO] OldArchetype created in dir: /home/test/event-tutorial
-                    [INFO] ------------------------------------------------------------------------
-                    [INFO] BUILD SUCCESSFUL
-                    [INFO] ------------------------------------------------------------------------
-                    [INFO] Total time: 36 seconds
-                    [INFO] Finished at: Mon Apr 05 17:23:22 CEST 2010
-                    [INFO] Final Memory: 15M/158M
-                    [INFO] ------------------------------------------------------------------------
+    mvn archetype:generate
+    [INFO] Scanning for projects...
+    [INFO] Searching repository for plugin with prefix: 'archetype'.
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Building Maven Default Project
+    [INFO] task-segment: [archetype:generate] (aggregator-style)
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Preparing archetype:generate
+    [INFO] No goals needed for project - skipping
+    [INFO] Setting property: classpath.resource.loader.class =>
+    'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+    [INFO] Setting property: velocimacro.messages.on => 'false'.
+    [INFO] Setting property: resource.loader => 'classpath'.
+    [INFO] Setting property: resource.manager.logwhenfound => 'false'.
+    [INFO] [archetype:generate {execution: default-cli}]
+    Choose archetype:
+    1: internal -> appfuse-basic-jsf (AppFuse archetype for creating a web application with Hibernate,
+    Spring and JSF)
+    2: internal -> appfuse-basic-spring (AppFuse archetype for creating a web application with
+    Hibernate, Spring and Spring MVC)
+    3: internal -> appfuse-basic-struts (AppFuse archetype for creating a web application with
+    Hibernate, Spring and Struts 2)
+    4: internal -> appfuse-basic-tapestry (AppFuse archetype for creating a web application with
+    Hibernate, Spring and Tapestry 4)
+    5: internal -> appfuse-core (AppFuse archetype for creating a jar application with Hibernate and
+    Spring and XFire)
+    6: internal -> appfuse-modular-jsf (AppFuse archetype for creating a modular application with
+    Hibernate, Spring and JSF)
+    7: internal -> appfuse-modular-spring (AppFuse archetype for creating a modular application with
+    Hibernate, Spring and Spring MVC)
+    8: internal -> appfuse-modular-struts (AppFuse archetype for creating a modular application with
+    Hibernate, Spring and Struts 2)
+    9: internal -> appfuse-modular-tapestry (AppFuse archetype for creating a modular application with
+    Hibernate, Spring and Tapestry 4)
+    10: internal -> maven-archetype-j2ee-simple (A simple J2EE Java application)
+    11: internal -> maven-archetype-marmalade-mojo (A Maven plugin development project using marmalade)
+    12: internal -> maven-archetype-mojo (A Maven Java plugin development project)
+    13: internal -> maven-archetype-portlet (A simple portlet application)
+    14: internal -> maven-archetype-profiles ()
+    15: internal -> maven-archetype-quickstart ()
+    16: internal -> maven-archetype-site-simple (A simple site generation project)
+    17: internal -> maven-archetype-site (A more complex site project)
+    18: internal -> maven-archetype-webapp (A simple Java web application)
+    19: internal -> struts2-archetype-starter (A starter Struts 2 application with Sitemesh, DWR, and
+    Spring)
+    20: internal -> struts2-archetype-blank (A minimal Struts 2 application)
+    21: internal -> struts2-archetype-portlet (A minimal Struts 2 application that can be deployed as a
+    portlet)
+    22: internal -> struts2-archetype-dbportlet (A starter Struts 2 portlet that demonstrates a simple
+    CRUD interface with db backing)
+    23: internal -> struts2-archetype-plugin (A Struts 2 plugin)
+    24: internal -> shale-archetype-blank (A blank Shale web application with JSF)
+    25: internal -> maven-adf-archetype (Archetype to ease the burden of creating a new application
+    based with ADF)
+    26: internal -> data-app (A new Databinder application with sources and resources.)
+    27: internal -> jini-service-archetype (Archetype for Jini service project creation)
+    28: internal -> softeu-archetype-seam (JSF+Facelets+Seam Archetype)
+    29: internal -> softeu-archetype-seam-simple (JSF+Facelets+Seam (no persistence) Archetype)
+    30: internal -> softeu-archetype-jsf (JSF+Facelets Archetype)
+    31: internal -> jpa-maven-archetype (JPA application)
+    32: internal -> spring-osgi-bundle-archetype (Spring-OSGi archetype)
+    33: internal -> confluence-plugin-archetype (Atlassian Confluence plugin archetype)
+    34: internal -> maven-archetype-har (Hibernate Archive)
+    35: internal -> maven-archetype-sar (JBoss Service Archive)
+    36: internal -> wicket-archetype-quickstart (A simple Apache Wicket project)
+    Choose a number:
+    (1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/33/34/35/36)
+    15: :
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Define value for groupId: : org.hibernatespatial.tutorials
+    Define value for artifactId: : event-tutorial
+    Define value for version: 1.0-SNAPSHOT: :
+    Define value for package: : event
+    Confirm properties configuration:
+    groupId: org.hibernatespatial.tutorials
+    artifactId: event-tutorial
+    version: 1.0-SNAPSHOT
+    package: event
+    Y: : Y
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    Downloading:
+    http://repo1.maven.org/maven2/org/apache/maven/archetypes/maven-archetype-quickstart/1.0/maven-archetype-quickstart-1.0.jar
+    [INFO] ----------------------------------------------------------------------------
+    [INFO] Using following parameters for creating OldArchetype: maven-archetype-quickstart:1.0
+    [INFO] ----------------------------------------------------------------------------
+    [INFO] Parameter: groupId, Value: org.hibernatespatial.tutorials
+    [INFO] Parameter: packageName, Value: event
+    [INFO] Parameter: package, Value: event
+    [INFO] Parameter: artifactId, Value: event-tutorial
+    [INFO] Parameter: basedir, Value: /home/test
+    [INFO] Parameter: version, Value: 1.0-SNAPSHOT
+    [INFO] ********************* End of debug info from resources from generated POM
+    ***********************
+    [INFO] OldArchetype created in dir: /home/test/event-tutorial
+    [INFO] ------------------------------------------------------------------------
+    [INFO] BUILD SUCCESSFUL
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Total time: 36 seconds
+    [INFO] Finished at: Mon Apr 05 17:23:22 CEST 2010
+    [INFO] Final Memory: 15M/158M
+    [INFO] ------------------------------------------------------------------------
 
 
                 </source>
                 <p>This results in the following directory structure.</p>
                 <source>
-                    event-tutorial/
+ <![CDATA[
+                    .
                     |-- pom.xml
                     `-- src
-                    |-- main
-                    | `-- java
-                    | `-- event
-                    | `-- App.java
-                    `-- test
-                    `-- java
-                    `-- event
-                    `-- AppTest.java
-
+                        |-- main
+                        |   |-- java
+                        |   |   |-- event
+                        |   |      `-- App.java
+                        `-- test
+                            `-- java
+                                `-- event
+]]>
                 </source>
                 <p>We now need to edit the pom to add the required dependencies and repositories (see also the<a
                         href="mavenquick.html">Maven Quick Start</a>.).
@@ -276,23 +276,23 @@
                 </p>
 
                 <source>
-                    mvn dependency:list
-                    ....
-                    [INFO] The following files have been resolved:
-                    [INFO] antlr:antlr:jar:2.7.6:compile
-                    [INFO] com.vividsolutions:jts:jar:1.10:compile
-                    [INFO] commons-collections:commons-collections:jar:3.1:compile
-                    [INFO] dom4j:dom4j:jar:1.6.1:compile
-                    [INFO] javassist:javassist:jar:3.11.0.GA:compile
-                    [INFO] javax.transaction:jta:jar:1.1:compile
-                    [INFO] org.hibernate:hibernate-core:jar:3.3.2.GA:compile
-                    [INFO] org.hibernatespatial:hibernate-spatial:jar:1.0:compile
-                    [INFO] org.hibernatespatial:hibernate-spatial-postgis:jar:1.0:compile
-                    [INFO] org.postgis:postgis-jdbc:jar:1.3.5:compile
-                    [INFO] org.slf4j:slf4j-api:jar:1.5.11:compile
-                    [INFO] org.slf4j:slf4j-simple:jar:1.5.11:compile
-                    [INFO] postgresql:postgresql:jar:8.4-701.jdbc3:provided
-                    [INFO] xml-apis:xml-apis:jar:1.0.b2:compile
+    mvn dependency:list
+    ....
+    [INFO] The following files have been resolved:
+    [INFO] antlr:antlr:jar:2.7.6:compile
+    [INFO] com.vividsolutions:jts:jar:1.10:compile
+    [INFO] commons-collections:commons-collections:jar:3.1:compile
+    [INFO] dom4j:dom4j:jar:1.6.1:compile
+    [INFO] javassist:javassist:jar:3.11.0.GA:compile
+    [INFO] javax.transaction:jta:jar:1.1:compile
+    [INFO] org.hibernate:hibernate-core:jar:3.3.2.GA:compile
+    [INFO] org.hibernatespatial:hibernate-spatial:jar:1.0:compile
+    [INFO] org.hibernatespatial:hibernate-spatial-postgis:jar:1.0:compile
+    [INFO] org.postgis:postgis-jdbc:jar:1.3.5:compile
+    [INFO] org.slf4j:slf4j-api:jar:1.5.11:compile
+    [INFO] org.slf4j:slf4j-simple:jar:1.5.11:compile
+    [INFO] postgresql:postgresql:jar:8.4-701.jdbc3:provided
+    [INFO] xml-apis:xml-apis:jar:1.0.b2:compile
 
                 </source>
                 <p>Hibernate Spatial works with a wide range of versions of these libraries, so don't be too concerned
@@ -310,55 +310,55 @@
                     are geographic objects, or features.
                 </p>
                 <source>
+ <![CDATA[
+    package event;
 
-                    package event;
+    import java.util.Date;
 
-                    import java.util.Date;
+    import com.vividsolutions.jts.geom.Point;
 
-                    import com.vividsolutions.jts.geom.Point;
+    public class Event {
+        private Long id;
+        private String title;
+        private Date date;
+        private Point location;
 
-                    public class Event {
-                    private Long id;
-                    private String title;
-                    private Date date;
-                    private Point location;
+        public Event() {
+        }
 
-                    public Event() {
-                    }
+        public Long getId() {
+            return id;
+        }
 
-                    public Long getId() {
-                    return id;
-                    }
+        private void setId(Long id) {
+            this.id = id;
+        }
 
-                    private void setId(Long id) {
-                    this.id = id;
-                    }
+        public Date getDate() {
+            return date;
+        }
 
-                    public Date getDate() {
-                    return date;
-                    }
+        public void setDate(Date date) {
+            this.date = date;
+        }
 
-                    public void setDate(Date date) {
-                    this.date = date;
-                    }
+        public String getTitle() {
+            return title;
+        }
 
-                    public String getTitle() {
-                    return title;
-                    }
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
-                    public void setTitle(String title) {
-                    this.title = title;
-                    }
+        public Point getLocation() {
+            return this.location;
+        }
 
-                    public Point getLocation() {
-                    return this.location;
-                    }
-
-                    public void setLocation(Point location) {
-                    this.location = location;
-                    }
-                    }
-
+        public void setLocation(Point location) {
+            this.location = location;
+        }
+    }
+]]>
                 </source>
                 <p>We put this file in the
                     <code>./src/main/java/event</code>
@@ -482,32 +482,35 @@
             class creates the Hibernate SessionFactory for the application, and provides a getter
             to it. (The code below is copied from the Hibernate Tutorial without change).
             <source>
-                package util;
+ <![CDATA[
+    package util;
 
 
-                import org.hibernate.*;
-                import org.hibernate.cfg.*;
+    import org.hibernate.*;
+    import org.hibernate.cfg.*;
 
-                public class HibernateUtil {
+    public class HibernateUtil {
 
-                private static final SessionFactory sessionFactory;
+        private static final SessionFactory sessionFactory;
 
-                static {
-                try {
+        static {
+            try {
                 // Create the SessionFactory from hibernate.cfg.xml
                 sessionFactory = new Configuration().configure().buildSessionFactory();
-                } catch (Throwable ex) {
+            } catch (Throwable ex) {
                 // Make sure you log the exception, as it might be swallowed
                 System.err.println("Initial SessionFactory creation failed." + ex);
                 throw new ExceptionInInitializerError(ex);
-                }
-                }
+            }
+        }
 
-                public static SessionFactory getSessionFactory() {
-                return sessionFactory;
-                }
+        public static SessionFactory getSessionFactory() {
+            return sessionFactory;
+        }
 
-                }
+    }
+
+]]>
             </source>
 
         </subsection>
@@ -515,107 +518,107 @@
             <p>
                 We are now ready to write a first version of the main application class<code>EventManager</code>.
                 <source>
-                    package event;
+  <![CDATA[
+    package event;
 
-                    import org.hibernate.Session;
+    import org.hibernate.Session;
 
-                    import java.util.Date;
+    import java.util.Date;
 
-                    import com.vividsolutions.jts.geom.Point;
-                    import com.vividsolutions.jts.geom.Geometry;
-                    import com.vividsolutions.jts.io.WKTReader;
-                    import com.vividsolutions.jts.io.ParseException;
+    import com.vividsolutions.jts.geom.Point;
+    import com.vividsolutions.jts.geom.Geometry;
+    import com.vividsolutions.jts.io.WKTReader;
+    import com.vividsolutions.jts.io.ParseException;
 
-                    import util.HibernateUtil;
+    import util.HibernateUtil;
 
-                    public class EventManager {
+    public class EventManager {
 
-                    public static void main(String[] args) {
-                    EventManager mgr = new EventManager();
+        public static void main(String[] args) {
+            EventManager mgr = new EventManager();
 
-                    if (args[0].equals("store")) {
-                    mgr.createAndStoreEvent("My Event", new Date(), args[1]);
-                    }
+            if (args[0].equals("store")) {
+                mgr.createAndStoreEvent("My Event", new Date(), args[1]);
+            }
 
-                    HibernateUtil.getSessionFactory().close();
-                    }
+            HibernateUtil.getSessionFactory().close();
+        }
 
-                    private void createAndStoreEvent(String title, Date theDate, String wktPoint) {
+        private void createAndStoreEvent(String title, Date theDate, String wktPoint) {
 
-                    //First interpret the WKT string to a point
-                    WKTReader fromText = new WKTReader();
-                    Geometry geom = null;
-                    try {
-                    geom = fromText.read(wktPoint);
-                    } catch (ParseException e) {
-                    throw new RuntimeException("Not a WKT string:" + wktPoint);
-                    }
-                    if (!geom.getGeometryType().equals("Point")) {
-                    throw new RuntimeException("Geometry must be a point. Got a " + geom.getGeometryType());
-                    }
+            //First interpret the WKT string to a point
+            WKTReader fromText = new WKTReader();
+            Geometry geom = null;
+            try {
+                geom = fromText.read(wktPoint);
+            } catch (ParseException e) {
+                throw new RuntimeException("Not a WKT string:" + wktPoint);
+            }
+            if (!geom.getGeometryType().equals("Point")) {
+                throw new RuntimeException("Geometry must be a point. Got a " + geom.getGeometryType());
+            }
 
-                    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
-                    session.beginTransaction();
+            session.beginTransaction();
 
-                    Event theEvent = new Event();
-                    theEvent.setTitle(title);
-                    theEvent.setDate(theDate);
-                    theEvent.setLocation((Point) geom);
-                    session.save(theEvent);
+            Event theEvent = new Event();
+            theEvent.setTitle(title);
+            theEvent.setDate(theDate);
+            theEvent.setLocation((Point) geom);
+            session.save(theEvent);
 
-                    session.getTransaction().commit();
-                    }
-                    }
-
+            session.getTransaction().commit();
+        }
+    }
+]]>
                 </source>
-                We modified the
-                <code>EventManger</code>
-                implementation of the Hibernate Tutorial so that it stores
-                a point for the event. The point is given as a String in the Well-Known Text (WKT) format. See
-                <a href="http://www.vividsolutions.com/jts/javadoc/com/vividsolutions/jts/io/WKTReader.html">the JTS
-                    WTKReader JavaDoc
-                </a>
-                for more information about the WTK format.
-            </p>
-            <p>
-                The development directory now looks like this.
-                <source>
-                    .
-                    |-- event-tutorial.iml
-                    |-- event-tutorial.ipr
-                    |-- event-tutorial.iws
-                    |-- pom.xml
-                    `-- src
-                    |-- main
-                    | |-- java
-                    | | |-- event
-                    | | | |-- Event.java
-                    | | | `-- EventManager.java
-                    | | `-- util
-                    | | `-- HibernateUtil.java
-                    | `-- resources
-                    | |-- event
-                    | | `-- Event.hbm.xml
-                    | `-- hibernate.cfg.xml
-                    `-- test
-                    `-- java
+    We modified the
+    <code>EventManger</code>
+    implementation of the Hibernate Tutorial so that it stores
+    a point for the event. The point is given as a String in the Well-Known Text (WKT) format. See
+    <a href="http://www.vividsolutions.com/jts/javadoc/com/vividsolutions/jts/io/WKTReader.html">the JTS
+        WTKReader JavaDoc
+    </a>
+    for more information about the WTK format.
+</p>
+<p>
+    The development directory now looks like this.
+    <source>
+ <![CDATA[
+        .
+        |-- pom.xml
+        `-- src
+            |-- main
+            |   |-- java
+            |   |   |-- event
+            |   |   |   |-- Event.java
+            |   |   |   `-- EventManager.java
+            |   |   `-- util
+            |   |       `-- HibernateUtil.java
+            |   `-- resources
+            |       |-- event
+            |       |   `-- Event.hbm.xml
+            |       `-- hibernate.cfg.xml
+            `-- test
+                `-- java
                     `-- event
+]]>
                 </source>
             </p>
             <p>
                 We can now build this program using maven:
                 <source>
-                    $ mvn compile
+ <![CDATA[    $ mvn compile ]]>
                 </source>
 
 
                 We can now execute the program using maven as follows:
                 <br/>
-                (Note: the backslash in<code>POINT(10\ 0)</code>. this escapes the space in the POINT WKT
+                (Note: the backslash in <code>POINT(10\ 0)</code>. this escapes the space in the POINT WKT
                 representation.)
                 <source>
-                    mvn exec:java -Dexec.mainClass="event.EventManager" -Dexec.args="store POINT(10\ 5)"
+<![CDATA[   mvn exec:java -Dexec.mainClass="event.EventManager" -Dexec.args="store POINT(10\ 5)"]]>
                 </source>
 
             </p>
@@ -626,12 +629,12 @@
             We can check the content of the events table using the astext() function that
             converts the geometries to their WKT representation.
             <source>
-                events=# select title, astext(loc) from events;
+ <![CDATA[      events=# select title, astext(loc) from events;
 
                 title | astext
                 ----------+--------------
                 My Event | POINT(10 15)
-                (1 row)
+                (1 row) ]]>
             </source>
         </subsection>
         <subsection name="Spatial Queries">
@@ -740,8 +743,7 @@ import org.hibernatespatial.criterion.SpatialRestrictions;
             <p>
                 If now run:
                 <source>
-                    $ mvn exec:java -Dexec.mainClass="event.EventManager" -Dexec.args="find POLYGON((1\ 1,20\ 1,20\
-                    20,1\ 20,1\ 1))"
+ <![CDATA[  $ mvn exec:java -Dexec.mainClass="event.EventManager" -Dexec.args="find POLYGON((1\ 1,20\ 1,20\20,1\ 20,1\ 1))" ]]>
                 </source>
                 We get
                 <source>
@@ -928,72 +930,73 @@ Event: My Event, Time: 2010-04-05 19:58:36.896, Location: POINT (10 5)
 
             <p>We now change the source code of the Events class so that it looks like this</p>
             <source>
-                package event;
+ <![CDATA[
+package event;
 
-                import java.util.Date;
+import java.util.Date;
 
-                import javax.persistence.*;
+import javax.persistence.*;
 
-                import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Type;
 
-                import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Point;
 
-                @Entity
-                @Table(name = "EVENTS")
-                public class Event {
+@Entity
+@Table(name = "EVENTS")
+public class Event {
 
-                @Id
-                @GeneratedValue
-                @Column(name = "EVENT_ID")
-                private Long id;
+    @Id
+    @GeneratedValue
+    @Column(name = "EVENT_ID")
+    private Long id;
 
-                @Column(name = "TITLE")
-                private String title;
+    @Column(name = "TITLE")
+    private String title;
 
-                @Column(name = "EVENT_DATE")
-                private Date date;
+    @Column(name = "EVENT_DATE")
+    private Date date;
 
 
-                @Column(name = "LOC")
-                @Type(type = "org.hibernatespatial.GeometryUserType")
-                private Point location;
+    @Column(name = "LOC")
+    @Type(type = "org.hibernatespatial.GeometryUserType")
+    private Point location;
 
-                public Event() {
-                }
+    public Event() {
+    }
 
-                public Long getId() {
-                return id;
-                }
+    public Long getId() {
+        return id;
+    }
 
-                private void setId(Long id) {
-                this.id = id;
-                }
+    private void setId(Long id) {
+        this.id = id;
+    }
 
-                public Date getDate() {
-                return date;
-                }
+    public Date getDate() {
+        return date;
+    }
 
-                public void setDate(Date date) {
-                this.date = date;
-                }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-                public String getTitle() {
-                return title;
-                }
+    public String getTitle() {
+        return title;
+    }
 
-                public void setTitle(String title) {
-                this.title = title;
-                }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-                public Point getLocation() {
-                return this.location;
-                }
+    public Point getLocation() {
+        return this.location;
+    }
 
-                public void setLocation(Point location) {
-                this.location = location;
-                }
-                }
-            </source>
+    public void setLocation(Point location) {
+        this.location = location;
+    }
+}]]>
+</source>
             <p>Note that for the Geometry field we needed
                 to use the Hibernate-specific
                 <code>@Type</code>
@@ -1006,11 +1009,11 @@ Event: My Event, Time: 2010-04-05 19:58:36.896, Location: POINT (10 5)
             </p>
 
             <source>
-                &lt;mapping resource="event/Event.hbm.xml"/&gt;
+    &lt;mapping resource="event/Event.hbm.xml"/&gt;
             </source>
             <p>with a declaration of mapped classes.</p>
             <source>
-                &lt;mapping class="event.Event"&gt;
+    &lt;mapping class="event.Event"&gt;
             </source>
             <p>Finally, we change the
                 <code>HibernateUtil</code>
@@ -1018,15 +1021,15 @@ Event: My Event, Time: 2010-04-05 19:58:36.896, Location: POINT (10 5)
                 an AnnotationConfiguration object. Change the line:
             </p>
             <source>
-                ...
-                sessionFactory = new Configuration().configure().buildSessionFactory();
-                ...
+    ...
+    sessionFactory = new Configuration().configure().buildSessionFactory();
+    ...
             </source>
             <p>needs to change to</p>
             <source>
-                ...
-                sessionFactory = new AnnotationConfiguration().configure().buildSessionFactory();
-                ...
+    ...
+    sessionFactory = new AnnotationConfiguration().configure().buildSessionFactory();
+    ...
             </source>
             <p>Now the operations should work as before.</p>
         </section>
