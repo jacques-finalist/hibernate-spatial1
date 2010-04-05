@@ -28,19 +28,17 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * A <code>Decoder</code> implementation can decode
- * native database objects to geometries of type T.
+ * Decodes native database objects to geometries of type T.
  *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public interface Decoder<T extends Geometry> {
 
     public T decode(SqlServerGeometry nativeGeom);
 
-    boolean accepts(SqlServerGeometry nativeGeom);
+    public boolean accepts(SqlServerGeometry nativeGeom);
 
-    boolean accepts(OpenGisType type);
+    public boolean accepts(OpenGisType type);
 
 
 }

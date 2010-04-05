@@ -32,14 +32,7 @@ import org.hibernatespatial.mgeom.MGeometryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Mar 3, 2010
- * Time: 10:05:33 PM
- * To change this template use File | Settings | File Templates.
- */
-public abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollection> extends AbstractDecoder<T> {
+abstract class AbstractGeometryCollectionDecoder<T extends GeometryCollection> extends AbstractDecoder<T> {
 
     public AbstractGeometryCollectionDecoder(MGeometryFactory factory) {
         super(factory);

@@ -37,7 +37,6 @@ import java.sql.Types;
  * The <code>GeometryUserType</code> for Microsoft SQL Server (2008).
  *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public class SQLServerGeometryUserType extends AbstractDBGeometryType {
 

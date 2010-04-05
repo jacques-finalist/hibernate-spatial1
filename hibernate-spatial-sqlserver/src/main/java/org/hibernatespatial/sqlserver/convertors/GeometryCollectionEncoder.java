@@ -32,9 +32,11 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import java.util.List;
 
 /**
+ * <code>Encoder</code> for GeometryCollections.
+ *
  * @Author Karel Maesen
  */
-public class GeometryCollectionEncoder<T extends GeometryCollection> extends AbstractEncoder<T> {
+class GeometryCollectionEncoder<T extends GeometryCollection> extends AbstractEncoder<T> {
 
     private final OpenGisType openGisType;
 

@@ -1,42 +1,53 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- $Id$ -->
+    <!-- $Id$ -->
 
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.hibernatespatial</groupId>
-		<artifactId>hibernate-spatial-maven</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>../hibernate-spatial-maven</relativePath>
-	</parent>
-	<artifactId>hibernate-spatial-mysql</artifactId>
-	<packaging>jar</packaging>
-	<name>MySQL DialectProvider</name>
-	<url>http://www.hibernatespatial.org/hibernate-spatial-mysql</url>
-	<description>
-		MySQL dialect provider for Hibernate Spatial (for MySQL 5.0 or higher).
-	</description>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.hibernatespatial</groupId>
+        <artifactId>hibernate-spatial-maven</artifactId>
+        <version>1.0</version>
+        <relativePath>../hibernate-spatial-maven</relativePath>
+    </parent>
+    <artifactId>hibernate-spatial-mysql</artifactId>
+    <packaging>jar</packaging>
+    <name>MySQL DialectProvider</name>
+    <url>http://www.hibernatespatial.org/hibernate-spatial-mysql</url>
+    <description>
+        MySQL dialect provider for Hibernate Spatial (for MySQL 5.0 or higher).
+    </description>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-			<version>${project.version}</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>provided</scope>
-			<version>[5.0.5,)</version>
-		</dependency>
-	</dependencies>
+            <version>[5.0.5,)</version>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>Hibernate Spatial site</id>
+            <name>Hibernate Spatial</name>
+            <url>
+                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-mysql
+            </url>
+        </site>
+    </distributionManagement>
+
 </project>

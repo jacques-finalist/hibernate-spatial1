@@ -32,7 +32,6 @@ import org.hibernatespatial.spi.SpatialDialectProvider;
  * A <code>SpatialDialectProvider</code> for SQL Server (2008).
  *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public class DialectProvider implements SpatialDialectProvider {
 

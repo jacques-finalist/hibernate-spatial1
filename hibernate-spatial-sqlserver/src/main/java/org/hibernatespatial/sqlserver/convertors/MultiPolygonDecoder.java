@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,7 +32,7 @@ import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import java.util.List;
 
-public class MultiPolygonDecoder extends AbstractGeometryCollectionDecoder<MultiPolygon> {
+class MultiPolygonDecoder extends AbstractGeometryCollectionDecoder<MultiPolygon> {
 
     public MultiPolygonDecoder(MGeometryFactory factory) {
         super(factory);

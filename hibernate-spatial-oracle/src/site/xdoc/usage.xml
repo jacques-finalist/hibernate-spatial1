@@ -1,54 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <document>
-<header>
-</header>
+    <header>
+    </header>
 
-	<body>
-		<section name="Hibernate Spatial Oracle Provider Usage">
-		<subsection name="Basic usage">
-		<p>To have Hibernate Spatial use this provider, simply drop the jar on the class-path alongside the hibernate-spatial.jar. When
-		the Hibernate Spatial library is loaded it will find the provider and use it to retrieve the Hibernate dialect for Oracle Spatial. 
-		This dialect is a subclass of <code>org.hibernate.dialect.Oracle9Dialect</code></p>
-		<p>With the provider installed, you can use it by setting the dialect in the Hibernate configuration file as in the following snippet.</p>
-		<source>
-	  	...
-		&lt;property name="hibernate.dialect"&gt;
-			org.hibernatespatial.oracle.OracleSpatial10gDialect
-		&lt;/property&gt;
-		...
-	  	</source>
-		</subsection>
-		<subsection name="Oracle Specific Configuration">
-		<p>You can configure the Oracle provider by creating a properties file
-		with the name <code>org.hibernatespatial.oracle.OracleSpatial10gDialect.properties</code> and
-		putting it on the classpath.</p>
-		<h4>The ConnectionFinder Interface</h4>
-		<p> The SDOGeometryType requires access to an <code>OracleConnection</code>
-		object when converting a geometry to <code>SDO_GEOMETRY</code>, prior to
-		setting the geometry attribute in prepared statements. In some environments,
-		however,
-		the prepared statements do not return an <code>OracleConnection</code> but
-		a wrapper object. Implementations of this interface attempt to retrieve the
-		<code>OracleConnection</code> from the wrapper in such cases.</p>
-		<p>You can provide your own implementation of this interface to Hibernate Spatial
-		by adding a property CONNECTION-FINDER in the properties file, and setting it
-		to the fully-qualified class name of your implementation.</p>
-		<source>
-		CONNECTION-FINDER = &lt;fully qualified class name&gt;
-		</source>
-		
-		<h4>OGC Compliance Setting</h4>
-      	<p>This provider can be configured to run in either OGC strict or non-strict mode. In OGC strict mode, the Open Geospatial compliant functions of Oracle Spatial 
-      	are used in spatial operations. In non-strict mode the usual Oracle Spatial functions are used directly, and mimic the OGC semantics. <em>The default is OGC strict mode</em>.
-      	You can change this to non-strict mode by adding the following line to the properties file:</p>
-      	<source>
-      	OGC_STRICT = false
-      	</source>
-        <p>Note that changing from strict to non-strict mode changes the semantics of the spatial operation. We have attempted to implement the OGC semantics as well we could using the
-        standard Oracle Spatial operators, but this was not possible in all cases.</p>
-        </subsection>
-      	</section>
-      	
-  </body>
+    <body>
+        <section name="Hibernate Spatial Oracle Provider Usage">
+            <subsection name="Basic usage">
+                <p>To have Hibernate Spatial use this provider, simply drop the jar on the class-path alongside the
+                    hibernate-spatial.jar. When
+                    the Hibernate Spatial library is loaded it will find the provider and use it to retrieve the
+                    Hibernate dialect for Oracle Spatial.
+                    This dialect is a subclass of
+                    <code>org.hibernate.dialect.Oracle10gDialect</code>
+                </p>
+                <p>With the provider installed, you can use it by setting the dialect in the Hibernate configuration
+                    file as in the following snippet.
+                </p>
+                <source>
+                    ...
+                    &lt;property name="hibernate.dialect"&gt;
+                    org.hibernatespatial.oracle.OracleSpatial10gDialect
+                    &lt;/property&gt;
+                    ...
+                </source>
+            </subsection>
+            <subsection name="Oracle Specific Configuration">
+                <p>You can configure the Oracle provider by creating a properties file
+                    with the name
+                    <code>org.hibernatespatial.oracle.OracleSpatial10gDialect.properties</code>
+                    and
+                    putting it on the classpath.
+                </p>
+                <h4>The ConnectionFinder Interface</h4>
+                <p>The SDOGeometryType requires access to an
+                    <code>OracleConnection</code>
+                    object when converting a geometry to<code>SDO_GEOMETRY</code>, prior to
+                    setting the geometry attribute in prepared statements. In some environments,
+                    however,
+                    the prepared statements do not return an
+                    <code>OracleConnection</code>
+                    but
+                    a wrapper object. Implementations of this interface attempt to retrieve the
+                    <code>OracleConnection</code>
+                    from the wrapper in such cases.
+                </p>
+                <p>You can provide your own implementation of this interface to Hibernate Spatial
+                    by adding a property CONNECTION-FINDER in the properties file, and setting it
+                    to the fully-qualified class name of your implementation.
+                </p>
+                <source>
+                    CONNECTION-FINDER = &lt;fully qualified class name&gt;
+                </source>
+
+                <h4>OGC Compliance Setting</h4>
+                <p>This provider can be configured to run in either OGC strict or non-strict mode. In OGC strict mode,
+                    the Open Geospatial compliant functions of Oracle Spatial
+                    are used in spatial operations. In non-strict mode the usual Oracle Spatial functions are used
+                    directly, and mimic the OGC semantics.<em>The default is OGC strict mode</em>.
+                    You can change this to non-strict mode by adding the following line to the properties file:
+                </p>
+                <source>
+                    OGC_STRICT = false
+                </source>
+                <p>Note that changing from strict to non-strict mode changes the semantics of the spatial operation. We
+                    have attempted to implement the OGC semantics as well we could using the
+                    standard Oracle Spatial operators, but this was not possible in all cases.
+                </p>
+            </subsection>
+        </section>
+
+    </body>
 </document>

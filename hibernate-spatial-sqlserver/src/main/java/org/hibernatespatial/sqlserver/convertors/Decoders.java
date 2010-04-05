@@ -33,8 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Decodes SQL Server Geometry objects to JTS <code>Geometry</code>s.
+ *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public class Decoders {
 

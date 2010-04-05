@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Hibernate Spatial Postgis provider">
-  
-  <bannerLeft>
-    <name>Hibernate Spatial MySQL Provider</name>
-    <href>http://www.cadrie.com/projects/majas-hibernate</href>
-  </bannerLeft>
-    
-  <skin>
-    <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-default-skin</artifactId>
-  </skin>
 
-  <publishDate format="yyyy MMM dd" />
-  
-  <body>
-  
-  	<menu name="Overview" inherit="top">
-      <item name="Introduction" href="hibernate-spatial-mysql/index.html"/>
-      <item name="Usage" href="hibernate-spatial-mysql/usage.html"/>
-    </menu>
+    <bannerLeft>
+        <name>Hibernate Spatial MySQL Provider</name>
+        <href>http://www.hibernatespatial.org/hibernate-spatial-mysql</href>
+    </bannerLeft>
 
-    
-  </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-default-skin</artifactId>
+    </skin>
+
+    <publishDate format="yyyy MMM dd"/>
+
+    <body>
+
+        <menu name="Overview" inherit="top">
+            <item name="Introduction" href="index.html"/>
+            <item name="Usage" href="usage.html"/>
+        </menu>
+
+
+    </body>
 </project>

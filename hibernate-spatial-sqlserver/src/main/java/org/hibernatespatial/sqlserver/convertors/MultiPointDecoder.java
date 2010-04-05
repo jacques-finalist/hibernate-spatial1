@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,7 +32,13 @@ import org.hibernatespatial.mgeom.MGeometryFactory;
 
 import java.util.List;
 
-public class MultiPointDecoder extends AbstractGeometryCollectionDecoder<MultiPoint> {
+/**
+ * <code>Decoder</code> for GeometryCollections.
+ *
+ * @author Karel Maesen, Geovise BVBA
+ */
+
+class MultiPointDecoder extends AbstractGeometryCollectionDecoder<MultiPoint> {
 
     public MultiPointDecoder(MGeometryFactory factory) {
         super(factory);

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Hibernate Spatial">
+
+<project name="Hibernate Spatial Microsoft SQL provider">
 
     <bannerLeft>
-        <name>Hibernate Spatial Oracle Provider</name>
-        <href>http://www.hibernatespatial.org/hibernate-spatial-oracle/index.html</href>
+        <name>Hibernate Spatial Postgis Provider</name>
+        <href>http://www.hibernatespatial.org/hibernate-spatial-sqlserver/index.html</href>
     </bannerLeft>
 
 
@@ -19,6 +20,7 @@
         <menu name="Overview" inherit="top">
             <item name="Introduction" href="index.html"/>
             <item name="Usage" href="usage.html"/>
+            <item name="JavaDoc" href="apidocs/index.html"/>
         </menu>
 
 

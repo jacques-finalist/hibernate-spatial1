@@ -28,8 +28,10 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
+ * An <code>Encoder</code> can encode
+ * geometries of type T to a <code>SqlServerGeometry</code>.
+ *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public interface Encoder<T extends Geometry> {
 

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,7 +32,12 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import java.util.List;
 
-public class PolygonEncoder extends AbstractEncoder<Polygon> {
+/**
+ * <code>Encoder</code> for Polygons.
+ *
+ * @uthor Karel Maesen, Geovise BVBA
+ */
+class PolygonEncoder extends AbstractEncoder<Polygon> {
 
     public boolean accepts(Geometry geom) {
         return geom instanceof Polygon;

@@ -29,14 +29,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
 import org.hibernatespatial.mgeom.MCoordinate;
 
-/**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Feb 10, 2010
- * Time: 9:14:09 PM
- * To change this template use File | Settings | File Templates.
- */
-public class MultiPointEncoder extends GeometryCollectionEncoder<MultiPoint> {
+
+class MultiPointEncoder extends GeometryCollectionEncoder<MultiPoint> {
 
     public MultiPointEncoder() {
         super(OpenGisType.MULTIPOINT);

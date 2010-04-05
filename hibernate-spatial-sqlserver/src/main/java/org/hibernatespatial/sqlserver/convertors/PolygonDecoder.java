@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -30,7 +30,10 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import org.hibernatespatial.mgeom.MGeometryFactory;
 
-public class PolygonDecoder extends AbstractDecoder<Polygon> {
+/**
+ * @author Karel Maesen, Geovise BVBA
+ */
+class PolygonDecoder extends AbstractDecoder<Polygon> {
 
     public PolygonDecoder(MGeometryFactory factory) {
         super(factory);

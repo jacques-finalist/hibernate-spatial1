@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.hibernatespatial</groupId>
         <artifactId>hibernate-spatial-maven</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
         <relativePath>../hibernate-spatial-maven</relativePath>
     </parent>
     <artifactId>hibernate-spatial-sqlserver</artifactId>
@@ -40,5 +40,16 @@
         </dependency>
 
     </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>Hibernate Spatial site</id>
+            <name>Hibernate Spatial</name>
+            <url>
+                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-sqlserver
+            </url>
+        </site>
+    </distributionManagement>
+
 
 </project>

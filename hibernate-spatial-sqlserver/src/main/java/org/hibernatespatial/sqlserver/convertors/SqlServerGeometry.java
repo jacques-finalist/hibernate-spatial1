@@ -35,12 +35,11 @@ import java.nio.ByteOrder;
  * A <code>SqlServerGeometry</code> represents the native SQL Server database object.
  * <p/>
  * <p>Instances are created by deserializing the byte array returned in the JDBC result set.
- * They present the structure of the SQL Server Geometry object as specified by <TODO: add reference>.
+ * They present the structure of the SQL Server Geometry object as specified in <a href="http://download.microsoft.com/download/7/9/3/79326E29-1E2E-45EE-AA73-74043587B17D/%5BMS-SSCLRT%5D.pdf">Microsoft SQL Server CLR Types Serialization Formats</a> .
  *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
-class SqlServerGeometry {
+public class SqlServerGeometry {
 
     public static final byte SUPPORTED_VERSION = 1;
 
@@ -120,7 +119,7 @@ class SqlServerGeometry {
         return result;
     }
 
-    public Coordinate getCoordinate(int index) {
+    Coordinate getCoordinate(int index) {
         Coordinate coordinate;
         if (hasMValues()) {
             coordinate = new MCoordinate();
@@ -134,15 +133,15 @@ class SqlServerGeometry {
         return coordinate;
     }
 
-    public boolean isParentShapeOf(int parent, int child) {
+    boolean isParentShapeOf(int parent, int child) {
         return getShape(child).parentOffset == parent;
     }
 
-    public boolean isEmptyShape(int shapeIndex) {
+    boolean isEmptyShape(int shapeIndex) {
         return getShape(shapeIndex).figureOffset == -1;
     }
 
-    public IndexRange getFiguresForShape(int shapeIndex) {
+    IndexRange getFiguresForShape(int shapeIndex) {
         int startIdx = getShape(shapeIndex).figureOffset;
         if (startIdx == -1) return new IndexRange(-1, -1); //empty figures
         int endIdx = -1;
@@ -161,7 +160,7 @@ class SqlServerGeometry {
      * @param figureIndex index to shape in shape array
      * @return index range for
      */
-    public IndexRange getPointsForFigure(int figureIndex) {
+    IndexRange getPointsForFigure(int figureIndex) {
         int start = getFigure(figureIndex).pointOffset;
         int end = -1;
         int nextFigure = figureIndex + 1;
@@ -173,15 +172,15 @@ class SqlServerGeometry {
         return new IndexRange(start, end);
     }
 
-    public boolean isFigureInteriorRing(int figureIdx) {
+    boolean isFigureInteriorRing(int figureIdx) {
         return getFigure(figureIdx).isInteriorRing();
     }
 
-    public OpenGisType getOpenGisTypeOfShape(int shpIdx) {
+    OpenGisType getOpenGisTypeOfShape(int shpIdx) {
         return getShape(shpIdx).openGisType;
     }
 
-    public Coordinate[] coordinateRange(IndexRange range) {
+    Coordinate[] coordinateRange(IndexRange range) {
         Coordinate[] coordinates = createCoordinateArray(range.end - range.start);
         for (int idx = range.start, i = 0; idx < range.end; idx++, i++) {
             coordinates[i] = getCoordinate(idx);

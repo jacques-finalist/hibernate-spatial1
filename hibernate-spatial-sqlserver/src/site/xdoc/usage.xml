@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<document>
+    <header/>
+
+
+    <body>
+        <section name="Hibernate Spatial Microsoft SQL Server Provider Usage">
+            <p>
+                To have Hibernate Spatial use this provider, simply drop
+                the jar on the class-path alongside the
+                hibernate-spatial.jar. When the Hibernate Spatial
+                library is loaded it will find the provider and use it
+                to retrieve the Hibernate dialect for SQL Server. This dialect is a subclass of
+                <code>org.hibernate.dialect.SQLServerDialect</code>
+            </p>
+            <p>
+                With the provider installed, you can use it by setting
+                the dialect in the Hibernate configuration file as in
+                the following snippet.
+            </p>
+            <source>
+                ...
+                &lt;property name="hibernate.dialect"&gt;
+                org.hibernatespatial.sqlserver.SQLServerSpatialDialect
+                &lt;/property&gt;
+                ...
+            </source>
+
+            <p>
+                When there is more than one Hibernate Spatial provider
+                on the Class-Path, you should explicitly label the
+                dialect for the Geometry valued properties.
+            </p>
+            <source>
+                ...
+                &lt;property name="geometry"&gt;
+                &lt;type name="org.hibernatespatial.GeometryUserType"&gt;
+                &lt;param name="dialect"&gt;sqlserver&lt;/param&gt;
+                &lt;/type&gt;
+                &lt;column name="geom" /&gt;
+                &lt;/property&gt;
+                ...
+            </source>
+        </section>
+
+    </body>
+</document>

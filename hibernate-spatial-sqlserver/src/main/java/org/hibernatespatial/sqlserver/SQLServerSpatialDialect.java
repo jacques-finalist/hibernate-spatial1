@@ -37,11 +37,10 @@ import org.hibernatespatial.SpatialRelation;
  * The <code>SpatialDialect</code> for Microsoft SQL Server (2008).
  *
  * @author Karel Maesen, Martin Steinwender.
- *         Date: Nov 2, 2009
  */
 public class SQLServerSpatialDialect extends SQLServerDialect implements SpatialDialect {
 
-    public final static String SHORT_NAME = "sql2008";
+    public final static String SHORT_NAME = "sqlserver";
 
     public final static String COLUMN_TYPE = "GEOMETRY";
 

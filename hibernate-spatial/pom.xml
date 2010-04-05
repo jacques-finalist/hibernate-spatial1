@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.hibernatespatial</groupId>
-	<artifactId>hibernate-spatial</artifactId>
-	<parent>
-		<groupId>org.hibernatespatial</groupId>
-		<artifactId>hibernate-spatial-maven</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>../hibernate-spatial-maven</relativePath>
-	</parent>
-	<name>Hibernate Spatial Core</name>
-	<url>http://www.hibernatespatial.org/hibernate-spatial</url>
-	<description>
-		Hibernate Spatial Core classes, interfaces and Service Provider
-		Interface
-	</description>
-	<packaging>jar</packaging>
-	<build>
-		<plugins>
-			<!--  this ensures that the common test cases are available for providers -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.hibernatespatial</groupId>
+    <artifactId>hibernate-spatial</artifactId>
+    <parent>
+        <groupId>org.hibernatespatial</groupId>
+        <artifactId>hibernate-spatial-maven</artifactId>
+        <version>1.0</version>
+        <relativePath>../hibernate-spatial-maven</relativePath>
+    </parent>
+    <name>Hibernate Spatial Core</name>
+    <url>http://www.hibernatespatial.org/hibernate-spatial</url>
+    <description>
+        Hibernate Spatial Core classes, interfaces and Service Provider
+        Interface
+    </description>
+    <packaging>jar</packaging>
+    <build>
+        <plugins>
+            <!--  this ensures that the common test cases are available for providers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <site>
+            <id>Hibernate Spatial site</id>
+            <name>Hibernate Spatial</name>
+            <url>
+                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial
+            </url>
+        </site>
+    </distributionManagement>
+
 </project>

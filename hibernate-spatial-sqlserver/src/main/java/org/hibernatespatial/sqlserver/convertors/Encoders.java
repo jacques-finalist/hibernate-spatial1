@@ -34,8 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Serializes a JTS <code>Geometry</code> to a byte-array.
+ *
  * @author Karel Maesen, Geovise BVBA.
- *         Date: Nov 2, 2009
  */
 public class Encoders {
 

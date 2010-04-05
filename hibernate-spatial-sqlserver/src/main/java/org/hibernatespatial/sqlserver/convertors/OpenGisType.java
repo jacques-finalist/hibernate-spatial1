@@ -28,10 +28,12 @@ package org.hibernatespatial.sqlserver.convertors;
 import com.vividsolutions.jts.geom.*;
 
 /**
+ * The type of geometry.
+ *
  * @author Karel Maesen, Geovise BVBA.
  *         Date: Nov 2, 2009
  */
-enum OpenGisType {
+public enum OpenGisType {
     POINT((byte) 1, Point.class),
     LINESTRING((byte) 2, LineString.class),
     POLYGON((byte) 3, Polygon.class),
@@ -49,7 +51,7 @@ enum OpenGisType {
         this.geomClass = geomClass;
     }
 
-    boolean typeOf(Object o){
+    boolean typeOf(Object o) {
         return geomClass.isAssignableFrom(o.getClass());
     }
 

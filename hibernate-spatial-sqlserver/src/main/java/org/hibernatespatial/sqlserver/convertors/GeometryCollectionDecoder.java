@@ -32,13 +32,11 @@ import org.hibernatespatial.mgeom.MGeometryFactory;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Jan 24, 2010
- * Time: 5:34:40 PM
- * To change this template use File | Settings | File Templates.
+ * <code>Decoder</code> for GeometryCollections.
+ *
+ * @Author Karel Maesen
  */
-public class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
+class GeometryCollectionDecoder extends AbstractGeometryCollectionDecoder<GeometryCollection> {
 
     public GeometryCollectionDecoder(MGeometryFactory factory) {
         super(factory);

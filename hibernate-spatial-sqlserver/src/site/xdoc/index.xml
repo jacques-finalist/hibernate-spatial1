@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<document>
+    <header/>
+
+    <body>
+        <section name="The Hibernate Spatial Microsoft SQL Server Provider">
+            <p>
+                The Microsoft SQL Server Provider adds support for SQL Server
+                2008. Currently only the geometry types are supported.
+            </p>
+        </section>
+    </body>
+</document>
