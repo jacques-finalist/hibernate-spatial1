@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<!-- HibernateTemplate offers easy access to Hibernate POJOs -->
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<!-- Use a JdbcTemplate to test Hibernate write operations -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+	<!--
+		Creates an in-memory "geodata" database populated with test data for
+		fast testing
+	-->
+	<bean id="dataSource" class="com.geodan.util.test.GeoDBTestDataSourceFactory">
+		<property name="testDatabaseName" value="geodata" />
+		<property name="schemaLocation" value="classpath:/testdb/geodb-test-schema.sql" />
+		<property name="testDataLocation" value="classpath:/testdb/geodb-test-data.sql" />
+	</bean>
+
+	<!--
+		A Hibernate SessionFactory for mapping TestDataElements from object to
+		relation tables
+	-->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.geodan.hibernatespatial.test.TestDataElement</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">com.geodan.hibernatespatial.geodb.GeoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+		A transaction manager for working with Hibernate SessionFactories
+	-->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+
+	<tx:annotation-driven />
+
+</beans>
