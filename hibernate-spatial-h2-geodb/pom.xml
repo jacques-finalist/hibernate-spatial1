@@ -1,205 +1,182 @@
+<!--
+  ~ $Id:$
+  ~
+  ~ This file is part of Hibernate Spatial, an extension to the
+  ~ hibernate ORM solution for geographic data.
+  ~
+  ~ Copyright 2010 Geodan IT b.v.
+  ~
+  ~ This library is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU Lesser General Public
+  ~ License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or (at your option) any later version.
+  ~
+  ~ This library is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this library; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ For more information, visit: http://www.hibernatespatial.org/
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.geodan.hibernatespatial</groupId>
-	<artifactId>hibernate-spatial-geodb</artifactId>
-	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>Hibernate Spatial H2 Dialect Provider</name>
-	<url>http://www.hibernatespatial.org</url>
-	<description>
-		GeoDB (H2 database) dialect provider for Hibernate Spatial. See
-		http://wiki.github.com/jdeolive/geodb/ for more information on GeoDB.
-	</description>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.hibernatespatial</groupId>
+        <artifactId>hibernate-spatial-maven</artifactId>
+        <version>1.1-SNAPSHOT</version>
+        <relativePath>../hibernate-spatial-maven</relativePath>
+    </parent>
+    <artifactId>hibernate-spatial-h2-geodb</artifactId>
+    <packaging>jar</packaging>
+    <name>Hibernate Spatial H2 Dialect Provider</name>
+    <url>http://www.hibernatespatial.org</url>
+    <description>
+        GeoDB (H2 database) dialect provider for Hibernate Spatial. See
+        http://wiki.github.com/jdeolive/geodb/ for more information on GeoDB.
+    </description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<hibernate-spatial.version>1.0</hibernate-spatial.version>
-		<spring.version>3.0.2.RELEASE</spring.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>3.0.2.RELEASE</spring.version>
+    </properties>
 
-	<repositories>
-		<repository>
-			<id>opengeo</id>
-			<url>http://repo.opengeo.org</url>
-		</repository>
-		<repository>
-			<id>geotools</id>
-			<url>http://maven.geotools.fr/repository</url>
-		</repository>
-		<repository>
-			<id>hibernatespatial</id>
-			<url>http://www.hibernatespatial.org/repository</url>
-		</repository>
-	</repositories>
+    <!--additional repository needed for H2-geodb-->
+    <repositories>
+        <repository>
+            <id>opengeo</id>
+            <url>http://repo.opengeo.org</url>
+        </repository>
+    </repositories>
 
-	<issueManagement>
-		<system>Mantis</system>
-		<url>http://mantis.geodan.nl/main_page.php</url>
-	</issueManagement>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opengeo</groupId>
+            <artifactId>geodb</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
 
-	<ciManagement>
-		<system>TeamCity</system>
-		<url>http://ecogrid-64bit:8111/overview.html</url>
-	</ciManagement>
 
-	<scm>
-		<connection>scm:svn:https://svn.geodan.nl/repos/it/oad/libraries/hibernate-spatial-geodb</connection>
-		<developerConnection>scm:svn:https://svn.geodan.nl/repos/it/oad/libraries/hibernate-spatial-geodb</developerConnection>
-		<url>https://svn.geodan.nl/repos/it/oad/libraries/hibernate-spatial-geodb</url>
-	</scm>
+        <!-- Dependencies needed for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.4.0.GA</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<distributionManagement>
-		<repository>
-			<id>geodan</id>
-			<url>http://mavenserver:8080/archiva/repository/geodan/</url>
-		</repository>
-		<snapshotRepository>
-			<id>geodan-snapshot</id>
-			<url>http://mavenserver:8080/archiva/repository/geodan-snapshot/</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.6.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
-	<dependencies>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>0.9.18</version>
-			<scope>compile</scope>
-		</dependency>
+    <distributionManagement>
+        <site>
+            <id>Hibernate Spatial</id>
+            <name>Hibernate Spatial</name>
+            <url>
+                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-h2-geodb
+            </url>
+        </site>
+    </distributionManagement>
 
-		<!-- Hibernate dependencies -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.3.2.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernatespatial</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-			<version>${hibernate-spatial.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opengeo</groupId>
-			<artifactId>geodb</artifactId>
-			<version>0.4</version>
-		</dependency>	
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-			<version>1.12-SNAPSHOT</version>
-		</dependency>		
+    <organization>
+        <name>Geodan IT b.v.</name>
+        <url>http://www.geodan.nl</url>
+    </organization>
 
-		<!-- Dependencies needed for testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.4.0.GA</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernatespatial</groupId>
-			<artifactId>hibernate-spatial</artifactId>
-			<version>${hibernate-spatial.version}</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>2.2</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.6.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-		</plugins>
-	</reporting>
-
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<organization>
-		<name>Geodan IT b.v.</name>
-		<url>http://www.geodan.nl</url>
-	</organization>
-
-	<developers>
-		<developer>
-			<id>janb</id>
-			<name>Jan Boonen</name>
-			<email>jan.boonen@geodan.nl</email>
-			<roles>
-				<role>Project Lead</role>
-				<role>Committer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>reinoldp</id>
-			<name>Reinold Pasterkamp</name>
-			<email>reinold.pasterkamp@geodan.nl</email>
-			<roles>
-				<role>Committer</role>
-			</roles>
-		</developer>		
-	</developers>
+    <developers>
+        <developer>
+            <id>janb</id>
+            <name>Jan Boonen</name>
+            <email>jan.boonen@geodan.nl</email>
+            <roles>
+                <role>Project Lead</role>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>reinoldp</id>
+            <name>Reinold Pasterkamp</name>
+            <email>reinold.pasterkamp@geodan.nl</email>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+    </developers>
 </project>
