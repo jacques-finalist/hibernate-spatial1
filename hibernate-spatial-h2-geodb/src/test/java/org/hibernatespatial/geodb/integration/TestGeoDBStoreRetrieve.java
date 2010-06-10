@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -54,13 +54,15 @@ import static org.junit.Assert.*;
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/geodb-test-context.xml"})
+@SuppressWarnings("restriction")
 public class TestGeoDBStoreRetrieve {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private static final Long MAX_RESULTS = 17L;
 
-    @Resource
+   
+	@Resource
     private HibernateTemplate hibernateTemplate;
 
     @Resource
