@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -51,11 +51,11 @@ public class BasicFeatureReader implements FeatureReader {
         this.session = sf.openStatelessSession();
         this.metadata = sf.getClassMetadata(entityClass);
         String geomProp;
-        GeometryPropertyFinder gp = new GeometryPropertyFinder();
-        geomProp = gp.find(this.metadata);
 
         Criteria crit = this.session.createCriteria(entityClass);
         if (filterGeom != null) {
+            GeometryPropertyFinder gp = new GeometryPropertyFinder();
+            geomProp = gp.find(this.metadata);
             SpatialFilter filter = SpatialRestrictions.filter(geomProp,
                     filterGeom);
             crit.add(filter);

@@ -1,14 +1,13 @@
 package org.hibernatespatial.test.cfg;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-
 import org.hibernate.cfg.Configuration;
 import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.cfg.HSConfiguration;
-import org.hibernatespatial.cfg.HSProperty;
 import org.junit.Test;
+
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
 
 public class HSConfigurationTest {
 

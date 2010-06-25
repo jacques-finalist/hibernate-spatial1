@@ -27,12 +27,7 @@ public class FeatureMapper {
 				String colName = rs.getString("COLUMN_NAME");
 				String dbType = rs.getString("TYPE_NAME");
 				int javaType = rs.getInt("DATA_TYPE");
-				AttributeInfo ai = new AttributeInfo();
-				ai.setColumnName(colName);
-				ai.setFieldName(naming.createPropertyName(colName));
-				ai.setHibernateType(typeMapper.getHibernateType(dbType, javaType));
-				ai.setCtClass(typeMapper.getCtClass(dbType, javaType));
-				cInfo.addAttribute(ai);
+                addAttribute(cInfo, colName, dbType, javaType);
 			}
 		} catch (SQLException ex){
 			throw new RuntimeException(ex);
@@ -75,5 +70,20 @@ public class FeatureMapper {
 		}
 		return cInfo;
 	}
+
+    private void addAttribute(ClassInfo cInfo, String colName, String dbType, int javaType){
+        String hibernateType = null;
+        try {
+            hibernateType = typeMapper.getHibernateType(dbType, javaType);
+        } catch (TypeNotFoundException e) {
+            
+        }
+        AttributeInfo ai = new AttributeInfo();
+        ai.setColumnName(colName);
+        ai.setFieldName(naming.createPropertyName(colName));
+        ai.setHibernateType(hibernateType);
+        ai.setCtClass(typeMapper.getCtClass(dbType, javaType));
+        cInfo.addAttribute(ai);
+    }
 
 }

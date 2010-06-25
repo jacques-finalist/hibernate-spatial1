@@ -28,20 +28,12 @@
  */
 package org.hibernatespatial.test.mgeom;
 
-import junit.framework.TestCase;
-
-import org.hibernatespatial.mgeom.DoubleComparator;
-import org.hibernatespatial.mgeom.MCoordinate;
-import org.hibernatespatial.mgeom.MCoordinateSequenceFactory;
-import org.hibernatespatial.mgeom.MGeometry;
-import org.hibernatespatial.mgeom.MGeometryException;
-import org.hibernatespatial.mgeom.MGeometryFactory;
-import org.hibernatespatial.mgeom.MLineString;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import junit.framework.TestCase;
+import org.hibernatespatial.mgeom.*;
 
 /**
  * @author Karel Maesen

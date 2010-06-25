@@ -24,15 +24,17 @@
  */
 package org.hibernatespatial.pojo;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
-
+import javassist.NotFoundException;
 import org.hibernatespatial.GeometryUserType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The <code>TypeMapper</code> maps a pair consisting of java.sql.Type, and a
@@ -43,6 +45,8 @@ import org.hibernatespatial.GeometryUserType;
  * @author Karel Maesen, Geovise BVBA (http://www.geovise.com/)
  */
 public class TypeMapper {
+
+    protected final static Logger logger = LoggerFactory.getLogger(TypeMapper.class);
 
 	private final static String GEOMETRY_USER_TYPE = GeometryUserType.class
 			.getCanonicalName();
@@ -63,37 +67,53 @@ public class TypeMapper {
 		// ensure that we can load the JTS classes.
 		pool.insertClassPath(new ClassClassPath(this.getClass()));
 
-		CtClass ctString = null;
-		CtClass ctDate = null;
+		CtClass ctString;
+		CtClass ctDate;
+        CtClass ctInteger;
+        CtClass ctBoolean;
+        CtClass ctFloat;
+        CtClass ctDouble;
+        CtClass ctLong;        
+        CtClass ctShort;
+        CtClass ctBigDecimal;
+        CtClass ctByte;
+        CtClass ctBinary;
 		try {
 			ctString = pool.get("java.lang.String");
 			ctDate = pool.get("java.util.Date");
 			ctGeom = pool.get("com.vividsolutions.jts.geom.Geometry");
-		} catch (Exception e) {
+            ctInteger = pool.get("java.lang.Integer");
+            ctBoolean = pool.get("java.lang.Boolean");
+            ctDouble = pool.get("java.lang.Double");
+            ctLong = pool.get("java.lang.Long");
+            ctShort = pool.get("java.lang.Short");
+            ctFloat = pool.get("java.lang.Float");
+            ctBigDecimal = pool.get("java.math.BigDecimal");
+            ctByte = pool.get("java.lang.Byte");
+            ctBinary = pool.get("byte[]");
+		} catch (NotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
-		entries.add(new TMEntry(Types.BIGINT, "integer", CtClass.longType));
 
-		entries.add(new TMEntry(Types.SMALLINT, "integer", CtClass.intType));
-
-		entries.add(new TMEntry(Types.BOOLEAN, "boolean", CtClass.booleanType));
-
+		entries.add(new TMEntry(Types.BIGINT, "integer", ctInteger));
+		entries.add(new TMEntry(Types.SMALLINT, "short", ctShort));
+        entries.add(new TMEntry(Types.TINYINT, "byte", ctByte));
+		entries.add(new TMEntry(Types.BOOLEAN, "boolean", ctBoolean));
+		entries.add(new TMEntry(Types.BIT, "boolean", ctBoolean));
 		entries.add(new TMEntry(Types.CHAR, "string", ctString));
-
 		entries.add(new TMEntry(Types.DATE, "date", ctDate));
-
-		entries.add(new TMEntry(Types.DECIMAL, "double", CtClass.doubleType));
-
-		entries.add(new TMEntry(Types.DOUBLE, "double", CtClass.doubleType));
-
-		entries.add(new TMEntry(Types.NUMERIC, "double", CtClass.doubleType));
-
-		entries.add(new TMEntry(Types.FLOAT, "double", CtClass.doubleType));
-
-		entries.add(new TMEntry(Types.INTEGER, "long", CtClass.longType));
-
+		entries.add(new TMEntry(Types.TIMESTAMP, "timestamp", ctDate));
+		entries.add(new TMEntry(Types.TIME, "time", ctDate));
+		entries.add(new TMEntry(Types.DECIMAL, "big_decimal", ctBigDecimal));
+		entries.add(new TMEntry(Types.DOUBLE, "double", ctDouble));
+		entries.add(new TMEntry(Types.NUMERIC, "big_decimal", ctBigDecimal));
+		entries.add(new TMEntry(Types.FLOAT, "float", ctFloat));
+		entries.add(new TMEntry(Types.INTEGER, "integer", ctInteger));
+        entries.add(new TMEntry(Types.BIGINT, "long", ctLong));
 		entries.add(new TMEntry(Types.VARCHAR, "string", ctString));
+        entries.add(new TMEntry(Types.BINARY, "binary", ctBinary));
+        entries.add(new TMEntry(Types.CLOB, "text", ctString));
 	}
 
 	public CtClass getCtClass(String dbType, int sqlType) {
@@ -108,7 +128,7 @@ public class TypeMapper {
 		return null;
 	}
 
-	public String getHibernateType(String dbType, int sqlType) {
+	public String getHibernateType(String dbType, int sqlType) throws TypeNotFoundException {
 		if (dbType.equalsIgnoreCase(this.dbGeomType)) {
 			return GEOMETRY_USER_TYPE;
 		}
@@ -117,7 +137,7 @@ public class TypeMapper {
 				return entry.hibernateTypeName;
 			}
 		}
-		return null;
+		throw new TypeNotFoundException(dbType);
 
 	}
 
