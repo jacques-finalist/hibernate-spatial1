@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -107,6 +107,13 @@ public class TestEventLocator {
         assertEquals(MCoordinate.create2dWithMeasure(5.0, 0.0, 5.0), (MCoordinate) coordinates[0]);
         assertEquals(MCoordinate.create2dWithMeasure(6.0, 0.0, 6.0), (MCoordinate) coordinates[1]);
         assertEquals(MCoordinate.create2dWithMeasure(7.0, 0.0, 7.0), (MCoordinate) coordinates[2]);
+    }
+
+    @Test
+    public void test_locator_result_has_same_srid_as_input_mgeometry() throws MGeometryException {
+        incrML.setSRID(123);
+        MultiMLineString result = EventLocator.getLinearGeometry(incrML, 4.5, 7.0);
+        assertEquals(123, result.getSRID());
     }
 
 

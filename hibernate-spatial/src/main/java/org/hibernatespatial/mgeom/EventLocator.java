@@ -73,7 +73,7 @@ public class EventLocator {
     }
 
     public static void copySRID(Geometry source, Geometry target) {
-        target.setSRID(target.getSRID());
+        target.setSRID(source.getSRID());
     }
 
 }
