@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -40,7 +40,7 @@ public class GeometryEquality {
 
     public boolean test(Geometry geom1, Geometry geom2) {
         if (geom1 == null) return geom2 == null;
-        if (geom1.isEmpty()) return geom2.isEmpty();
+        if (geom1.isEmpty()) return geom2.isEmpty() && geom1.getSRID() == geom2.getSRID();
         if (geom1 instanceof GeometryCollection) {
             if (!(geom2 instanceof GeometryCollection)) return false;
             GeometryCollection expectedCollection = (GeometryCollection) geom1;
@@ -65,7 +65,7 @@ public class GeometryEquality {
      */
     protected boolean testSimpleGeometryEquality(Geometry geom1, Geometry geom2) {
         //return geom1.equals(geom2);
-        return testTypeAndVertexEquality(geom1, geom2);
+        return testTypeAndVertexEquality(geom1, geom2) && geom1.getSRID() == geom2.getSRID();
     }
 
     protected boolean testTypeAndVertexEquality(Geometry geom1, Geometry geom2) {
