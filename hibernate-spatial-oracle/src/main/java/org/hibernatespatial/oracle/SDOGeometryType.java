@@ -398,27 +398,35 @@ public class SDOGeometryType extends AbstractDBGeometryType {
     public Geometry convert2JTS(SDO_GEOMETRY sdoGeom) {
         int dim = sdoGeom.getGType().getDimension();
         int lrsDim = sdoGeom.getGType().getLRSDimension();
-
+        Geometry result = null;
         switch (sdoGeom.getGType().getTypeGeometry()) {
             case POINT:
-                return convertSDOPoint(sdoGeom);
+                result = convertSDOPoint(sdoGeom);
+                break;
             case LINE:
-                return convertSDOLine(dim, lrsDim, sdoGeom);
+                result = convertSDOLine(dim, lrsDim, sdoGeom);
+                break;
             case POLYGON:
-                return convertSDOPolygon(dim, lrsDim, sdoGeom);
+                result = convertSDOPolygon(dim, lrsDim, sdoGeom);
+                break;
             case MULTIPOINT:
-                return convertSDOMultiPoint(dim, lrsDim, sdoGeom);
+                result = convertSDOMultiPoint(dim, lrsDim, sdoGeom);
+                break;
             case MULTILINE:
-                return convertSDOMultiLine(dim, lrsDim, sdoGeom);
+                result = convertSDOMultiLine(dim, lrsDim, sdoGeom);
+                break;
             case MULTIPOLYGON:
-                return convertSDOMultiPolygon(dim, lrsDim, sdoGeom);
+                result = convertSDOMultiPolygon(dim, lrsDim, sdoGeom);
+                break;
             case COLLECTION:
-                return convertSDOCollection(dim, lrsDim, sdoGeom);
+                result = convertSDOCollection(dim, lrsDim, sdoGeom);
+                break;
             default:
                 throw new IllegalArgumentException("Type not supported: "
                         + sdoGeom.getGType().getTypeGeometry());
         }
-
+        result.setSRID(sdoGeom.getSRID());
+        return result;
     }
 
     private Geometry convertSDOCollection(int dim, int lrsDim,
@@ -445,8 +453,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
         }
         CoordinateSequence cs = convertOrdinateArray(ordinates, sdoGeom);
         Point point = getGeometryFactory().createPoint(cs);
-
-        point.setSRID(sdoGeom.getSRID());
         return point;
     }
 
@@ -455,7 +461,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
         Double[] ordinates = sdoGeom.getOrdinates().getOrdinateArray();
         CoordinateSequence cs = convertOrdinateArray(ordinates, sdoGeom);
         MultiPoint multipoint = getGeometryFactory().createMultiPoint(cs);
-        multipoint.setSRID(sdoGeom.getSRID());
         return multipoint;
     }
 
@@ -478,7 +483,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
 
         LineString ls = lrs ? getGeometryFactory().createMLineString(cs)
                 : getGeometryFactory().createLineString(cs);
-        ls.setSRID(sdoGeom.getSRID());
         return ls;
     }
 
@@ -510,7 +514,6 @@ public class SDOGeometryType extends AbstractDBGeometryType {
         MultiLineString mls = lrs ? getGeometryFactory()
                 .createMultiMLineString((MLineString[]) lines)
                 : getGeometryFactory().createMultiLineString(lines);
-        mls.setSRID(sdoGeom.getSRID());
         return mls;
 
     }
@@ -533,16 +536,13 @@ public class SDOGeometryType extends AbstractDBGeometryType {
             if (info.getElementType(i).isInteriorRing()) {
                 holes[idxInteriorRings] = getGeometryFactory()
                         .createLinearRing(cs);
-                holes[idxInteriorRings].setSRID(sdoGeom.getSRID());
                 idxInteriorRings++;
             } else {
                 shell = getGeometryFactory().createLinearRing(cs);
-                shell.setSRID(sdoGeom.getSRID());
             }
             i += 1 + numCompounds;
         }
         Polygon polygon = getGeometryFactory().createPolygon(shell, holes);
-        polygon.setSRID(sdoGeom.getSRID());
         return polygon;
     }
 
@@ -564,18 +564,15 @@ public class SDOGeometryType extends AbstractDBGeometryType {
             }
             if (info.getElementType(i).isInteriorRing()) {
                 LinearRing lr = getGeometryFactory().createLinearRing(cs);
-                lr.setSRID(sdoGeom.getSRID());
                 holes.add(lr);
             } else {
                 if (shell != null) {
                     Polygon polygon = getGeometryFactory().createPolygon(shell,
                             holes.toArray(new LinearRing[holes.size()]));
-                    polygon.setSRID(sdoGeom.getSRID());
                     polygons.add(polygon);
                     shell = null;
                 }
                 shell = getGeometryFactory().createLinearRing(cs);
-                shell.setSRID(sdoGeom.getSRID());
                 holes = new ArrayList<LinearRing>();
             }
             i += 1 + numCompounds;
@@ -583,12 +580,10 @@ public class SDOGeometryType extends AbstractDBGeometryType {
         if (shell != null) {
             Polygon polygon = getGeometryFactory().createPolygon(shell,
                     holes.toArray(new LinearRing[holes.size()]));
-            polygon.setSRID(sdoGeom.getSRID());
             polygons.add(polygon);
         }
         MultiPolygon multiPolygon = getGeometryFactory().createMultiPolygon(
                 polygons.toArray(new Polygon[polygons.size()]));
-        multiPolygon.setSRID(sdoGeom.getSRID());
         return multiPolygon;
     }
 
