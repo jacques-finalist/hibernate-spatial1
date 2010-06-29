@@ -7,11 +7,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.pojo.AutoMapper;
+import org.hibernatespatial.postgis.PostgisExpressionTemplate;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -54,8 +57,9 @@ public class TestAutoMapper {
 
 
     @Test
-    public void testList() {
-
+    public void testList() throws SQLException {
+        DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-postgis-test.properties", new PostgisExpressionTemplate());
+        dataSourceUtils.insertTestData();
         Session session = delegate.getSessionFactory().openSession();
         try {
 
@@ -73,6 +77,7 @@ public class TestAutoMapper {
         } finally {
             session.close();
         }
+        dataSourceUtils.deleteTestData();
 
     }
 

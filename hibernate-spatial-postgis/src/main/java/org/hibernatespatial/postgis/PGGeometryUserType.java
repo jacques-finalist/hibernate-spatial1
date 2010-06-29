@@ -106,7 +106,7 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
                 default:
                     throw new RuntimeException("Unknown type of PGgeometry");
             }
-
+            out.setSRID(geom.getGeometry().srid);
             return out;
         } else if (object instanceof org.postgis.PGboxbase) {
             return convertBox((org.postgis.PGboxbase) object);
@@ -145,6 +145,8 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
         com.vividsolutions.jts.geom.Geometry[] jtsGeometries = new com.vividsolutions.jts.geom.Geometry[geometries.length];
         for (int i = 0; i < geometries.length; i++) {
             jtsGeometries[i] = convert2JTS(geometries[i]);
+            //TODO  - refactor this so the following line is not necessary
+            jtsGeometries[i].setSRID(0); // convert2JTS sets SRIDs, but constituent geometries in a collection must have srid  == 0 
         }
         com.vividsolutions.jts.geom.GeometryCollection jtsGCollection = getGeometryFactory()
                 .createGeometryCollection(jtsGeometries);
@@ -162,7 +164,6 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
         com.vividsolutions.jts.geom.MultiPolygon out = getGeometryFactory()
                 .createMultiPolygon(polygons);
-        out.setSRID(pgMultiPolygon.srid);
         return out;
     }
 
@@ -199,7 +200,6 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
             }
             out = getGeometryFactory().createMultiLineString(lstrs);
         }
-        out.setSRID(mlstr.srid);
         return out;
     }
 
@@ -220,14 +220,12 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
         } else {
             out = getGeometryFactory().createPolygon(shell, null);
         }
-        out.setSRID(polygon.srid);
         return out;
     }
 
     protected com.vividsolutions.jts.geom.Point convertPoint(Point pnt) {
         com.vividsolutions.jts.geom.Point g = getGeometryFactory().createPoint(
                 this.toJTSCoordinate(pnt));
-        g.setSRID(pnt.getSrid());
         return g;
     }
 
@@ -237,7 +235,6 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
                 .createMLineString(toJTSCoordinates(lstr.getPoints()))
                 : getGeometryFactory().createLineString(
                 toJTSCoordinates(lstr.getPoints()));
-        out.setSRID(lstr.getSrid());
         return out;
     }
 
