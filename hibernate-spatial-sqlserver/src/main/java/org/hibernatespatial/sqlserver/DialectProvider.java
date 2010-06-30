@@ -37,7 +37,12 @@ public class DialectProvider implements SpatialDialectProvider {
 
 
     public SpatialDialect createSpatialDialect(String dialect) {
-        return new SQLServerSpatialDialect();
+        if (dialect.equals(SQLServerSpatialDialect.class.getCanonicalName())
+                || dialect.equals("org.hibernate.dialect.SQLServerDialect")
+                || dialect.equals(SQLServerSpatialDialect.SHORT_NAME)) {
+            return new SQLServerSpatialDialect();
+        }
+        return null;
     }
 
     public SpatialDialect getDefaultDialect() {
