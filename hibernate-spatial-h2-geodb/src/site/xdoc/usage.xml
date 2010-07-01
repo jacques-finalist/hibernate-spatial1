@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+	<header />
+
+	<body>
+		<section name="Hibernate Spatial H2 GeoDB Provider Usage">
+			<p>
+				To have Hibernate Spatial use this provider, simply drop
+				the jar on the class-path alongside the
+				hibernate-spatial.jar. When the Hibernate Spatial
+				library is loaded it will find the provider and use it
+				to retrieve the Hibernate dialect for H2 GeoDB. This dialect is a subclass of
+				<code>org.hibernate.dialect.GeoDBDialect</code>
+			</p>
+			<p>
+				With the provider installed, you can use it by setting
+				the dialect in the Hibernate configuration file as in
+				the following snippet.
+			</p>
+			<source>
+... 
+	&lt;property name="hibernate.dialect"&gt;
+		org.hibernatespatial.geodb.GeoDBDialect
+	&lt;/property&gt; 
+...
+			</source>
+
+			<p>
+				When there is more than one Hibernate Spatial provider
+				on the Class-Path, you should explicitly label the
+				dialect for the Geometry valued properties.
+			</p>
+			<source>
+... 
+	&lt;property name="geometry"&gt;
+		&lt;column name="geom" sql-type="GEOMETRY"&gt;
+		&lt;type name="org.hibernatespatial.GeometryUserType"&gt;
+			&lt;param name="dialect"&gt;
+				org.hibernatespatial.geodb.GeoDBDialect
+			&lt;/param&gt;
+		&lt;/type&gt;
+	&lt;/property&gt; 
+...
+			</source>
+		</section>
+
+	</body>
+</document>

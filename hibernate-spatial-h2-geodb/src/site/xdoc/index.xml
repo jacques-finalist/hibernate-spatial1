@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+	<header />
+
+	<body>
+		<section name="The Hibernate Spatial H2 GeoDB Provider">
+			<p>
+				The H2 GeoDB Provider adds support for H2 GeoDB to
+				Hibernate
+				Spatial. It has been tested with H2 GeoDB 0.3
+				and should work with
+				any version later than that.
+			</p>
+			
+			<subsection name="Important notes"/>
+			<ul>
+			<li>
+				Note that H2 GeoDB does not completely implement the OGC Simple
+				Feature Specification.
+				Some functions that work for PostGIS or Oracle
+				may fail to work for H2
+				GeoDB.
+			</li>
+			<li>
+				Note that version 0.3 does not store the SRID with the geometry.
+				This is
+				due to an omission in the JTS API. Version 0.4 solved this
+				issue by
+				extending the JTS API, but the fix was committed in the
+				opengeo
+				repository. To use version 0.4, you have to include the
+				GeoTools Maven repository (<a href="http://repo.opengeo.org/com/vividsolutions/jts/1.12-SNAPSHOT/">http://repo.opengeo.org/com/vividsolutions/jts/1.12-SNAPSHOT/</a>) and you cannot use other JTS versions.
+				</li>
+			</ul>
+		</section>
+	</body>
+</document>

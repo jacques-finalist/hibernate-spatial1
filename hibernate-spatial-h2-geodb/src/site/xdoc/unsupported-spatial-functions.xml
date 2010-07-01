@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<header />
+
+	<body>
+		<section name="Unsupported spatial functions" />
+		The following spatial functions are not available with the H2 GeoDB provider, because they are not implemented in GeoDB:
+		<ul>
+			<li>dimension</li>
+			<li>boundary</li>
+			<li>relate</li>
+			<li>distance</li>
+			<li>convexhull</li>
+			<li>difference</li>
+			<li>intersection</li>
+			<li>symdifference</li>
+			<li>geomunion</li>
+			<li>extent</li>
+		</ul>
+	</body>
+</document>

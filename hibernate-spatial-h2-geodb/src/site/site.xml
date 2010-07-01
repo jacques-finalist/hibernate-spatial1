@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Hibernate Spatial H2 GeoDB Provider">
+
+	<bannerLeft>
+		<name>Hibernate Spatial H2 GeoDB Provider</name>
+		<href>http://www.hibernatespatial.org/hibernate-spatial-h2-geodb
+		</href>
+	</bannerLeft>
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-default-skin</artifactId>
+	</skin>
+
+	<publishDate format="yyyy MMM dd" />
+
+	<body>
+
+		<menu name="Overview" inherit="top">
+			<item name="Introduction" href="index.html" />
+			<item name="Usage" href="usage.html" />
+			<item name="Tutorial on integration testing" href="tutorial-integration-testing.html" />
+			<item name="Unsupported spatial functions" href="unsupported-spatial-functions.html" />
+		</menu>
+
+		<menu ref="parent" inherit="top"/>
+
+	</body>
+</project>
