@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -35,7 +35,7 @@ import org.hibernatespatial.SpatialRelation;
 /**
  * Extends the H2Dialect by also including information on spatial functions.
  *
- * @author janb
+ * @author Jan Boonen, Geodan IT b.v.
  */
 public class GeoDBDialect extends H2Dialect implements SpatialDialect {
 

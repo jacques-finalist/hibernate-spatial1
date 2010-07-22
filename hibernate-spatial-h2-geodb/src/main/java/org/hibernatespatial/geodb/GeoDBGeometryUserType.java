@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -38,11 +38,13 @@ import java.sql.Connection;
 import java.sql.Types;
 
 /**
- * @author janb
+ * @author Jan Boonen, Geodan IT b.v.
  */
 public class GeoDBGeometryUserType extends AbstractDBGeometryType {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeoDBGeometryUserType.class);
+	private static final long serialVersionUID = -8929343431050580222L;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeoDBGeometryUserType.class);
 
     private static final int[] geometryTypes = new int[]{Types.ARRAY};
 

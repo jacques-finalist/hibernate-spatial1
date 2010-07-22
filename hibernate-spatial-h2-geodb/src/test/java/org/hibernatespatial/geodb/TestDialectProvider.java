@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -35,6 +35,11 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
+/**
+ * Tests basic properties of the {@link GeoDBDialect}.
+ * 
+ * @Author Jan Boonen, Geodan IT b.v.
+ */
 public class TestDialectProvider {
 
     private final static String DIALECT_NAME = "org.hibernatespatial.geodb.GeoDBDialect";

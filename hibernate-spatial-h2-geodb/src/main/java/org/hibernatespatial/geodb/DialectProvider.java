@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -30,7 +30,7 @@ import org.hibernatespatial.spi.SpatialDialectProvider;
 /**
  * GeoDB (H2 database with HatBox spatial extension) Dialect Provider.
  *
- * @author janb
+ * @author Jan Boonen, Geodan IT b.v.
  */
 public class DialectProvider implements SpatialDialectProvider {
 
