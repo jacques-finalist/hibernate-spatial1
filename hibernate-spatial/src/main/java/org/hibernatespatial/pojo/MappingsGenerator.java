@@ -24,15 +24,15 @@
  */
 package org.hibernatespatial.pojo;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 /**
  * This class creates a Hibernate mapping file for a list of tables.
@@ -60,15 +60,16 @@ public class MappingsGenerator {
 		return this.mappingDoc;
 	}
 
-	public void load(List<ClassInfo> mappedClasses)
+	public void load(List<ClassInfo> mappedClasses, String schema)
 			throws PKeyNotFoundException {
 
 		this.mappingDoc = DocumentHelper.createDocument();
 		this.mappingDoc.addDocType("hibernate-mapping",
 				"-//Hibernate/Hibernate Mapping DTD 3.0//EN",
 				"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd");
-		Element root = this.mappingDoc.addElement("hibernate-mapping")
-				.addAttribute("package", this.packageName);
+		Element root = this.mappingDoc.addElement("hibernate-mapping");
+    	root.addAttribute("package", this.packageName);
+        root.addAttribute("schema", schema);
 		for (ClassInfo classInfo: mappedClasses) {
 			addTableElement(root, classInfo);
 		}

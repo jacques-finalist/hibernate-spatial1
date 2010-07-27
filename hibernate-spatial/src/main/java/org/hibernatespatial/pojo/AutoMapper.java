@@ -24,19 +24,15 @@
  */
 package org.hibernatespatial.pojo;
 
+import org.dom4j.Document;
+import org.hibernatespatial.HBSpatialExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.dom4j.Document;
-import org.hibernatespatial.HBSpatialExtension;
+import java.util.*;
 
 /**
  * @author Karel Maesen, Geovise BVBA
@@ -74,9 +70,9 @@ public class AutoMapper {
 			}
 		}
 		logger.info("Generating Hibernate Mapping file");
-		MappingsGenerator mappingGenerator = new MappingsGenerator(PACKAGE_NAME);	
+		MappingsGenerator mappingGenerator = new MappingsGenerator(PACKAGE_NAME);
 		try {
-			mappingGenerator.load(cInfos);
+			mappingGenerator.load(cInfos, schema);
 		} catch (PKeyNotFoundException e) {
 			throw new RuntimeException(e);
 		}
