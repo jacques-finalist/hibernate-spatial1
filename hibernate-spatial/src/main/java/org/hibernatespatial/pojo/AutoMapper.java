@@ -67,8 +67,10 @@ public class AutoMapper {
 				cInfos.add(cInfo);
 			} catch (TableNotFoundException e) {
 				logger.warn(e.getMessage());
-			}
-		}
+			} catch (PKeyException e) {
+                logger.warn(e.getMessage());
+            }
+        }
 		logger.info("Generating Hibernate Mapping file");
 		MappingsGenerator mappingGenerator = new MappingsGenerator(PACKAGE_NAME);
 		try {

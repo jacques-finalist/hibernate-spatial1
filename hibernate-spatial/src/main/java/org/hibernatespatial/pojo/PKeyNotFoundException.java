@@ -30,7 +30,7 @@ package org.hibernatespatial.pojo;
  * @author Karel Maesen, Geovise BVBA
  * 
  */
-public class PKeyNotFoundException extends Exception {
+public class PKeyNotFoundException extends PKeyException {
 
 	/**
 	 * 

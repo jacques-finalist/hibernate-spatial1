@@ -69,7 +69,9 @@ public class MappingsGenerator {
 				"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd");
 		Element root = this.mappingDoc.addElement("hibernate-mapping");
     	root.addAttribute("package", this.packageName);
-        root.addAttribute("schema", schema);
+        if (schema != null){
+            root.addAttribute("schema", schema);
+        }
 		for (ClassInfo classInfo: mappedClasses) {
 			addTableElement(root, classInfo);
 		}
