@@ -32,7 +32,7 @@ import org.dom4j.io.XMLWriter;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This class creates a Hibernate mapping file for a list of tables.
@@ -60,7 +60,7 @@ public class MappingsGenerator {
 		return this.mappingDoc;
 	}
 
-	public void load(List<ClassInfo> mappedClasses, String schema)
+	public void load(Collection<ClassInfo> mappedClasses, String schema)
 			throws MissingIdentifierException {
 
 		this.mappingDoc = DocumentHelper.createDocument();
