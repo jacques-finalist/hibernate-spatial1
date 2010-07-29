@@ -67,7 +67,7 @@ public class AutoMapper {
 				cInfos.add(cInfo);
 			} catch (TableNotFoundException e) {
 				logger.warn(e.getMessage());
-			} catch (PKeyException e) {
+			} catch (MissingIdentifierException e) {
                 logger.warn(e.getMessage());
             }
         }
@@ -75,7 +75,7 @@ public class AutoMapper {
 		MappingsGenerator mappingGenerator = new MappingsGenerator(PACKAGE_NAME);
 		try {
 			mappingGenerator.load(cInfos, schema);
-		} catch (PKeyNotFoundException e) {
+		} catch (MissingIdentifierException e) {
 			throw new RuntimeException(e);
 		}
 		return mappingGenerator.getMappingsDoc();

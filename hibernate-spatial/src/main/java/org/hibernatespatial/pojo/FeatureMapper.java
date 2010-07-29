@@ -3,6 +3,10 @@ package org.hibernatespatial.pojo;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class FeatureMapper {
 
@@ -14,23 +18,52 @@ public class FeatureMapper {
         this.typeMapper = typeMapper;
     }
 
-    public ClassInfo createClassInfo(String catalog, String schema, String tableName, DatabaseMetaData dmd) throws TableNotFoundException, PKeyException {
-
+    public ClassInfo createClassInfo(String catalog, String schema, String tableName, DatabaseMetaData dmd) throws TableNotFoundException, MissingIdentifierException {
         String className = naming.createClassName(tableName);
         ClassInfo cInfo = new ClassInfo(tableName, className);
-        ResultSet rs = readColums(catalog, schema, tableName, dmd, cInfo);
-        determinePrimaryKey(catalog, schema, tableName, dmd, cInfo, rs);
+        readColums(catalog, schema, tableName, dmd, cInfo);
+        determineIdentifier(catalog, schema, tableName, dmd, cInfo);
         return cInfo;
     }
 
-    private void determinePrimaryKey(String catalog, String schema, String tableName, DatabaseMetaData dmd, ClassInfo cInfo, ResultSet rs) throws CompositePKeyException, PKeyNotFoundException {
+    private void determineIdentifier(String catalog, String schema, String tableName, DatabaseMetaData dmd, ClassInfo cInfo) throws MissingIdentifierException {
+        String pkn = null;
+        pkn = determinePrimaryKey(catalog, schema, tableName, dmd);
+        if (pkn == null) {
+            pkn = findUniqueIndex(catalog, schema, tableName, dmd);
+        }
+        if (pkn == null) throw new MissingIdentifierException(tableName);
+        setAsIdentifier(cInfo, pkn);
+        return;
+
+    }
+
+    private String findUniqueIndex(String catalog, String schema, String tableName, DatabaseMetaData dmd) {
+        Map<String, String> indexes = new HashMap<String,String>();
+        Set<String> rejectedIndexes = new HashSet<String>();
+        readUniqueIndexes(catalog, schema, tableName, dmd, indexes, rejectedIndexes);
+        for (String candidate : indexes.keySet()){
+            if (!rejectedIndexes.contains(candidate)) return indexes.get(candidate);
+        }
+        return null;
+    }
+
+    private void readUniqueIndexes(String catalog, String schema, String tableName, DatabaseMetaData dmd, Map<String, String> indexes, Set<String> rejectedIndexes) {
+        ResultSet rs = null;
         try {
-            rs = dmd.getPrimaryKeys(catalog, schema, tableName);
-            if(!rs.next()) throw new PKeyNotFoundException(tableName);            
-            String pkn = rs.getString("COLUMN_NAME");
-            //check whether the primary key is non-composite
-            if (rs.next()) throw new CompositePKeyException(tableName);
-            setAsIdentifier(cInfo, pkn);
+            rs = dmd.getIndexInfo(catalog, schema, tableName, true, false);
+            while(rs.next()){
+                String colName = rs.getString("COLUMN_NAME");
+                String indexName = rs.getString("INDEX_NAME");
+                if (indexName == null){
+                    indexName = colName;
+                }
+                if (indexes.get(indexName) != null){
+                    rejectedIndexes.add(indexName);
+                } else {
+                    indexes.put(indexName, colName);
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -42,7 +75,28 @@ public class FeatureMapper {
         }
     }
 
-    private ResultSet readColums(String catalog, String schema, String tableName, DatabaseMetaData dmd, ClassInfo cInfo) throws TableNotFoundException {
+    private String determinePrimaryKey(String catalog, String schema, String tableName, DatabaseMetaData dmd) {
+        String pkn = null;
+        ResultSet rs = null;
+        try {
+            rs = dmd.getPrimaryKeys(catalog, schema, tableName);
+            if(!rs.next()) return null;
+            pkn = rs.getString("COLUMN_NAME");
+            //check whether the primary key is non-composite
+            if (rs.next()) return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                //do nothing
+            }
+        }
+        return pkn;
+    }
+
+    private void readColums(String catalog, String schema, String tableName, DatabaseMetaData dmd, ClassInfo cInfo) throws TableNotFoundException {
         ResultSet rs = null;
         boolean empty = true;
         try {
@@ -63,11 +117,9 @@ public class FeatureMapper {
                 // do nothing
             }
         }
-
         if (empty) {
             throw new TableNotFoundException(tableName);
         }
-        return rs;
     }
 
     private void setAsIdentifier(ClassInfo cInfo, String pkn) {

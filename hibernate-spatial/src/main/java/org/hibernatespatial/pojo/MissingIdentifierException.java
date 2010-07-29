@@ -30,28 +30,28 @@ package org.hibernatespatial.pojo;
  * @author Karel Maesen, Geovise BVBA
  * 
  */
-public class PKeyNotFoundException extends PKeyException {
+public class MissingIdentifierException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String basemsg = "No primary key found in table";
+	private static final String basemsg = "No suitable identifier found in table";
 
-	public PKeyNotFoundException() {
+	public MissingIdentifierException() {
 		super(basemsg);
 	}
 
-	public PKeyNotFoundException(String msg) {
+	public MissingIdentifierException(String msg) {
 		super(basemsg + ":" + msg);
 	}
 
-	public PKeyNotFoundException(Throwable cause) {
+	public MissingIdentifierException(Throwable cause) {
 		super(cause);
 	}
 
-	public PKeyNotFoundException(String msg, Throwable cause) {
+	public MissingIdentifierException(String msg, Throwable cause) {
 		super(basemsg + ":" + msg, cause);
 	}
 

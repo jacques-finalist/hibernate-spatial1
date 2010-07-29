@@ -61,7 +61,7 @@ public class MappingsGenerator {
 	}
 
 	public void load(List<ClassInfo> mappedClasses, String schema)
-			throws PKeyNotFoundException {
+			throws MissingIdentifierException {
 
 		this.mappingDoc = DocumentHelper.createDocument();
 		this.mappingDoc.addDocType("hibernate-mapping",
@@ -78,7 +78,7 @@ public class MappingsGenerator {
 	}
 
 	private void addTableElement(Element root, ClassInfo classInfo)
-			throws PKeyNotFoundException {
+			throws MissingIdentifierException {
 		Element tableEl = root.addElement("class");
 		tableEl.addAttribute("name", classInfo.getClassName());
 		tableEl.addAttribute("table", classInfo.getTableName());

@@ -40,13 +40,13 @@ public class ClassInfo {
 		this.tableName = tableName;
 	}
 
-	public AttributeInfo getIdAttribute() throws PKeyNotFoundException {
+	public AttributeInfo getIdAttribute() throws MissingIdentifierException {
 		for (AttributeInfo ai : getAttributes()) {
 			if (ai.isIdentifier()) {
 				return ai;
 			}
 		}
-		throw new PKeyNotFoundException();
+		throw new MissingIdentifierException();
 	}
 
 	public AttributeInfo getGeomAttribute() throws GeometryNotFoundException {
