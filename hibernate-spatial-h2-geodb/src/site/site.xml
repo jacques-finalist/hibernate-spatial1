@@ -23,7 +23,5 @@
 			<item name="Unsupported spatial functions" href="unsupported-spatial-functions.html" />
 		</menu>
 
-		<menu ref="parent" inherit="top"/>
-
 	</body>
 </project>
