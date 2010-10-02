@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -28,49 +28,50 @@
  */
 package org.hibernatespatial.postgis;
 
-import java.util.Map;
-
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.spi.SpatialDialectProvider;
 
 /**
  * PostGIS DialectProvider
- * 
+ *
  * @author Karel Maesen
  */
 public class DialectProvider implements SpatialDialectProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
-	 *      java.util.Map)
-	 */
-	public SpatialDialect createSpatialDialect(String dialect) {
-		if (dialect.equals(PostgisDialect.class.getCanonicalName())
-				|| dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
-				|| dialect.equals("postgis"))
-			return new PostgisDialect();
-		else
-			return null;
-	}
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
+      *      java.util.Map)
+      */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#getDefaultDialect()
-	 */
-	public SpatialDialect getDefaultDialect() {
-		return new PostgisDialect();
-	}
+    public SpatialDialect createSpatialDialect(String dialect) {
+        if (dialect.equals(PostgisDialect.class.getCanonicalName())
+                || dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
+                || dialect.equals("postgis"))
+            return new PostgisDialect();
+        else
+            return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#getSupportedDialects()
-	 */
-	public String[] getSupportedDialects() {
-		return new String[] { PostgisDialect.class.getCanonicalName() };
-	}
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#getDefaultDialect()
+      */
+
+    public SpatialDialect getDefaultDialect() {
+        return new PostgisDialect();
+    }
+
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#getSupportedDialects()
+      */
+
+    public String[] getSupportedDialects() {
+        return new String[]{PostgisDialect.class.getCanonicalName()};
+    }
 
 }

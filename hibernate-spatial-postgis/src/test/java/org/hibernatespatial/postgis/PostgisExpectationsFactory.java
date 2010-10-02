@@ -27,10 +27,11 @@ package org.hibernatespatial.postgis;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
 
 /**
- * This class provides the expected return values to the test classes in this package.
+ * This class provides the expected return values to the testsuite-suite classes in this package.
  *
  * @author Karel Maesen, Geovise BVBA
  */
@@ -38,8 +39,8 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
 
     private final PGGeometryUserType decoder = new PGGeometryUserType();
 
-    public PostgisExpectationsFactory() {
-        super("hibernate-spatial-postgis-test.properties", new PostgisExpressionTemplate());
+    public PostgisExpectationsFactory(DataSourceUtils utils) {
+        super(utils, new PostgisExpressionTemplate());
     }
 
     @Override
