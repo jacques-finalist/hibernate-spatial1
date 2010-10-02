@@ -24,6 +24,7 @@
         <module>../hibernate-spatial-oracle</module>
         <module>../hibernate-spatial-mysql</module>
         <module>../hibernate-spatial-sqlserver</module>
+        <module>../hibernate-spatial-h2-geodb</module>
     </modules>
     <repositories>
         <repository>
