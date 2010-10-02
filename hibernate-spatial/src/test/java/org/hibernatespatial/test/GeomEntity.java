@@ -31,19 +31,19 @@ import com.vividsolutions.jts.io.ParseException;
 /**
  * Test class used in unit testing.
  */
-public class GeomEntity {
+public class GeomEntity implements TestFeature {
 
-    private int id;
+    private Integer id;
 
     private String type;
 
     private Geometry geom;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

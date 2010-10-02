@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -38,7 +38,7 @@ import java.util.List;
 public class TestDataReader {
 
     public List<TestDataElement> read(String fileName) {
-        if (fileName == null) throw new RuntimeException("Null test data file specified.");
+        if (fileName == null) throw new RuntimeException("Null testsuite-suite data file specified.");
         List<TestDataElement> testDataElements = new ArrayList<TestDataElement>();
         SAXReader reader = new SAXReader();
         try {

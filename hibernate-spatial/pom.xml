@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
     <build>
         <plugins>
-            <!--  this ensures that the common test cases are available for providers -->
+            <!--  this ensures that the common testsuite-suite cases are available for providers -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

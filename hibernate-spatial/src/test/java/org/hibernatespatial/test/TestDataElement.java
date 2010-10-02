@@ -26,7 +26,7 @@
 package org.hibernatespatial.test;
 
 /**
- * A <code>TestDataElement</code> captures the information necessary to build a test geometry.
+ * A <code>TestDataElement</code> captures the information necessary to build a testsuite-suite geometry.
  *
  * @author Karel Maesen, Geovise BVBA
  */

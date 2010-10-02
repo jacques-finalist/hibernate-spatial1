@@ -25,7 +25,7 @@
 package org.hibernatespatial.mgeom;
 
 /**
- * This utility class is used to test doubles for equality
+ * This utility class is used to testsuite-suite doubles for equality
  *
  * @author Didier H. Besset <p/> Adapted from "Object-oriented implementation of
  *         numerical methods"

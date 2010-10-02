@@ -42,7 +42,6 @@ import java.util.Map;
  * The expected values are returned as a map of (identifier, expected value) pairs.
  *
  * @author Karel Maesen, Geovise BVBA
- * @see TestSpatialFunctions
  */
 public abstract class AbstractExpectationsFactory {
 
@@ -58,9 +57,8 @@ public abstract class AbstractExpectationsFactory {
     private final DataSourceUtils dataSourceUtils;
     private static final int MAX_BYTE_LEN = 1024;
 
-    public AbstractExpectationsFactory(String propertiesFile, SQLExpressionTemplate sqlExpressionTemplate) {
-        this.dataSourceUtils = new DataSourceUtils(propertiesFile, sqlExpressionTemplate);
-
+    public AbstractExpectationsFactory(DataSourceUtils dataSourceUtils, SQLExpressionTemplate sqlExpressionTemplate) {
+        this.dataSourceUtils = dataSourceUtils;
     }
 
     protected DataSourceUtils getDataSourceUtils() {
@@ -78,7 +76,7 @@ public abstract class AbstractExpectationsFactory {
 
 
     /**
-     * Returns the expected dimensions of all test geometries.
+     * Returns the expected dimensions of all testsuite-suite geometries.
      *
      * @return map of identifier, dimension
      * @throws SQLException
@@ -88,7 +86,7 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns the expected WKT of all test geometries.
+     * Returns the expected WKT of all testsuite-suite geometries.
      *
      * @return map of identifier, WKT-string
      * @throws SQLException
@@ -100,7 +98,7 @@ public abstract class AbstractExpectationsFactory {
 
 
     /**
-     * Returns the expected WKB representations of all test geometries
+     * Returns the expected WKB representations of all testsuite-suite geometries
      *
      * @return map of identifier, WKB representation
      * @throws SQLException
@@ -110,7 +108,7 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns the expected type names of all test geometries
+     * Returns the expected type names of all testsuite-suite geometries
      *
      * @return map of identifier, type name
      * @throws SQLException
@@ -120,7 +118,7 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns the expected SRID codes of all test geometries
+     * Returns the expected SRID codes of all testsuite-suite geometries
      *
      * @return map of identifier, SRID
      * @throws SQLException
@@ -130,9 +128,9 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns whether the test geometries are simple
+     * Returns whether the testsuite-suite geometries are simple
      *
-     * @return map of identifier and whether test geometry is simple
+     * @return map of identifier and whether testsuite-suite geometry is simple
      * @throws SQLException
      */
     public Map<Integer, Boolean> getIsSimple() throws SQLException {
@@ -140,9 +138,9 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns whether the test geometries are empty
+     * Returns whether the testsuite-suite geometries are empty
      *
-     * @return map of identifier and whether test geometry is empty
+     * @return map of identifier and whether testsuite-suite geometry is empty
      * @throws SQLException
      */
     public Map<Integer, Boolean> getIsEmpty() throws SQLException {
@@ -150,7 +148,7 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns the expected boundaries of all test geometries
+     * Returns the expected boundaries of all testsuite-suite geometries
      *
      * @return map of identifier and boundary geometry
      * @throws SQLException
@@ -160,7 +158,7 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
-     * Returns the expected envelopes of all test geometries
+     * Returns the expected envelopes of all testsuite-suite geometries
      *
      * @return map of identifier and envelope
      * @throws SQLException
@@ -172,7 +170,7 @@ public abstract class AbstractExpectationsFactory {
     /**
      * Returns the expected results of the within operator
      *
-     * @param geom test geometry
+     * @param geom testsuite-suite geometry
      * @return
      * @throws SQLException
      */
@@ -300,7 +298,7 @@ public abstract class AbstractExpectationsFactory {
     /**
      * Returns the expected results of the convexhull function
      *
-     * @param geom geometry with which each test geometry is unioned before convexhull calculation
+     * @param geom geometry with which each testsuite-suite geometry is unioned before convexhull calculation
      * @return
      * @throws SQLException
      */
@@ -585,7 +583,7 @@ public abstract class AbstractExpectationsFactory {
      * @throws SQLException
      */
     protected Connection createConnection() throws SQLException {
-        return this.dataSourceUtils.createConnection();
+        return this.dataSourceUtils.getConnection();
     }
 
     /**
@@ -597,9 +595,9 @@ public abstract class AbstractExpectationsFactory {
     protected abstract Geometry decode(Object o);
 
     /**
-     * Return a test polygon (filter, ...)
+     * Return a testsuite-suite polygon (filter, ...)
      *
-     * @return a test polygon
+     * @return a testsuite-suite polygon
      */
     public Polygon getTestPolygon() {
         WKTReader reader = new WKTReader();

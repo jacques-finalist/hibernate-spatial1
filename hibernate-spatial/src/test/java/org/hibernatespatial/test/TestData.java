@@ -34,7 +34,7 @@ import java.util.ListIterator;
 /**
  * A <code>TestData</code> instance is a list object
  * that contains all the <code>TestDataElement</code>s that
- * are used in a unit test suite.
+ * are used in a unit testsuite-suite suite.
  *
  * @author Karel Maesen, Geovise BVBA
  */

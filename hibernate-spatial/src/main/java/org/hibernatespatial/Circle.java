@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -164,7 +164,7 @@ public class Circle {
         a23 = 2 * (p2.x - p3.x);
         b23 = 2 * (p2.y - p3.y);
         c23 = (p2.y * p2.y - p3.y * p3.y) + (p2.x * p2.x - p3.x * p3.x);
-        // test to be certain we have three distinct points passed
+        // testsuite-suite to be certain we have three distinct points passed
         double smallNumber = 0.01;
         if ((Math.abs(a13) < smallNumber && Math.abs(b13) < smallNumber)
                 || (Math.abs(a13) < smallNumber && Math.abs(b13) < smallNumber)) {

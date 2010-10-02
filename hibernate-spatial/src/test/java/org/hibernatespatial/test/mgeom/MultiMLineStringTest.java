@@ -104,7 +104,7 @@ public class MultiMLineStringTest extends TestCase {
     }
 
     /*
-      * Class under test for java.lang.String getGeometryType()
+      * Class under testsuite-suite for java.lang.String getGeometryType()
       */
 
     public void testGetGeometryType() {
@@ -125,7 +125,7 @@ public class MultiMLineStringTest extends TestCase {
     }
 
     /*
-      * Class under test for boolean
+      * Class under testsuite-suite for boolean
       * equalsExact(com.vividsolutions.jts.geom.Geometry, double)
       */
 
@@ -134,7 +134,7 @@ public class MultiMLineStringTest extends TestCase {
     }
 
     /*
-      * Class under test for void
+      * Class under testsuite-suite for void
       * MultiLineString(com.vividsolutions.jts.geom.LineString[],
       * com.vividsolutions.jts.geom.PrecisionModel, int)
       */
@@ -144,7 +144,7 @@ public class MultiMLineStringTest extends TestCase {
     }
 
     /*
-      * Class under test for void
+      * Class under testsuite-suite for void
       * MultiLineString(com.vividsolutions.jts.geom.LineString[],
       * com.vividsolutions.jts.geom.GeometryFactory)
       */

@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -42,7 +42,7 @@ public interface SpatialDialect {
      * assumed (first stage using only spatial index; second stage performing
      * exact comparisons between geometries). The returned SQL-fragement in that
      * case should contains two input parameters. The first for setting the
-     * filter geometry, the second for the test geometry.
+     * filter geometry, the second for the testsuite-suite geometry.
      *
      * @param columnName      The name of the geometry-typed column to which the relation is
      *                        applied
@@ -92,7 +92,7 @@ public interface SpatialDialect {
      * In two-phase filtering you can form a SQL WHERE-expression that searches
      * for matching objects in two phases. A first phase performs a quick
      * bounding box search for neighbouring objects. The second phase calculates
-     * the precise spatial relation between the test object and the results of
+     * the precise spatial relation between the testsuite-suite object and the results of
      * the first phase.
      * <p/>
      * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL

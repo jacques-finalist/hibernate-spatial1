@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ $Id$
+  ~ $Id: GeomEntity.hbm.xml 242 2010-09-22 20:40:07Z maesenka $
   ~
   ~ This file is part of Hibernate Spatial, an extension to the
   ~ hibernate ORM solution for geographic data.
@@ -29,7 +29,7 @@
 
 <hibernate-mapping>
     <class name="org.hibernatespatial.test.GeomEntity" table="GEOMTEST">
-        <id name="id" type="int">
+        <id name="id" type="integer">
             <generator class="assigned"/>
         </id>
         <property name="type" type="string">

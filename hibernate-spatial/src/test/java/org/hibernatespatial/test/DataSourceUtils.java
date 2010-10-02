@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -32,15 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
- * <p>Unit test support class.</p>
+ * <p>Unit testsuite-suite support class.</p>
  *
  * @author Karel Maesen, Geovise BVBA.
  */
@@ -50,13 +47,15 @@ public class DataSourceUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtils.class);
 
-    private final String propertyFile;
-    private final SQLExpressionTemplate sqlExpressionTemplate;
 
-    private TestData testData;
-    private Properties properties;
+    private final SQLExpressionTemplate sqlExpressionTemplate;
+    private final String jdbcDriver;
+    private final String jdbcUrl;
+    private final String jdbcUser;
+    private final String jdbcPass;
+
     private DataSource dataSource;
-    private static final String TEST_DATA_SET = "dataset";
+
 
     /**
      * Constructor for the DataSourceUtils object.
@@ -69,61 +68,28 @@ public class DataSourceUtils {
      * <li> driver: fully-qualified class name for the JDBC Driver</li>
      * </il>
      *
-     * @param propertyFile          properties file for the database properties
+     * @param jdbcDriver
+     * @param jdbcUrl
+     * @param jdbcUser
+     * @param jdbcPass
      * @param sqlExpressionTemplate SQLExpressionTemplate object that generates SQL statements for this database
      */
-    public DataSourceUtils(String propertyFile, SQLExpressionTemplate sqlExpressionTemplate) {
-        this.propertyFile = propertyFile;
+    public DataSourceUtils(String jdbcDriver, String jdbcUrl, String jdbcUser, String jdbcPass, SQLExpressionTemplate sqlExpressionTemplate) {
+        this.jdbcDriver = jdbcDriver;
+        this.jdbcUrl = jdbcUrl;
+        this.jdbcUser = jdbcUser;
+        this.jdbcPass = jdbcPass;
         this.sqlExpressionTemplate = sqlExpressionTemplate;
-        readProperties();
         createBasicDataSource();
-        loadTestObjects();
-    }
-
-    private void readProperties() {
-        InputStream is = null;
-        try {
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile);
-            if (is == null) throw new RuntimeException(String.format("File %s not found on classpath.", propertyFile));
-            properties = new Properties();
-            properties.load(is);
-        } catch (IOException e) {
-            throw (new RuntimeException(e));
-        } finally {
-            if (is != null) try {
-                is.close();
-            } catch (IOException e) {
-                //nothing to do
-            }
-        }
     }
 
     private void createBasicDataSource() {
-        String url = properties.getProperty("jdbcUrl");
-        String user = properties.getProperty("dbUsername");
-        String pwd = properties.getProperty("dbPassword");
-        String driverName = properties.getProperty("driver");
         BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName(driverName);
-        bds.setUrl(url);
-        bds.setUsername(user);
-        bds.setPassword(pwd);
+        bds.setDriverClassName(jdbcDriver);
+        bds.setUrl(jdbcUrl);
+        bds.setUsername(jdbcUser);
+        bds.setPassword(jdbcPass);
         dataSource = bds;
-    }
-
-    /**
-     * loads the test objects
-     * <p/>
-     */
-    private void loadTestObjects() {
-        testData = TestData.fromFile(properties.getProperty(TEST_DATA_SET));
-    }
-
-    /**
-     * Return the test data set
-     */
-    public TestData getTestData() {
-        return this.testData;
     }
 
     /**
@@ -141,14 +107,14 @@ public class DataSourceUtils {
      * @return a JDBC Connection object
      * @throws SQLException
      */
-    public Connection createConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         Connection cn = getDataSource().getConnection();
         cn.setAutoCommit(false);
         return cn;
     }
 
     /**
-     * Delete all test data from the database
+     * Delete all testsuite-suite data from the database
      *
      * @throws SQLException
      */
@@ -173,16 +139,8 @@ public class DataSourceUtils {
         }
     }
 
-    /**
-     * Insert all test data in the database
-     *
-     * @throws SQLException
-     */
-    public void insertTestData() throws SQLException {
-        insertTestData(testData);
-    }
-
     public void insertTestData(TestData testData) throws SQLException {
+        deleteTestData();
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -234,7 +192,7 @@ public class DataSourceUtils {
     }
 
     /**
-     * Return the geometries of the test objects as raw (i.e. undecoded) objects from the database.
+     * Return the geometries of the testsuite-suite objects as raw (i.e. undecoded) objects from the database.
      *
      * @param type type of geometry
      * @return map of identifier, undecoded geometry object
@@ -267,14 +225,14 @@ public class DataSourceUtils {
     }
 
     /**
-     * Returns the JTS geometries that are expected of a decoding of the test object's geometry.
+     * Returns the JTS geometries that are expected of a decoding of the testsuite-suite object's geometry.
      * <p/>
-     * <p>This method reads the WKT of the test objects and returns the result.</p>
+     * <p>This method reads the WKT of the testsuite-suite objects and returns the result.</p>
      *
      * @param type type of geometry
      * @return map of identifier and JTS geometry
      */
-    public Map<Integer, Geometry> expectedGeoms(String type) {
+    public Map<Integer, Geometry> expectedGeoms(String type, TestData testData) {
         Map<Integer, Geometry> result = new HashMap<Integer, Geometry>();
         EWKTReader parser = new EWKTReader();
         for (TestDataElement testDataElement : testData) {

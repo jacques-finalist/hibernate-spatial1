@@ -29,7 +29,6 @@
 package org.hibernatespatial;
 
 import org.hibernate.HibernateException;
-import org.hibernate.type.CustomType;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -58,8 +57,6 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
 
     public static String DIALECT_PARAM_NAME = "dialect";
 
-    public final static CustomType TYPE = new CustomType(GeometryUserType.class, null);
-
     private void configure(Properties properties) {
         if (properties == null || properties.getProperty(DIALECT_PARAM_NAME) == null) {
             spatialDialect = HBSpatialExtension.getDefaultSpatialDialect();
@@ -72,8 +69,14 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
                     "No spatial Dialect could be created");
         }
         delegate = spatialDialect.getGeometryUserType();
-        if (delegate instanceof ParameterizedType) {
+        if (delegate instanceof ParameterizedType && properties != null) {
             ((ParameterizedType) delegate).setParameterValues(properties);
+        }
+    }
+
+    private void initialize() {
+        if (delegate == null) {
+            configure(null);
         }
     }
 
@@ -87,6 +90,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      */
     public Object assemble(Serializable arg0, Object arg1)
             throws HibernateException {
+        initialize();
         return delegate.assemble(arg0, arg1);
     }
 
@@ -107,6 +111,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
      */
     public Serializable disassemble(Object arg0) throws HibernateException {
+        initialize();
         return delegate.disassemble(arg0);
     }
 
@@ -119,6 +124,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      *      java.lang.Object)
      */
     public boolean equals(Object arg0, Object arg1) throws HibernateException {
+        initialize();
         return delegate.equals(arg0, arg1);
     }
 
@@ -128,6 +134,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
+        initialize();
         return delegate.equals(obj);
     }
 
@@ -136,6 +143,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
+        initialize();
         return delegate.hashCode();
     }
 
@@ -146,6 +154,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
      */
     public int hashCode(Object arg0) throws HibernateException {
+        initialize();
         return delegate.hashCode(arg0);
     }
 
@@ -154,6 +163,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see org.hibernate.usertype.UserType#isMutable()
      */
     public boolean isMutable() {
+        initialize();
         return delegate.isMutable();
     }
 
@@ -169,6 +179,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      */
     public Object nullSafeGet(ResultSet arg0, String[] arg1, Object arg2)
             throws HibernateException, SQLException {
+        initialize();
         return delegate.nullSafeGet(arg0, arg1, arg2);
     }
 
@@ -183,6 +194,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      */
     public void nullSafeSet(PreparedStatement arg0, Object arg1, int arg2)
             throws HibernateException, SQLException {
+        initialize();
         delegate.nullSafeSet(arg0, arg1, arg2);
     }
 
@@ -197,6 +209,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      */
     public Object replace(Object arg0, Object arg1, Object arg2)
             throws HibernateException {
+        initialize();
         return delegate.replace(arg0, arg1, arg2);
     }
 
@@ -205,6 +218,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see org.hibernate.usertype.UserType#returnedClass()
      */
     public Class returnedClass() {
+        initialize();
         return delegate.returnedClass();
     }
 
@@ -213,6 +227,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see org.hibernate.usertype.UserType#sqlTypes()
      */
     public int[] sqlTypes() {
+        initialize();
         return delegate.sqlTypes();
     }
 
@@ -221,6 +236,7 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
      * @see java.lang.Object#toString()
      */
     public String toString() {
+        initialize();
         return delegate.toString();
     }
 
