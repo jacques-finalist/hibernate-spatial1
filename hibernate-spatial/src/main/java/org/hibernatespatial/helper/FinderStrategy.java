@@ -45,7 +45,7 @@ public interface FinderStrategy<T, S> {
 	 *            the object that is being searched
 	 * @return the object sought
 	 * @throws FinderException
-	 *             thrown when the feature is not sought;
+	 *             thrown when the feature can be found;
 	 */
 	public T find(S subject) throws FinderException;
 

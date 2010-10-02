@@ -66,6 +66,7 @@
             <item name="Postgresql" href="hibernate-spatial-postgis"/>
             <item name="Microsft SQL Server" href="hibernate-spatial-sqlserver"/>
             <item name="MySQL" href="hibernate-spatial-mysql"/>
+            <item name="GeoDB (H2)" href="hibernate-spatial-h2-geodb" />
         </menu>
 
     </body>

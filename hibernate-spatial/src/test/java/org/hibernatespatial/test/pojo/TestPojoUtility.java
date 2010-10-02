@@ -7,6 +7,9 @@ import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.cfg.HSConfiguration;
 import org.hibernatespatial.pojo.AutoMapper;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,9 +25,11 @@ public class TestPojoUtility {
         HBSpatialExtension.setConfiguration(hsconfig);
         List<String> tables = new ArrayList<String>();
         tables.add("geomtest");
+//        tables.add("test2") ;
         Document mappingdocument;
         try {
             mappingdocument = AutoMapper.map(conn, null, null, tables);
+            writeToFile(mappingdocument);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -33,6 +38,17 @@ public class TestPojoUtility {
         config.addXML(mappingdocument.asXML());
         this.sessionFactory = config.configure().buildSessionFactory();
 
+    }
+
+    private void writeToFile(Document mappingdocument) {
+        try {
+            File f = File.createTempFile("test-hs-automapper", ".xml");
+            FileWriter writer = new FileWriter(f);
+            mappingdocument.write(writer);
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public SessionFactory getSessionFactory() {
