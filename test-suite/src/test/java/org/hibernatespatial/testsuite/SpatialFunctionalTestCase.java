@@ -1,13 +1,14 @@
 package org.hibernatespatial.testsuite;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.testing.junit.functional.FunctionalTestCase;
 import org.hibernatespatial.test.*;
 import org.slf4j.Logger;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +30,19 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
         super(string);
     }
 
-    public void prepareTest(){
+
+    public void insertTestData() {
+        try {
+            dataSourceUtils.insertTestData(testData);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void prepareTest() {
         try {
             TestSupportFactory tsFactory = TestSupportFactories.instance().getTestSupportFactory(getDialect());
-            Configuration cfg =  getCfg();
+            Configuration cfg = getCfg();
             dataSourceUtils = tsFactory.createDataSourceUtil(cfg);
             expectationsFactory = tsFactory.createExpectationsFactory(dataSourceUtils);
             testData = tsFactory.createTestData(this);
@@ -41,6 +51,10 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Connection getConnection() throws SQLException {
+        return dataSourceUtils.getConnection();
     }
 
     public String getBaseForMappings() {
@@ -55,14 +69,14 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
 
     /**
      * Adds the query results to a Map.
-     *
+     * <p/>
      * Each row is added as a Map entry with the first column the key,
      * and the second the value. It is assumed that the first column is an
      * identifier of a type assignable to Integer.
      *
      * @param result map of
-     * @param query the source Query
-     * @param <T> type of the second column in the query results
+     * @param query  the source Query
+     * @param <T>    type of the second column in the query results
      */
     protected <T> void addQueryResults(Map<Integer, T> result, Query query) {
         List<Object[]> rows = (List<Object[]>) query.list();
@@ -104,7 +118,6 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
             }
         }
     }
-
 
 
 }

@@ -36,11 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.*;
 
 /**
  * @author Karel Maesen, Geovise BVBA
@@ -53,16 +49,13 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         super(string);
     }
 
-    public void prepareTest(){
+    public void prepareTest() {
         super.prepareTest();
-        try {
-            dataSourceUtils.insertTestData(testData);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        insertTestData();
     }
 
-    protected Logger getLogger(){
+
+    protected Logger getLogger() {
         return LOGGER;
     }
 
@@ -263,7 +256,6 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         doInSession(hql, hsreceived, params);
         compare(dbexpected, hsreceived);
     }
-
 
 
     private <T> void doInSession(String hql, Map<Integer, T> result, Map<String, Object> params) {
