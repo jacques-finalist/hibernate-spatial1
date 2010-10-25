@@ -30,6 +30,7 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.CustomType;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
 /**
@@ -91,7 +92,7 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
         super();
 
         // Register Geometry column type
-        registerColumnType(java.sql.Types.BLOB, "GEOM");
+        registerColumnType(java.sql.Types.ARRAY, "BLOB");
 
         // Register functions that operate on spatial types
 // NOT YET AVAILABLE IN GEODB
@@ -102,7 +103,7 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
         registerFunction("srid", new StandardSQLFunction("ST_SRID",
                 Hibernate.INTEGER));
         registerFunction("envelope", new StandardSQLFunction("ST_Envelope",
-                new CustomType(GeoDBGeometryUserType.class, null)));
+                new CustomType(new GeoDBGeometryUserType(), null)));
         registerFunction("astext", new StandardSQLFunction("ST_AsText",
                 Hibernate.STRING));
         registerFunction("asbinary", new StandardSQLFunction("ST_AsEWKB",
@@ -141,7 +142,7 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
 //		registerFunction("distance", new StandardSQLFunction("distance",
 //				Hibernate.DOUBLE));
         registerFunction("buffer", new StandardSQLFunction("ST_Buffer",
-                new CustomType(GeoDBGeometryUserType.class, null)));
+                new CustomType(new GeoDBGeometryUserType(), null)));
 // NOT YET AVAILABLE IN GEODB			
 //		registerFunction("convexhull", new StandardSQLFunction("convexhull",
 //				new CustomType(GeoDBGeometryUserType.class, null)));
@@ -237,6 +238,18 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
 
     public boolean isTwoPhaseFiltering() {
         return false;
-	}
+    }
+
+    public boolean supports(SpatialFunction function) {
+        switch (function) {
+            case filter:
+            case dimension:
+            case geometrytype:
+            case boundary:
+                return false;
+        }
+
+        return true;
+    }
 
 }
