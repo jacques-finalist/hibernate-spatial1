@@ -11,7 +11,6 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.classic.Session;
 import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.pojo.*;
-import org.hibernatespatial.test.TestSupportFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,6 @@ public class TestAutoMapper extends SpatialFunctionalTestCase {
      * @return
      */
     public SessionFactory buildSessionFactory(Configuration config) {
-        TestSupportFactory tsFactory = null;
         Connection conn = null;
         try {
             conn = getConnection();
