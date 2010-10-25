@@ -98,7 +98,17 @@ public interface SpatialDialect {
      * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL
      * don't.
      *
-     * @return
+     * @return *
      */
-	public boolean isTwoPhaseFiltering();
+    @Deprecated
+    public boolean isTwoPhaseFiltering();
+
+    /**
+     * Does this dialect supports the specified <code>SpatialFunction</code>.
+     *
+     * @param function <code>SpatialFunction</code>
+     * @return true if this <code>SpatialDialect</code> supports the spatial function specified by the function parameter.
+     */
+    public boolean supports(SpatialFunction function);
+
 }

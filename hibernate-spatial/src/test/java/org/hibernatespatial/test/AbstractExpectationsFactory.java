@@ -29,6 +29,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -45,6 +47,8 @@ import java.util.Map;
  */
 public abstract class AbstractExpectationsFactory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractExpectationsFactory.class);
+
     public final static int INTEGER = 1;
     public final static int DOUBLE = 2;
     public final static int GEOMETRY = 3;
@@ -57,7 +61,7 @@ public abstract class AbstractExpectationsFactory {
     private final DataSourceUtils dataSourceUtils;
     private static final int MAX_BYTE_LEN = 1024;
 
-    public AbstractExpectationsFactory(DataSourceUtils dataSourceUtils, SQLExpressionTemplate sqlExpressionTemplate) {
+    public AbstractExpectationsFactory(DataSourceUtils dataSourceUtils) {
         this.dataSourceUtils = dataSourceUtils;
     }
 
@@ -617,6 +621,7 @@ public abstract class AbstractExpectationsFactory {
         try {
             cn = createConnection();
             preparedStatement = nativeSQLStatement.prepare(cn);
+            LOGGER.info("Native SQL is: " + preparedStatement.toString());
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 int id = results.getInt(1);

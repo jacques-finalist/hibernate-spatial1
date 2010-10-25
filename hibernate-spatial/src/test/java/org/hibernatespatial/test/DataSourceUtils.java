@@ -32,9 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>Unit testsuite-suite support class.</p>
@@ -83,6 +85,41 @@ public class DataSourceUtils {
         createBasicDataSource();
     }
 
+    /**
+     * Constructor using a properties file
+     *
+     * @param propertyFile
+     * @param template
+     */
+    public DataSourceUtils(String propertyFile, SQLExpressionTemplate template) {
+        Properties properties = readProperties(propertyFile);
+        this.jdbcUrl = properties.getProperty("jdbcUrl");
+        this.jdbcDriver = properties.getProperty("jdbcDriver");
+        this.jdbcUser = properties.getProperty("jdbcUser");
+        this.jdbcPass = properties.getProperty("jdbcPass");
+        this.sqlExpressionTemplate = template;
+        createBasicDataSource();
+    }
+
+    private Properties readProperties(String propertyFile) {
+        InputStream is = null;
+        try {
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile);
+            if (is == null) throw new RuntimeException(String.format("File %s not found on classpath.", propertyFile));
+            Properties properties = new Properties();
+            properties.load(is);
+            return properties;
+        } catch (IOException e) {
+            throw (new RuntimeException(e));
+        } finally {
+            if (is != null) try {
+                is.close();
+            } catch (IOException e) {
+                //nothing to do
+            }
+        }
+    }
+
     private void createBasicDataSource() {
         BasicDataSource bds = new BasicDataSource();
         bds.setDriverClassName(jdbcDriver);
@@ -90,6 +127,16 @@ public class DataSourceUtils {
         bds.setUsername(jdbcUser);
         bds.setPassword(jdbcPass);
         dataSource = bds;
+    }
+
+
+    /**
+     * Closes the connections to the database.
+     *
+     * @throws SQLException
+     */
+    public void close() throws SQLException {
+        ((BasicDataSource) dataSource).close();
     }
 
     /**
@@ -140,7 +187,6 @@ public class DataSourceUtils {
     }
 
     public void insertTestData(TestData testData) throws SQLException {
-        deleteTestData();
         Connection cn = null;
         try {
             cn = getDataSource().getConnection();
@@ -160,6 +206,38 @@ public class DataSourceUtils {
                 if (cn != null) cn.close();
             } catch (SQLException e) {
                 // nothing to do
+            }
+        }
+    }
+
+
+    /**
+     * Parses the content of a file into an executable SQL statement.
+     *
+     * @param fileName name of a file containing SQL-statements
+     * @return
+     * @throws IOException
+     */
+    public String parseSqlIn(String fileName) throws IOException {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+        if (is == null) {
+            throw new RuntimeException("File " + fileName + " not found on Classpath.");
+        }
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is));
+
+            StringWriter sw = new StringWriter();
+            BufferedWriter writer = new BufferedWriter(sw);
+
+            for (int c = reader.read(); c != -1; c = reader.read()) {
+                writer.write(c);
+            }
+            writer.flush();
+            return sw.toString();
+        } finally {
+            if (is != null) {
+                is.close();
             }
         }
     }
@@ -189,6 +267,13 @@ public class DataSourceUtils {
             } catch (SQLException e) {
             } //do nothing.
         }
+    }
+
+    /**
+     * Operations to fully initialize the
+     */
+    public void afterCreateSchema() {
+
     }
 
     /**
