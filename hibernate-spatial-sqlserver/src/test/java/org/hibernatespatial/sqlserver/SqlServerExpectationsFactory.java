@@ -28,6 +28,7 @@ package org.hibernatespatial.sqlserver;
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.sqlserver.convertors.Decoders;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
 
 
@@ -38,8 +39,8 @@ import org.hibernatespatial.test.NativeSQLStatement;
 public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
 
 
-    public SqlServerExpectationsFactory() {
-        super("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
+    public SqlServerExpectationsFactory(DataSourceUtils utils) {
+        super(utils);
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.type.CustomType;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
 /**
@@ -52,7 +53,7 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
         // (spec_simplefeatures_sql_99-04.pdf)
 
         // CustomType for GeometryUserType
-        CustomType geomType = new CustomType(SQLServerGeometryUserType.class, null);
+        CustomType geomType = new CustomType(new SQLServerGeometryUserType(), new String[]{"sqlserver_geometry"});
 
         // section 2.1.1.1
         // Registerfunction calls for registering geometry functions:
@@ -185,5 +186,9 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
 
     public boolean isTwoPhaseFiltering() {
         return false;
+    }
+
+    public boolean supports(SpatialFunction function) {
+        return true;
     }
 }

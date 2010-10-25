@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -27,9 +27,13 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.sqlserver.SQLServerExpressionTemplate;
+import org.hibernatespatial.sqlserver.SQLServerTestSupport;
 import org.hibernatespatial.test.DataSourceUtils;
+import org.hibernatespatial.test.TestData;
+import org.hibernatespatial.test.TestSupport;
 import org.junit.BeforeClass;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,21 +49,26 @@ public class AbstractConvertorTest {
 
     private final static DataSourceUtils dataSourceUtils = new DataSourceUtils("hibernate-spatial-sqlserver-test.properties", new SQLServerExpressionTemplate());
 
+    private final static TestSupport support = new SQLServerTestSupport();
+
     Map<Integer, Geometry> decodedGeoms;
     Map<Integer, Object> rawResults;
     Map<Integer, byte[]> encodedGeoms;
     Map<Integer, Geometry> expectedGeoms;
 
     @BeforeClass
-    public static void beforeClass() throws SQLException {
-        dataSourceUtils.deleteTestData();
-        dataSourceUtils.insertTestData();
+    public static void beforeClass() throws SQLException, IOException {
+        String sql = dataSourceUtils.parseSqlIn("create-test-schema.sql");
+        dataSourceUtils.executeStatement(sql);
+        TestData testData = support.createTestData(null);
+        dataSourceUtils.insertTestData(testData);
     }
 
 
     public void doDecoding(OpenGisType type) {
         rawResults = dataSourceUtils.rawDbObjects(type.toString());
-        expectedGeoms = dataSourceUtils.expectedGeoms(type.toString());
+        TestData testData = support.createTestData(null);
+        expectedGeoms = dataSourceUtils.expectedGeoms(type.toString(), testData);
         decodedGeoms = new HashMap<Integer, Geometry>();
 
         for (Integer id : rawResults.keySet()) {
