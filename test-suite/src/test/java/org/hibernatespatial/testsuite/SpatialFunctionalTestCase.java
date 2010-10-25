@@ -2,8 +2,12 @@ package org.hibernatespatial.testsuite;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.classic.Session;
 import org.hibernate.testing.junit.functional.FunctionalTestCase;
+import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.test.*;
 import org.slf4j.Logger;
 
@@ -30,7 +34,6 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
         super(string);
     }
 
-
     public void insertTestData() {
         try {
             dataSourceUtils.insertTestData(testData);
@@ -39,18 +42,39 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
         }
     }
 
+    public void deleteAllTestEntities() {
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = openSession();
+            tx = session.beginTransaction();
+            String hql = "delete from GeomEntity";
+            Query q = session.createQuery(hql);
+            q.executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+        } finally {
+            if (session != null) session.close();
+        }
+    }
+
     public void prepareTest() {
         try {
-            TestSupportFactory tsFactory = TestSupportFactories.instance().getTestSupportFactory(getDialect());
+            TestSupport tsFactory = TestSupportFactories.instance().getTestSupportFactory(getDialect());
             Configuration cfg = getCfg();
             dataSourceUtils = tsFactory.createDataSourceUtil(cfg);
             expectationsFactory = tsFactory.createExpectationsFactory(dataSourceUtils);
             testData = tsFactory.createTestData(this);
             geometryEquality = tsFactory.createGeometryEquality();
-
+            dataSourceUtils.afterCreateSchema();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void cleanupTest() throws SQLException {
+        dataSourceUtils.close();
     }
 
     public Connection getConnection() throws SQLException {
@@ -63,6 +87,11 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
 
     public String[] getMappings() {
         return new String[]{"GeomEntity.hbm.xml"};
+    }
+
+    public boolean isSupportedByDialect(SpatialFunction spatialFunction) {
+        SpatialDialect dialect = (SpatialDialect) getDialect();
+        return dialect.supports(spatialFunction);
     }
 
     abstract protected Logger getLogger();
@@ -101,7 +130,7 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
 
 
     protected void compare(Integer id, Object expected, Object received) {
-        assertTrue(expected != null && received != null);
+        assertTrue(expected != null || (expected == null && received == null));
         if (expected instanceof byte[]) {
             assertArrayEquals("Failure on testsuite-suite for case " + id, (byte[]) expected, (byte[]) received);
 

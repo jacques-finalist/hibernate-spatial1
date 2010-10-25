@@ -29,6 +29,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.criterion.SpatialRestrictions;
 import org.hibernatespatial.test.GeomEntity;
 import org.slf4j.Logger;
@@ -38,9 +39,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 /**
  * Created by IntelliJ IDEA.
  * User: maesenka
@@ -48,7 +46,7 @@ import static org.junit.Assert.fail;
  * Time: 10:02:24 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TestSpatialRestrictions extends SpatialFunctionalTestCase{
+public class TestSpatialRestrictions extends SpatialFunctionalTestCase {
 
     private static Logger LOGGER = LoggerFactory.getLogger(TestSpatialRestrictions.class);
 
@@ -56,7 +54,7 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase{
         super(string);
     }
 
-    public void prepareTest(){
+    public void prepareTest() {
         super.prepareTest();
         try {
             dataSourceUtils.insertTestData(testData);
@@ -65,59 +63,80 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase{
         }
     }
 
-    protected Logger getLogger(){
+    protected Logger getLogger() {
         return LOGGER;
     }
 
-    public void test_within() throws SQLException {
+    public void testRestrictions() throws Exception {
+        within();
+        filter();
+        contains();
+        crosses();
+        touches();
+        disjoint();
+        eq();
+        intersects();
+        overlaps();
+    }
+
+    public void within() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.within)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getWithin(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.within("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_filter() throws SQLException {
+    public void filter() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.filter)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getFilter(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.filter("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_contains() throws SQLException {
+    public void contains() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.contains)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getContains(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.contains("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_crosses() throws SQLException {
+    public void crosses() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.crosses)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getCrosses(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.crosses("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_touches() throws SQLException {
+    public void touches() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.touches)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getTouches(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.touches("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_disjoint() throws SQLException {
+    public void disjoint() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.disjoint)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getDisjoint(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.disjoint("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_eq() throws SQLException {
+    public void eq() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.equals)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getEquals(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.eq("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_intersects() throws SQLException {
+    public void intersects() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.intersects)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getIntersects(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.intersects("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
-    public void test_overlaps() throws SQLException {
+    public void overlaps() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.overlaps)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getOverlaps(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.overlaps("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
@@ -133,7 +152,7 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase{
             criteria.add(spatialCriterion);
             compare(dbexpected, criteria.list());
             tx.commit();
-        } catch(Exception e){
+        } catch (Exception e) {
             tx.rollback();
         }
         finally {

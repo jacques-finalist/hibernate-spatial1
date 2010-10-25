@@ -30,7 +30,8 @@ import com.vividsolutions.jts.io.ParseException;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernatespatial.test.*;
+import org.hibernatespatial.test.GeomEntity;
+import org.hibernatespatial.test.TestDataElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,24 +47,27 @@ public class TestStoreRetrieve extends SpatialFunctionalTestCase {
 
     private static Logger LOGGER = LoggerFactory.getLogger(TestStoreRetrieve.class);
 
-    public TestStoreRetrieve(String string){
+    public TestStoreRetrieve(String string) {
         super(string);
     }
 
 
-    protected Logger getLogger(){
+    protected Logger getLogger() {
         return LOGGER;
     }
 
 
-    public void test_store_retrieve() throws ParseException {
+    public void testStoreRetrieve() throws ParseException {
         Map<Integer, GeomEntity> stored = new HashMap<Integer, GeomEntity>();
+        //check whether we retrieve exactly what we store
         storeTestObjects(stored);
         retrieveAndCompare(stored);
-    }
 
-    public void test_store_retrieve_null_geometry() {
+        deleteAllTestEntities();
+
+        //check if we can store null-geometries
         storeNullGeometry();
+        //check if we can retrieve null-geometries
         retrieveNullGeometry();
     }
 
@@ -155,7 +159,7 @@ public class TestStoreRetrieve extends SpatialFunctionalTestCase {
             GeomEntity entity = retrieved.get(0);
             assertNull(entity.getGeom());
             tx.commit();
-        } catch(Exception e){
+        } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw new RuntimeException(e);
         } finally {

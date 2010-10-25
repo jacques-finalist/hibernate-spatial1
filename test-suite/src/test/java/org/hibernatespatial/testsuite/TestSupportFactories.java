@@ -1,7 +1,7 @@
 package org.hibernatespatial.testsuite;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernatespatial.test.TestSupportFactory;
+import org.hibernatespatial.test.TestSupport;
 
 
 /**
@@ -12,23 +12,24 @@ public class TestSupportFactories {
 
     private static TestSupportFactories instance = new TestSupportFactories();
 
-    public static TestSupportFactories instance(){
+    public static TestSupportFactories instance() {
         return instance;
     }
 
-    private TestSupportFactories(){}
+    private TestSupportFactories() {
+    }
 
 
-    public TestSupportFactory getTestSupportFactory(Dialect dialect) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public TestSupport getTestSupportFactory(Dialect dialect) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dialect == null) throw new IllegalArgumentException("Dialect argument is required.");
         String testSupportFactoryClassName = getSupportFactoryClassName(dialect);
         return instantiate(testSupportFactoryClassName);
 
     }
 
-    private  TestSupportFactory instantiate(String testSupportFactoryClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private TestSupport instantiate(String testSupportFactoryClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cloader = getClassLoader();
-        Class<TestSupportFactory> cl = (Class<TestSupportFactory>)(cloader.loadClass(testSupportFactoryClassName));
+        Class<TestSupport> cl = (Class<TestSupport>) (cloader.loadClass(testSupportFactoryClassName));
         return cl.newInstance();
     }
 
@@ -36,10 +37,22 @@ public class TestSupportFactories {
         return this.getClass().getClassLoader();
     }
 
-    private static String getSupportFactoryClassName(Dialect dialect){
+    private static String getSupportFactoryClassName(Dialect dialect) {
         String canonicalName = dialect.getClass().getCanonicalName();
         if ("org.hibernatespatial.postgis.PostgisDialect".equals(canonicalName)) {
-            return "org.hibernatespatial.postgis.PostgisTestSupportFactory";
+            return "org.hibernatespatial.postgis.PostgisTestSupport";
+        }
+        if ("org.hibernatespatial.geodb.GeoDBDialect".equals(canonicalName)) {
+            return "org.hibernatespatial.geodb.GeoDBSupport";
+        }
+        if ("org.hibernatespatial.sqlserver.SQLServerSpatialDialect".equals(canonicalName)) {
+            return "org.hibernatespatial.sqlserver.SQLServerTestSupport";
+        }
+        if ("org.hibernatespatial.mysql.MySQLSpatialDialect".equals(canonicalName)) {
+            return "org.hibernatespatial.mysql.MySQLTestSupport";
+        }
+        if ("org.hibernatespatial.oracle.OracleSpatial10gDialect".equals(canonicalName)) {
+            return "org.hibernatespatial.oracle.OracleSDOTestSupport";
         }
         throw new IllegalArgumentException("Dialect not known in test suite");
     }

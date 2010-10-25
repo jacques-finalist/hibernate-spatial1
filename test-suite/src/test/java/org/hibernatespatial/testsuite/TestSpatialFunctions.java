@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.type.CustomType;
 import org.hibernatespatial.GeometryUserType;
+import org.hibernatespatial.SpatialFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,85 +60,119 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         return LOGGER;
     }
 
+    public void testSpatialFunctions() throws Exception {
+        dimension();
+        astext();
+        asbinary();
+        geometrytype();
+        srid();
+        issimple();
+        isempty();
+        boundary();
+        envelope();
+        within();
+        equals();
+        crosses();
+        contains();
+        disjoint();
+        intersects();
+        overlaps();
+        touches();
+        relate();
+        distance();
+        buffer();
+        convexhull();
+        intersection();
+        difference();
+        symdifference();
+        geomunion();
+    }
 
-    public void test_dimension() throws SQLException {
+
+    public void dimension() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.dimension)) return;
         Map<Integer, Integer> dbexpected = expectationsFactory.getDimension();
         String hql = "SELECT id, dimension(geom) FROM GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_astext() throws SQLException {
+    public void astext() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.astext)) return;
         Map<Integer, String> dbexpected = expectationsFactory.getAsText();
         String hql = "SELECT id, astext(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_asbinary() throws SQLException {
+    public void asbinary() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.asbinary)) return;
         Map<Integer, byte[]> dbexpected = expectationsFactory.getAsBinary();
         String hql = "SELECT id, asbinary(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
 
-    public void test_geometrytype() throws SQLException {
+    public void geometrytype() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.geometrytype)) return;
         Map<Integer, String> dbexpected = expectationsFactory.getGeometryType();
         String hql = "SELECT id, geometrytype(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_srid() throws SQLException {
+    public void srid() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.srid)) return;
         Map<Integer, Integer> dbexpected = expectationsFactory.getSrid();
         String hql = "SELECT id, srid(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_issimple() throws SQLException {
+    public void issimple() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.issimple)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getIsSimple();
         String hql = "SELECT id, issimple(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_isempty() throws SQLException {
+    public void isempty() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.isempty)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getIsEmpty();
         String hql = "SELECT id, isEmpty(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
 
-    public void test_boundary() throws SQLException {
+    public void boundary() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.boundary)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getBoundary();
         String hql = "SELECT id, boundary(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
 
-    public void test_envelope() throws SQLException {
+    public void envelope() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.envelope)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getEnvelope();
         String hql = "SELECT id, envelope(geom) from GeomEntity";
         retrieveHQLResultsAndCompare(dbexpected, hql);
     }
 
-    public void test_within() throws SQLException {
+    public void within() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.within)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getWithin(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, within(geom, :filter) from GeomEntity where within(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    private Map<String, Object> createQueryParams(String filterParamName, Object value) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put(filterParamName, value);
-        return params;
-    }
-
-    public void test_equals() throws SQLException {
+    public void equals() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.equals)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getEquals(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, equals(geom, :filter) from GeomEntity where equals(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_crosses() throws SQLException {
+    public void crosses() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.crosses)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getCrosses(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, crosses(geom, :filter) from GeomEntity where crosses(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
@@ -145,7 +180,8 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
 
     }
 
-    public void test_contains() throws SQLException {
+    public void contains() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.contains)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getContains(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, contains(geom, :filter) from GeomEntity where contains(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
@@ -153,35 +189,40 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
     }
 
 
-    public void test_disjoint() throws SQLException {
+    public void disjoint() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.disjoint)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getDisjoint(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, disjoint(geom, :filter) from GeomEntity where disjoint(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_intersects() throws SQLException {
+    public void intersects() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.intersects)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getIntersects(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, intersects(geom, :filter) from GeomEntity where intersects(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_overlaps() throws SQLException {
+    public void overlaps() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.overlaps)) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getOverlaps(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, overlaps(geom, :filter) from GeomEntity where overlaps(geom, :filter) = true and srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_touches() throws SQLException {
+    public void touches() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.touches)) return;
         String hql = "SELECT id, touches(geom, :filter) from GeomEntity where touches(geom, :filter) = true and srid(geom) = 4326";
         Map<Integer, Boolean> dbexpected = expectationsFactory.getTouches(expectationsFactory.getTestPolygon());
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_relate() throws SQLException {
+    public void relate() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.relate)) return;
         String matrix = "T*T***T**";
         Map<Integer, Boolean> dbexpected = expectationsFactory.getRelate(expectationsFactory.getTestPolygon(), matrix);
         String hql = "SELECT id, relate(geom, :filter, :matrix) from GeomEntity where relate(geom, :filter, :matrix) = true and srid(geom) = 4326";
@@ -196,14 +237,16 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
 
     }
 
-    public void test_distance() throws SQLException {
+    public void distance() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.distance)) return;
         Map<Integer, Double> dbexpected = expectationsFactory.getDistance(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, distance(geom, :filter) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_buffer() throws SQLException {
+    public void buffer() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.buffer)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getBuffer(Double.valueOf(1.0));
         String hql = "SELECT id, buffer(geom, :distance) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("distance", Double.valueOf(1.0));
@@ -211,7 +254,8 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
 
     }
 
-    public void test_convexhull() throws SQLException {
+    public void convexhull() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.convexhull)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getConvexHull(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, convexhull(geomunion(geom, :polygon)) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
@@ -219,28 +263,32 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
 
     }
 
-    public void test_intersection() throws SQLException {
+    public void intersection() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.intersection)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getIntersection(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, intersection(geom, :polygon) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_difference() throws SQLException {
+    public void difference() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.difference)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getDifference(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, difference(geom, :polygon) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_symdifference() throws SQLException {
+    public void symdifference() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.symdifference)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getSymDifference(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, symdifference(geom, :polygon) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
     }
 
-    public void test_geomunion() throws SQLException {
+    public void geomunion() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.geomunion)) return;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getGeomUnion(expectationsFactory.getTestPolygon());
         String hql = "SELECT id, geomunion(geom, :polygon) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
@@ -257,6 +305,11 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         compare(dbexpected, hsreceived);
     }
 
+    private Map<String, Object> createQueryParams(String filterParamName, Object value) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(filterParamName, value);
+        return params;
+    }
 
     private <T> void doInSession(String hql, Map<Integer, T> result, Map<String, Object> params) {
         Session session = null;
