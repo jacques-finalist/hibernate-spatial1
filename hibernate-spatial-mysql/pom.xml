@@ -32,12 +32,6 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>provided</scope>
-            <version>[5.0.5,)</version>
-        </dependency>
     </dependencies>
 
     <distributionManagement>

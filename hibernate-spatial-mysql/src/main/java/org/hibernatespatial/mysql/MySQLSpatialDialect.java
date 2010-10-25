@@ -32,8 +32,10 @@ import org.hibernate.Hibernate;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
 /**
@@ -43,6 +45,9 @@ import org.hibernatespatial.SpatialRelation;
  * @author Karel Maesen
  */
 public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect {
+
+
+    private static final Type geometryCustomType = new CustomType(new MySQLGeometryUserType(), new String[]{"mysql_geometry"});
 
     public MySQLSpatialDialect() {
         super();
@@ -62,7 +67,7 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         registerFunction("srid", new StandardSQLFunction("srid",
                 Hibernate.INTEGER));
         registerFunction("envelope", new StandardSQLFunction("envelope",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                new CustomType(new MySQLGeometryUserType(), null)));
         registerFunction("astext", new StandardSQLFunction("astext",
                 Hibernate.STRING));
         registerFunction("asbinary", new StandardSQLFunction("asbinary",
@@ -72,7 +77,7 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         registerFunction("issimple", new StandardSQLFunction("issimple",
                 Hibernate.BOOLEAN));
         registerFunction("boundary", new StandardSQLFunction("boundary",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                geometryCustomType));
 
         // Register functions for spatial relation constructs
         registerFunction("overlaps", new StandardSQLFunction("overlaps",
@@ -98,19 +103,17 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         registerFunction("distance", new StandardSQLFunction("distance",
                 Hibernate.DOUBLE));
         registerFunction("buffer", new StandardSQLFunction("buffer",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                geometryCustomType));
         registerFunction("convexhull", new StandardSQLFunction("convexhull",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                geometryCustomType));
         registerFunction("difference", new StandardSQLFunction("difference",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                geometryCustomType));
         registerFunction("intersection", new StandardSQLFunction(
-                "intersection", new CustomType(MySQLGeometryUserType.class,
-                        null)));
+                "intersection", geometryCustomType));
         registerFunction("symdifference", new StandardSQLFunction(
-                "symdifference", new CustomType(MySQLGeometryUserType.class,
-                        null)));
+                "symdifference", geometryCustomType));
         registerFunction("geomunion", new StandardSQLFunction("union",
-                new CustomType(MySQLGeometryUserType.class, null)));
+                geometryCustomType));
 
     }
 
@@ -178,6 +181,22 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
     public boolean isTwoPhaseFiltering() {
         return false;
+    }
+
+    public boolean supports(SpatialFunction function) {
+        switch (function) {
+            case boundary:
+            case relate:
+            case distance:
+            case buffer:
+            case convexhull:
+            case difference:
+            case symdifference:
+            case intersection:
+            case geomunion:
+                return false;
+        }
+        return true;
     }
 
 }

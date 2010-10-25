@@ -27,6 +27,7 @@ package org.hibernatespatial.mysql;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
 
 /**
@@ -39,8 +40,8 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
 
     private final MySQLGeometryUserType decoder = new MySQLGeometryUserType();
 
-    public MySQLExpectationsFactory() {
-        super("hibernate-spatial-mysql-test.properties", new MySQLExpressionTemplate());
+    public MySQLExpectationsFactory(DataSourceUtils dataSourceUtils) {
+        super(dataSourceUtils);
     }
 
     @Override
