@@ -20,6 +20,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>../hibernate-spatial</module>
+        <module>../test-suite</module>
         <module>../hibernate-spatial-postgis</module>
         <module>../hibernate-spatial-oracle</module>
         <module>../hibernate-spatial-mysql</module>
@@ -33,7 +34,7 @@
         </repository>
         <repository>
             <id>JBoss repo</id>
-            <url>http://repository.jboss.com/maven2</url>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
         </repository>
     </repositories>
     <build>
@@ -45,10 +46,9 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
-
-            <!--  We skip the unit tests when building and packaging because it
-                   it requires specific test set-up.
-               -->
+            <!--We skip the unit tests when building and packaging because it
+                it requires specific testsuite-suite set-up.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -56,7 +56,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <!-- generate source artefacts -->
+            <!--generate source artefacts -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -71,9 +71,22 @@
                 </executions>
             </plugin>
 
+            <!--  this ensures that the common testsuite-suite cases are available for providers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
     </build>
+
+
     <scm>
         <connection>
             scm:svn:http://www.hibernatespatial.org/svn/hibernate-spatial/trunk/hibernate-spatial-maven
@@ -150,7 +163,14 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.3.2.GA</version>
+            <!--<version>3.3.2.GA</version>-->
+            <version>3.6.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-testing</artifactId>
+            <scope>test</scope>
+            <version>3.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -178,7 +198,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.4.2</version>
+            <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -186,7 +206,8 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <scope>test</scope>
-            <version>[1.2.2,)</version>
+            <!--<version>[1.2.2,)</version>-->
+            <version>1.4</version>
         </dependency>
 
         <dependency>
@@ -197,6 +218,176 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>automated-unit-test</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <filtering>false</filtering>
+                        <directory>src/test/java</directory>
+                        <includes>
+                            <include>**/*.xml</include>
+                        </includes>
+                    </testResource>
+                    <testResource>
+                        <filtering>true</filtering>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+
+        <!-- postgresql + postgis -->
+        <profile>
+            <id>postgresql83</id>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>8.4-701.jdbc3</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.postgis</groupId>
+                    <artifactId>postgis-jdbc</artifactId>
+                    <version>[1.1.6,)</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-postgis</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-postgis</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.postgis.PostgisDialect</db.dialect>
+                <jdbc.driver>org.postgresql.Driver</jdbc.driver>
+                <!--<jdbc.url>jdbc:postgresql://vmg03.mw.lab.eng.bos.redhat.com:5432:hibbrtru</jdbc.url>-->
+                <jdbc.url>jdbc:postgresql://localhost:5432:hibbrtru</jdbc.url>
+                <jdbc.user>hibbrtru</jdbc.user>
+                <jdbc.pass>hibbrtru</jdbc.pass>
+                <jdbc.isolation/>
+            </properties>
+        </profile>
+
+        <!-- GeoDB (H2) -->
+        <profile>
+            <id>geodb</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-h2-geodb</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.opengeo</groupId>
+                    <artifactId>geodb</artifactId>
+                    <version>0.3</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.geodb.GeoDBDialect</db.dialect>
+                <jdbc.driver>org.h2.Driver</jdbc.driver>
+                <jdbc.url>jdbc:h2:mem:testhbs;DB_CLOSE_DELAY=-1</jdbc.url>
+                <jdbc.user>sa</jdbc.user>
+                <jdbc.pass>sa</jdbc.pass>
+                <jdbc.isolation/>
+            </properties>
+        </profile>
+
+        <!-- Microsoft SQL Server 2008 -->
+        <profile>
+            <id>sqlserver-2008</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-sqlserver</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft</groupId>
+                    <artifactId>sqljdbc</artifactId>
+                    <scope>test</scope>
+                    <version>[2.0,)</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.sqlserver.SQLServerSpatialDialect</db.dialect>
+                <jdbc.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc.driver>
+                <jdbc.url>jdbc:sqlserver://192.168.122.119:1433;databaseName=HBS</jdbc.url>
+                <jdbc.user>hbs</jdbc.user>
+                <jdbc.pass>hbs</jdbc.pass>
+                <jdbc.isolation/>
+            </properties>
+        </profile>
+
+        <!-- MySQL -->
+        <profile>
+            <id>mysql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-mysql</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <scope>provided</scope>
+                    <version>[5.0.5,)</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.mysql.MySQLSpatialDialect</db.dialect>
+                <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+                <jdbc.url>jdbc:mysql://localhost/testhbs</jdbc.url>
+                <jdbc.user>hibernate</jdbc.user>
+                <jdbc.pass>hibernate</jdbc.pass>
+            </properties>
+        </profile>
+
+        <!-- Oracle -->
+        <profile>
+            <id>oracle10g</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-oracle</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>com.oracle.jdbc</groupId>
+                    <!--<artifactId>ojdbc14</artifactId>-->
+                    <artifactId>ojdbc6</artifactId>
+                    <scope>provided</scope>
+                    <!--<version>10.2.0.1.0</version>-->
+                    <version>[11.1.0.6.0,)</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.oracle.OracleSpatial10gDialect</db.dialect>
+                <jdbc.driver>oracle.jdbc.driver.OracleDriver</jdbc.driver>
+                <jdbc.url>jdbc:oracle:thin:@oracle.geovise.com/ORCL</jdbc.url>
+                <jdbc.user>hbs</jdbc.user>
+                <jdbc.pass>hbs</jdbc.pass>
+            </properties>
+        </profile>
+
+    </profiles>
+
 
     <reporting>
         <plugins>
@@ -289,6 +480,24 @@
                 <role>Contributor</role>
             </roles>
         </developer>
+        <developer>
+            <id>janb</id>
+            <name>Jan Boonen</name>
+            <email>jan.boonen@geodan.nl</email>
+            <roles>
+                <role>H2-geodb Project Lead</role>
+                <role>H2-geodb Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>reinoldp</id>
+            <name>Reinold Pasterkamp</name>
+            <email>reinold.pasterkamp@geodan.nl</email>
+            <roles>
+                <role>H2-geodb Committer</role>
+            </roles>
+        </developer>
+
     </developers>
 
 
