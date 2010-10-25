@@ -40,7 +40,7 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     private final PGGeometryUserType decoder = new PGGeometryUserType();
 
     public PostgisExpectationsFactory(DataSourceUtils utils) {
-        super(utils, new PostgisExpressionTemplate());
+        super(utils);
     }
 
     @Override

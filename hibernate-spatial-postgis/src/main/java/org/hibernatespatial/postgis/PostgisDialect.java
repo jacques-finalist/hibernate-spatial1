@@ -37,6 +37,7 @@ import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialAggregate;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
 /**
@@ -207,6 +208,10 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
     }
 
     public boolean isTwoPhaseFiltering() {
+        return true;
+    }
+
+    public boolean supports(SpatialFunction function) {
         return true;
     }
 
