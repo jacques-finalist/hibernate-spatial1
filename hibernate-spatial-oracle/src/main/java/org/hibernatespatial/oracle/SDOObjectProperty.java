@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -91,7 +91,7 @@ class SDOObjectProperty implements SQLFunction {
       *      org.hibernate.engine.SessionFactoryImplementor)
       */
 
-    public String render(List args, SessionFactoryImplementor factory)
+    public String render(Type firstArgtype, List args, SessionFactoryImplementor factory)
             throws QueryException {
         StringBuffer buf = new StringBuffer();
         if (args.isEmpty())

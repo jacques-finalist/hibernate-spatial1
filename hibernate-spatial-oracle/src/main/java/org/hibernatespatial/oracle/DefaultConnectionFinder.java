@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -28,12 +28,12 @@
  */
 package org.hibernatespatial.oracle;
 
+import oracle.jdbc.driver.OracleConnection;
+import org.hibernatespatial.helper.FinderException;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-
-import oracle.jdbc.driver.OracleConnection;
-
-import org.hibernatespatial.helper.FinderException;
 
 /**
  * Default <code>ConnectionFinder</code> implementation.
@@ -43,35 +43,43 @@ import org.hibernatespatial.helper.FinderException;
  * <code>Connection</code> objects, executes these methods and checks the
  * result. If the result is of type <code>OracleConnection</code> the object
  * is returned, otherwise it recurses on it.
+ * <p/>
  * </p>
- * 
+ *
  * @author Karel Maesen
- * 
  */
 public class DefaultConnectionFinder implements ConnectionFinder {
 
-	public OracleConnection find(Connection con) throws FinderException {
-		if (con == null) {
-			return null;
-		}
-		if (con instanceof OracleConnection) {
-			return (OracleConnection) con;
-		}
-		// try to find the Oracleconnection recursively
-		for (Method method : con.getClass().getMethods()) {
-			if (method.getReturnType().isAssignableFrom(
-					java.sql.Connection.class)
-					&& method.getParameterTypes().length == 0) {
-				try {
-					return find((java.sql.Connection) (method.invoke(con,
-							new Object[] {})));
-				} catch (Exception e) {
-					// Shouldm't ever happen.
-				}
-			}
-		}
-		throw new FinderException(
-				"Couldn't get at the OracleSpatial Connection object from the PreparedStatement.");
-	}
+    public OracleConnection find(Connection con) throws FinderException {
+        if (con == null) {
+            return null;
+        }
+        if (con instanceof OracleConnection) {
+            return (OracleConnection) con;
+        }
+        // try to find the Oracleconnection recursively
+        for (Method method : con.getClass().getMethods()) {
+            if (method.getReturnType().isAssignableFrom(
+                    java.sql.Connection.class)
+                    && method.getParameterTypes().length == 0) {
+
+                try {
+                    method.setAccessible(true);
+                    OracleConnection oc = find((Connection) (method.invoke(con, new Object[]{})));
+                    if (oc == null) {
+                        throw new FinderException(String.format("Tried retrieving OracleConnection from %s using method %s, but received null.", con.getClass().getCanonicalName(), method.getName()));
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new FinderException(String.format("Illegal access on executing method %s when finding OracleConnection", method.getName()));
+                } catch (InvocationTargetException e) {
+                    throw new FinderException(String.format("Invocation exception on executing method %s when finding OracleConnection", method.getName()));
+                }
+
+
+            }
+        }
+        throw new FinderException(
+                "Couldn't get at the OracleSpatial Connection object from the PreparedStatement.");
+    }
 
 }

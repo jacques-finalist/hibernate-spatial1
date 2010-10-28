@@ -27,10 +27,11 @@ package org.hibernatespatial.oracle;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
+import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
 
 /**
- * Expectations factory for Oracle 10g (SDO_GEOMETRY).
+ * Expectations factory for Oracle 10g (SDOGeometry).
  *
  * @Author Karel Maesen, Geovise BVBA
  */
@@ -38,8 +39,8 @@ public class SDOGeometryExpectationsFactory extends AbstractExpectationsFactory 
 
     private final SDOGeometryType decoder = new SDOGeometryType();
 
-    public SDOGeometryExpectationsFactory() {
-        super("hibernate-spatial-oracle10g-test.properties", new SDOGeometryExpressionTemplate());
+    public SDOGeometryExpectationsFactory(DataSourceUtils dataSourceUtils) {
+        super(dataSourceUtils);
     }
 
     @Override

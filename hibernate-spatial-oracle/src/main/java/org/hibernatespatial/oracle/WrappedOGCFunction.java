@@ -51,7 +51,7 @@ class WrappedOGCFunction extends StandardSQLFunction {
         this.geomArrays = geomArrays;
     }
 
-    public String render(final List args,
+    public String render(Type firstArgumentType, final List args,
                          final SessionFactoryImplementor factory) {
 
         StringBuffer buf = new StringBuffer();

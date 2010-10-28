@@ -27,6 +27,7 @@ package org.hibernatespatial.oracle;
 
 import org.hibernate.Hibernate;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.type.Type;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ class GetGeometryTypeFunction extends SDOObjectMethod {
         super("Get_GType", Hibernate.STRING);
     }
 
-    public String render(final List args,
+    public String render(Type firstArgumentType, final List args,
                          final SessionFactoryImplementor factory) {
         StringBuffer buf = new StringBuffer();
         if (args.isEmpty()) {

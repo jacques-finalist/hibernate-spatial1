@@ -24,7 +24,7 @@
   -->
 
 <!--
- Special test data set for testing store/retrieve in Oracle Spatial 10g (SDO_GEOMETRY)
+ Special test data set for testing store/retrieve in Oracle Spatial 10g (SDOGeometry)
 -->
 
 <TestData>

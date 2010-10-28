@@ -56,24 +56,23 @@ class SDOBooleanType extends BooleanType {
         }
     }
 
-    public void set(PreparedStatement st, Object value, int index)
+    public void set(PreparedStatement st, Boolean value, int index)
             throws SQLException {
 
         if (value == null) {
             st.setNull(index, Types.VARCHAR);
         } else {
-            boolean bool = ((Boolean) value).booleanValue();
+            boolean bool = value.booleanValue();
             st.setString(index, bool ? "TRUE" : "FALSE");
         }
     }
 
-    public String objectToSQLString(Object value, Dialect dialect)
-            throws Exception {
-        return ((Boolean) value).booleanValue() ? "'TRUE'" : "'FALSE'";
+    public String objectToSQLString(Boolean value, Dialect dialect) {
+        return value.booleanValue() ? "'TRUE'" : "'FALSE'";
     }
 
-    public int sqlType() {
-        return Types.VARCHAR;
-    }
+//    public int sqlType() {
+//        return Types.VARCHAR;
+//    }
 
 }

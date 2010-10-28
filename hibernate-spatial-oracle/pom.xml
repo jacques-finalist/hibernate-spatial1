@@ -13,7 +13,7 @@
     <name>Oracle DialectProvider</name>
     <url>http://www.hibernatespatial.org/hibernate-spatial-oracle</url>
     <description>
-        Oracle 10g dialact provider for Hibernate Spatial
+        Oracle 10g dialect provider for Hibernate Spatial
     </description>
 
     <dependencies>
@@ -31,9 +31,11 @@
         </dependency>
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
-            <artifactId>ojdbc14</artifactId>
+            <!--<artifactId>ojdbc14</artifactId>-->
+            <artifactId>ojdbc6</artifactId>
             <scope>provided</scope>
-            <version>10.2.0.1.0</version>
+            <!--<version>10.2.0.1.0</version>-->
+            <version>[11.1.0.6.0,)</version>
         </dependency>
     </dependencies>
 

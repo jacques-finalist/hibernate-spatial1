@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -28,28 +28,26 @@
  */
 package org.hibernatespatial.oracle;
 
-import java.sql.Connection;
-
-import oracle.jdbc.driver.OracleConnection;
-
+import oracle.jdbc.OracleConnection;
 import org.hibernatespatial.helper.FinderStrategy;
+
+import java.sql.Connection;
 
 /**
  * The <code>ConnectionFinder</code> returns an OracleConnection when given a
  * <code>Connection</code> object.
  * <p>
  * The SDOGeometryType requires access to an <code>OracleConnection</code>
- * object when converting a geometry to <code>SDO_GEOMETRY</code>, prior to
+ * object when converting a geometry to <code>SDOGeometry</code>, prior to
  * setting the geometry attribute in prepared statements. In some environments
  * the prepared statements do not return an <code>OracleConnection</code> but
  * a wrapper. Implementations of this interface attempt to retrieve the
  * <code>OracleConnection</code> from the wrapper in such cases.
  * </p>
- * 
+ *
  * @author Karel Maesen
- * 
  */
 public interface ConnectionFinder extends
-		FinderStrategy<OracleConnection, Connection> {
+        FinderStrategy<OracleConnection, Connection> {
 
 }

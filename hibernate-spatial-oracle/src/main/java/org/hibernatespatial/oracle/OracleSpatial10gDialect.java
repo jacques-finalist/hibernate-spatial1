@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -34,6 +34,7 @@ import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialAnalysis;
 import org.hibernatespatial.SpatialDialect;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 import org.hibernatespatial.helper.PropertyFileReader;
 import org.hibernatespatial.oracle.criterion.OracleSpatialAggregate;
@@ -57,6 +58,8 @@ import java.util.Properties;
 public class OracleSpatial10gDialect extends Oracle10gDialect implements
         SpatialDialect, Serializable {
 
+    private static final Type geometryCustomType = new CustomType(new SDOGeometryType(), new String[]{"sdo_geometry"});
+
     /**
      * Implementation of the OGC astext function for HQL.
      */
@@ -66,7 +69,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
             super("astext", Hibernate.STRING);
         }
 
-        public String render(final List args,
+        public String render(Type firstArgumentType, final List args,
                              final SessionFactoryImplementor factory) {
 
             StringBuffer buf = new StringBuffer();
@@ -95,7 +98,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
             this.relation = relation;
         }
 
-        public String render(final List args,
+        public String render(Type firstArgumentType, final List args,
                              final SessionFactoryImplementor factory) {
 
             if (args.size() < 2) {
@@ -122,7 +125,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
             this.analysis = analysis;
         }
 
-        public String render(List args, SessionFactoryImplementor factory) {
+        public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) {
             return isOGCStrict() ? getSpatialAnalysisSQL(args, this.analysis,
                     false) : getNativeSpatialAnalysisSQL(args, analysis);
         }
@@ -139,7 +142,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
             this.aggregation = aggregation;
         }
 
-        public String render(List args, SessionFactoryImplementor factory) {
+        public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) {
             return getNativeSpatialAggregateSQL((String) args.get(0),
                     this.aggregation);
         }
@@ -177,8 +180,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         registerFunction("srid", new SDOObjectProperty("SDO_SRID",
                 Hibernate.INTEGER));
         registerFunction("envelope",
-                new StandardSQLFunction("SDO_GEOM.SDO_MBR", new CustomType(
-                        SDOGeometryType.class, null)));
+                new StandardSQLFunction("SDO_GEOM.SDO_MBR", geometryCustomType));
         registerFunction("astext", new AsTextFunction());
 
         registerFunction("asbinary", new StandardSQLFunction(
@@ -188,7 +190,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         registerFunction("issimple", new WrappedOGCFunction("OGC_ISSIMPLE",
                 Hibernate.BOOLEAN, new boolean[]{true}));
         registerFunction("boundary", new WrappedOGCFunction("OGC_BOUNDARY",
-                new CustomType(SDOGeometryType.class, null),
+                geometryCustomType,
                 new boolean[]{true}));
 
         // registerFunction("area", new AreaFunction());
@@ -219,50 +221,50 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         registerFunction("distance", new SpatialAnalysisFunction("distance",
                 Hibernate.DOUBLE, SpatialAnalysis.DISTANCE));
         registerFunction("buffer", new SpatialAnalysisFunction("buffer",
-                new CustomType(SDOGeometryType.class, null),
+                geometryCustomType,
                 SpatialAnalysis.BUFFER));
         registerFunction("convexhull", new SpatialAnalysisFunction(
-                "convexhull", new CustomType(SDOGeometryType.class, null),
+                "convexhull", geometryCustomType,
                 SpatialAnalysis.CONVEXHULL));
         registerFunction("difference", new SpatialAnalysisFunction(
-                "difference", new CustomType(SDOGeometryType.class, null),
+                "difference", geometryCustomType,
                 SpatialAnalysis.DIFFERENCE));
         registerFunction("intersection", new SpatialAnalysisFunction(
-                "intersection", new CustomType(SDOGeometryType.class, null),
+                "intersection", geometryCustomType,
                 SpatialAnalysis.INTERSECTION));
         registerFunction("symdifference", new SpatialAnalysisFunction(
-                "symdifference", new CustomType(SDOGeometryType.class, null),
+                "symdifference", geometryCustomType,
                 SpatialAnalysis.SYMDIFFERENCE));
         registerFunction("geomunion", new SpatialAnalysisFunction("union",
-                new CustomType(SDOGeometryType.class, null),
+                geometryCustomType,
                 SpatialAnalysis.UNION));
         // we rename OGC union to geomunion because union is a reserved SQL
         // keyword. (See also postgis documentation).
 
         // portable spatial aggregate functions
         registerFunction("extent", new SpatialAggregationFunction("extent",
-                new CustomType(SDOGeometryType.class, null), false,
+                geometryCustomType, false,
                 OracleSpatialAggregate.EXTENT));
 
         // Oracle specific Aggregate functions
         registerFunction("centroid", new SpatialAggregationFunction("extent",
-                new CustomType(SDOGeometryType.class, null), false,
+                geometryCustomType, false,
                 OracleSpatialAggregate.CENTROID));
 
         registerFunction("concat_lines", new SpatialAggregationFunction(
-                "extent", new CustomType(SDOGeometryType.class, null), false,
+                "extent", geometryCustomType, false,
                 OracleSpatialAggregate.CONCAT_LINES));
 
         registerFunction("aggr_convexhull", new SpatialAggregationFunction(
-                "extent", new CustomType(SDOGeometryType.class, null), false,
+                "extent", geometryCustomType, false,
                 OracleSpatialAggregate.CONVEXHULL));
 
         registerFunction("aggr_union", new SpatialAggregationFunction("extent",
-                new CustomType(SDOGeometryType.class, null), false,
+                geometryCustomType, false,
                 OracleSpatialAggregate.UNION));
 
         registerFunction("lrs_concat", new SpatialAggregationFunction(
-                "lrsconcat", new CustomType(SDOGeometryType.class, null),
+                "lrsconcat", geometryCustomType,
                 false, OracleSpatialAggregate.LRS_CONCAT));
     }
 
@@ -546,7 +548,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
                                 .getContextClassLoader().loadClass(ccn);
                         ConnectionFinder cf = (ConnectionFinder) clazz
                                 .newInstance();
-                        SDOGeometryType.setConnectionFinder(cf);
+                        OracleJDBCTypeFactory.setConnectionFinder(cf);
                         log.info("Setting ConnectionFinder to " + ccn);
                     } catch (ClassNotFoundException e) {
                         log.warn("Tried to set ConnectionFinder to " + ccn
@@ -576,6 +578,10 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
 
     public boolean isTwoPhaseFiltering() {
         return false;
+    }
+
+    public boolean supports(SpatialFunction function) {
+        return true;
     }
 
 
