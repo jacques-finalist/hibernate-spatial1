@@ -84,7 +84,7 @@ public class GeometryEquality {
 
     private boolean testCoordinateEquality(Coordinate c1, Coordinate c2) {
         if (c1 instanceof MCoordinate) {
-            if (!(c1 instanceof MCoordinate)) return false;
+            if (!(c2 instanceof MCoordinate)) return false;
             MCoordinate mc1 = (MCoordinate) c1;
             MCoordinate mc2 = (MCoordinate) c2;
             if (!Double.isNaN(mc1.m) && mc1.m != mc2.m) return false;
