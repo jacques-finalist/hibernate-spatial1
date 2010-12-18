@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.classic.Session;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernatespatial.HBSpatialExtension;
 import org.hibernatespatial.pojo.*;
 import org.junit.Test;
@@ -81,6 +82,7 @@ public class TestAutoMapper extends SpatialFunctionalTestCase {
 
     public void prepareTest() {
         super.prepareTest();
+        if (!appliesTo(getDialect())) return;
         insertTestData();
         Configuration cfg = getCfg();
         cfg.setProperty(Environment.HBM2DDL_AUTO, "update");
@@ -97,11 +99,18 @@ public class TestAutoMapper extends SpatialFunctionalTestCase {
 
     @Test
     public void test_automapper() throws Exception {
+
+        //todo -- use appliesTo()-method
+        if (!(this.getDialect() instanceof PostgreSQLDialect)) {
+            return;
+        }
+
         Session session = openMappedSession();
         try {
 
             List<String[]> tables = AutoMapper.getMappedTables();
 
+            assertFalse(tables.isEmpty());
             for (String[] tncomp : tables) {
                 Class entityClass = AutoMapper.getClass(tncomp[0], tncomp[1], tncomp[2]);
                 Criteria c = session.createCriteria(entityClass);
@@ -175,10 +184,11 @@ public class TestAutoMapper extends SpatialFunctionalTestCase {
         try {
             conn = getConnection();
             //prepare testsuite-suite table
-            PreparedStatement pstmt = conn.prepareStatement("create table mucomp (c1 int, c2 int, c3 char(10))");
+            PreparedStatement pstmt = conn.prepareStatement("create table mucomp (c1 int not null, c2 int not null, c3 char(10))");
             pstmt.execute();
             pstmt = conn.prepareStatement("alter table mucomp add primary key (c1, c2)");
             pstmt.execute();
+            conn.commit();
 
             NamingStrategy naming = new SimpleNamingStrategy();
             TypeMapper typeMapper = new TypeMapper(HBSpatialExtension.getDefaultSpatialDialect().getDbGeometryTypeName());
@@ -202,6 +212,7 @@ public class TestAutoMapper extends SpatialFunctionalTestCase {
             if (conn != null) {
                 PreparedStatement delTabStmt = conn.prepareStatement("drop table mucomp");
                 delTabStmt.execute();
+                conn.commit();
                 conn.close();
             }
         }

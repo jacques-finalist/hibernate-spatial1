@@ -1,0 +1,29 @@
+## 2010-12-17 ##
+
+How to run the integration tests?
+=================================
+
+1. Edit the profiles in the <hibernate-spatial-maven>/pom.xml and
+   set the database properties to values appropriate for your environment.
+   Ensure that all databases and db users exist.
+      
+
+2. build all packages, and install locally:
+    $ cd <hibernate-spatial-maven>
+    $ mvn clean install
+
+3. run the tests for each database:
+    $ cd <test-suite>
+    $ mvn clean && mvn test -P<db-profile>
+
+The 'mvn clean' step is necessary because the database-specific connection values are
+copied to a hibernate.properties file during the building of the test-suite classes.
+
+Currently the following profiles exist for functional testing:
+- geodb
+- mysql
+- oracle10g
+- postgresql83
+- sqlserver-2008
+
+
