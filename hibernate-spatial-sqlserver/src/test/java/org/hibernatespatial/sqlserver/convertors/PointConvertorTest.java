@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -27,10 +27,11 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import static junit.framework.Assert.assertEquals;
 import org.hibernatespatial.mgeom.MCoordinate;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Karel Maesen, Geovise BVBA.

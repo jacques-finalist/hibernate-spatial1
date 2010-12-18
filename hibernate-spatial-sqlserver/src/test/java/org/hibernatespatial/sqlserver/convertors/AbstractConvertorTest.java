@@ -31,6 +31,7 @@ import org.hibernatespatial.sqlserver.SQLServerTestSupport;
 import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.TestData;
 import org.hibernatespatial.test.TestSupport;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import java.io.IOException;
@@ -64,6 +65,11 @@ public class AbstractConvertorTest {
         dataSourceUtils.insertTestData(testData);
     }
 
+    @AfterClass
+    public static void afterClass() throws SQLException, IOException {
+        String sql = dataSourceUtils.parseSqlIn("drop-test-schema.sql");
+        dataSourceUtils.executeStatement(sql);
+    }
 
     public void doDecoding(OpenGisType type) {
         rawResults = dataSourceUtils.rawDbObjects(type.toString());

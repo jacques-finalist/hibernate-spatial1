@@ -1,4 +1,4 @@
-DROP TABLE "HBS"."dbo"."geomtest";
+
 CREATE TABLE "HBS"."dbo"."geomtest"
 (
 id int PRIMARY KEY NOT NULL,

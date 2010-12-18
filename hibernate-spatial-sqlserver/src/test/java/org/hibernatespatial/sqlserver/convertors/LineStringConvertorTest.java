@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * This file is part of Hibernate Spatial, an extension to the
  * hibernate ORM solution for geographic data.
@@ -27,12 +27,13 @@ package org.hibernatespatial.sqlserver.convertors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
-import static junit.framework.Assert.assertEquals;
 import org.hibernatespatial.mgeom.MCoordinate;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LineStringConvertorTest extends AbstractConvertorTest {
 
