@@ -27,6 +27,11 @@
         <module>../hibernate-spatial-sqlserver</module>
         <module>../hibernate-spatial-h2-geodb</module>
     </modules>
+
+    <properties>
+        <hibernate.version>3.6.0.Final</hibernate.version>
+    </properties>
+
     <repositories>
         <repository>
             <id>OSGEO</id>
@@ -46,16 +51,7 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
-            <!--We skip the unit tests when building and packaging because it
-                it requires specific testsuite-suite set-up.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+
             <!--generate source artefacts -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -84,6 +80,8 @@
                 </executions>
             </plugin>
         </plugins>
+
+
     </build>
 
 
@@ -163,14 +161,13 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <!--<version>3.3.2.GA</version>-->
-            <version>3.6.0-SNAPSHOT</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-testing</artifactId>
             <scope>test</scope>
-            <version>3.6.0-SNAPSHOT</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -221,21 +218,20 @@
 
     <profiles>
         <profile>
-            <id>automated-unit-test</id>
+            <id>skip-functional-testing</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
-                <testResources>
-                    <testResource>
-                        <filtering>false</filtering>
-                        <directory>src/test/java</directory>
-                        <includes>
-                            <include>**/*.xml</include>
-                        </includes>
-                    </testResource>
-                    <testResource>
-                        <filtering>true</filtering>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
 
@@ -286,6 +282,11 @@
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-h2-geodb</artifactId>
                     <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-h2-geodb</artifactId>
+                    <version>${project.version}</version>
                     <classifier>tests</classifier>
                 </dependency>
                 <dependency>
@@ -313,6 +314,11 @@
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-sqlserver</artifactId>
                     <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-sqlserver</artifactId>
+                    <version>${project.version}</version>
                     <classifier>tests</classifier>
                 </dependency>
                 <dependency>
@@ -325,7 +331,7 @@
             <properties>
                 <db.dialect>org.hibernatespatial.sqlserver.SQLServerSpatialDialect</db.dialect>
                 <jdbc.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc.driver>
-                <jdbc.url>jdbc:sqlserver://192.168.122.119:1433;databaseName=HBS</jdbc.url>
+                <jdbc.url>jdbc:sqlserver://192.168.122.67:1433;databaseName=HBS</jdbc.url>
                 <jdbc.user>hbs</jdbc.user>
                 <jdbc.pass>hbs</jdbc.pass>
                 <jdbc.isolation/>
@@ -336,6 +342,11 @@
         <profile>
             <id>mysql</id>
             <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-mysql</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-mysql</artifactId>
@@ -362,6 +373,11 @@
         <profile>
             <id>oracle10g</id>
             <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-oracle</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-oracle</artifactId>
