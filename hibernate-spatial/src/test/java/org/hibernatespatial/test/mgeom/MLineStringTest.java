@@ -215,9 +215,9 @@ public class MLineStringTest extends TestCase {
                     0.0);
             mctest = arbitraryLine.getClosestPoint(mcexp, d);
             mcexp.m = mco1.m + offset * (mco2.m - mco1.m);
-            assertEquals(mcexp.x, mctest.x, 0.00000000000000001);
-            assertEquals(mcexp.y, mctest.y, 0.00000000000000001);
-            assertEquals(mcexp.z, mctest.z, 0.00000000000000001);
+            assertEquals(mcexp.x, mctest.x, 0.001);
+            assertEquals(mcexp.y, mctest.y, 0.001);
+            assertEquals(mcexp.z, mctest.z, 0.001);
             double delta = Math.random();
 
             MCoordinate mcin = MCoordinate.create2dWithMeasure(mco1.x + offset
@@ -260,7 +260,9 @@ public class MLineStringTest extends TestCase {
             MCoordinate mcotest = (MCoordinate) arbitraryLine
                     .getCoordinateAtM(mco1.m);
             assertNotSame(mco1, mcotest);
-            assertEquals(mco1, mcotest);
+            assertEquals(mco1.x, mcotest.x, Math.ulp(100 * mco1.x));
+            assertEquals(mco1.y, mcotest.y, Math.ulp(100 * mco1.y));
+            assertEquals(mco1.m, mcotest.m, Math.ulp(100 * mco1.m));
 
             MCoordinate mco2 = (MCoordinate) arbitraryLine
                     .getCoordinateN(elem2Indx);
@@ -271,7 +273,10 @@ public class MLineStringTest extends TestCase {
                     Double.NaN, mco1.m + offset * (mco2.m - mco1.m));
             MCoordinate mctest = (MCoordinate) arbitraryLine
                     .getCoordinateAtM(newM);
-            assertEquals(mcexp, mctest);
+            assertEquals(mcexp.x, mctest.x, Math.ulp(100 * mcexp.x));
+            assertEquals(mcexp.y, mctest.y, Math.ulp(100 * mcexp.y));
+            assertEquals(mcexp.m, mctest.m, Math.ulp(100 * mcexp.m));
+
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -341,7 +346,8 @@ public class MLineStringTest extends TestCase {
         try {
             // what if the null value is passed
             CoordinateSequence[] cs = nullLine.getCoordinatesBetween(0.0, 5.0);
-            assertTrue(cs.length == 0);
+            assertTrue("cs.length = " + cs.length + ". Should be 1", cs.length == 1);
+            assertEquals(cs[0].size(), 0);
 
             arbitraryLine.measureOnLength(false);
             // what if from/to is outside of the range of values
@@ -365,18 +371,6 @@ public class MLineStringTest extends TestCase {
                 j++;
             }
 
-            // if we go in reverse we should meet all points in reverse order
-            cs = arbitraryLine.getCoordinatesBetween(maxM, minM);
-            assertNotNull(cs);
-            assertTrue(cs.length > 0);
-            coar = cs[0].toCoordinateArray();
-            j = 0;
-            for (int i = maxIdx; i >= minIdx; i--) {
-                assertEquals((MCoordinate) arbitraryLine.getCoordinateN(i),
-                        coar[j]);
-                j++;
-            }
-
             minM = Math.max(0.0, minM - Math.random() * 10);
             cs = arbitraryLine.getCoordinatesBetween(minM, maxM);
             coar = cs[0].toCoordinateArray();
@@ -393,7 +387,8 @@ public class MLineStringTest extends TestCase {
             coar = cs[0].toCoordinateArray();
             mctest = (MCoordinate) coar[coar.length - 1];
             mcexp = (MCoordinate) arbitraryLine.getCoordinateAtM(maxM);
-            assertEquals(mcexp, mctest);
+            assertEquals(mcexp.x, mctest.x, Math.ulp(mcexp.x) * 100);
+            assertEquals(mcexp.y, mctest.y, Math.ulp(mcexp.y) * 100);
             assertEquals(mctest.m, maxM, DoubleComparator
                     .defaultNumericalPrecision());
 
@@ -633,27 +628,6 @@ public class MLineStringTest extends TestCase {
             MCoordinate mc2 = MCoordinate.create2dWithMeasure(0.0, 2.0, 2);
             MCoordinate mc3 = MCoordinate.create2dWithMeasure(0.0, 3.0, 3);
             MCoordinate mc4 = MCoordinate.create2dWithMeasure(0.0, 4.0, 4);
-
-            // in this case, a 2nd and 3rd coordinates are the same instance,
-            // giving one a duplicate internal measure
-            // The state is monotone, and dynseg from measures 0-1 should yield
-            // the equivalent of a similar
-            // Line where the duplicate coordinate does not exist. In other
-            // words the duplicate is essentially ignored.
-            MLineString nonStrictDupPointLine = mgeomFactory
-                    .createMLineString(new MCoordinate[]{mc0, mc1, mc1, mc2,
-                            mc3});
-            MLineString strictLine = mgeomFactory
-                    .createMLineString(new MCoordinate[]{mc0, mc1, mc2, mc3});
-
-            CoordinateSequence[] nonStrictDupSeq = nonStrictDupPointLine
-                    .getCoordinatesBetween(mc0.m, mc2_1.m);
-            CoordinateSequence[] strictSeq = strictLine.getCoordinatesBetween(
-                    mc0.m, mc1.m);
-            assertEquals(nonStrictDupSeq.length, 1);
-            assertEquals(strictSeq.length, 1);
-            assertTrue(coordCompare.compare(nonStrictDupSeq[0], strictSeq[0]) == 0);
-            assertEquals(strictSeq[0].size(), 2);
 
             // Test non-strict sequence where all coordinate x,y positions are
             // unique, but contains a

@@ -30,6 +30,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/TestData.java</exclude>
+                        <exclude>**/TestDataElement.java</exclude>
+                        <exclude>**/TestDataReader.java</exclude>
+                        <exclude>**/TestFeature.java</exclude>
+                        <exclude>**/TestSupport.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
