@@ -46,161 +46,161 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     @Override
     protected NativeSQLStatement createNativeTouchesStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, touches(t.geom, GeomFromText(?, 4326)) from GeomTest t where touches(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_touches(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_touches(t.geom, ST_geomFromText(?, 4326)) = 'true' and st_srid(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeOverlapsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, overlaps(t.geom, GeomFromText(?, 4326)) from GeomTest t where overlaps(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, overlaps(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_overlaps(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
-        String sql = "select t.id, relate(t.geom, GeomFromText(?, 4326), '" + matrix + "' ) from GeomTest t where relate(t.geom, GeomFromText(?, 4326), '" + matrix + "') = 'true' and srid(t.geom) = 4326";
+        String sql = "select t.id, st_relate(t.geom, ST_GeomFromText(?, 4326), '" + matrix + "' ) from GeomTest t where st_relate(t.geom, ST_GeomFromText(?, 4326), '" + matrix + "') = 'true' and ST_SRID(t.geom) = 4326";
         return createNativeSQLStatementAllWKTParams(sql, geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeIntersectsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, intersects(t.geom, GeomFromText(?, 4326)) from GeomTest t where intersects(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_intersects(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_intersects(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeFilterStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, t.geom && GeomFromText(?, 4326) from GeomTest t where intersects(t.geom, GeomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, t.geom && ST_GeomFromText(?, 4326) from GeomTest t where st_intersects(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeDistanceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, distance(t.geom, GeomFromText(?, 4326)) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_distance(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeDimensionSQL() {
-        return createNativeSQLStatement("select id, dimension(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_dimension(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeBufferStatement(Double distance) {
-        return createNativeSQLStatement("select t.id, buffer(t.geom,?) from GeomTest t where srid(t.geom) = 4326", new Object[]{distance});
+        return createNativeSQLStatement("select t.id, st_buffer(t.geom,?) from GeomTest t where ST_SRID(t.geom) = 4326", new Object[]{distance});
     }
 
     @Override
     protected NativeSQLStatement createNativeConvexHullStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, convexhull(geomunion(t.geom, GeomFromText(?, 4326))) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_convexhull(st_union(t.geom, ST_GeomFromText(?, 4326))) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeIntersectionStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, intersection(t.geom, GeomFromText(?, 4326)) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_intersection(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeDifferenceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, difference(t.geom, GeomFromText(?, 4326)) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_difference(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeSymDifferenceStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, symdifference(t.geom, GeomFromText(?, 4326)) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_symdifference(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeGeomUnionStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, geomunion(t.geom, GeomFromText(?, 4326)) from GeomTest t where srid(t.geom) = 4326",
+                "select t.id, st_union(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeAsTextStatement() {
-        return createNativeSQLStatement("select id, astext(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_astext(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeSridStatement() {
-        return createNativeSQLStatement("select id, srid(geom) from geomtest");
+        return createNativeSQLStatement("select id, ST_SRID(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeIsSimpleStatement() {
-        return createNativeSQLStatement("select id, issimple(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_issimple(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeIsEmptyStatement() {
-        return createNativeSQLStatement("select id, isempty(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_isempty(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeBoundaryStatement() {
-        return createNativeSQLStatement("select id, boundary(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_boundary(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeEnvelopeStatement() {
-        return createNativeSQLStatement("select id, envelope(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_envelope(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeAsBinaryStatement() {
-        return createNativeSQLStatement("select id, asbinary(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_asbinary(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeGeometryTypeStatement() {
-        return createNativeSQLStatement("select id, GeometryType(geom) from geomtest");
+        return createNativeSQLStatement("select id, st_GeometryType(geom) from geomtest");
     }
 
     @Override
     protected NativeSQLStatement createNativeWithinStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, within(t.geom, GeomFromText(?, 4326)) from GeomTest t where within(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_within(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_within(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeEqualsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, equals(t.geom, GeomFromText(?, 4326)) from GeomTest t where equals(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_equals(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_equals(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeCrossesStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, crosses(t.geom, GeomFromText(?, 4326)) from GeomTest t where crosses(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_crosses(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_crosses(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeContainsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, contains(t.geom, GeomFromText(?, 4326)) from GeomTest t where contains(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_contains(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_contains(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeDisjointStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, disjoint(t.geom, GeomFromText(?, 4326)) from GeomTest t where disjoint(t.geom, geomFromText(?, 4326)) = 'true' and srid(t.geom) = 4326",
+                "select t.id, st_disjoint(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_disjoint(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 

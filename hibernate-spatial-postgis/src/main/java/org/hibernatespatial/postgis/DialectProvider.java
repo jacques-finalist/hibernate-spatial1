@@ -50,7 +50,8 @@ public class DialectProvider implements SpatialDialectProvider {
                 || dialect.equals("org.hibernate.dialect.PostgreSQLDialect")
                 || dialect.equals("postgis"))
             return new PostgisDialect();
-        else
+        else if (dialect.equals(PostgisNoSQLMM.class.getCanonicalName()))
+            return new PostgisNoSQLMM();
             return null;
     }
 

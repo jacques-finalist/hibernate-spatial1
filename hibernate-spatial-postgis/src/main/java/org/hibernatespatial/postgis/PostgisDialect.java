@@ -48,10 +48,15 @@ import org.hibernatespatial.SpatialRelation;
  */
 public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect {
 
-    private static final Type geometryCustomType = new CustomType(new PGGeometryUserType(), new String[]{"postgis_geometry"});
+    protected static final Type geometryCustomType = new CustomType(new PGGeometryUserType(), new String[]{"postgis_geometry"});
 
     public PostgisDialect() {
         super();
+        registerTypesAndFunctions();
+
+    }
+
+    protected void registerTypesAndFunctions() {
         registerColumnType(java.sql.Types.STRUCT, "geometry");
 
         // registering OGC functions
@@ -61,102 +66,85 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
         // Registerfunction calls for registering geometry functions:
         // first argument is the OGC standard functionname, second the name as
         // it occurs in the spatial dialect
-        registerFunction("dimension", new StandardSQLFunction("dimension",
+        registerFunction("dimension", new StandardSQLFunction("st_dimension",
                 StandardBasicTypes.INTEGER));
         registerFunction("geometrytype", new StandardSQLFunction(
-                "geometrytype", StandardBasicTypes.STRING));
-        registerFunction("srid", new StandardSQLFunction("srid",
+                "st_geometrytype", StandardBasicTypes.STRING));
+        registerFunction("srid", new StandardSQLFunction("st_srid",
                 StandardBasicTypes.INTEGER));
-        registerFunction("envelope", new StandardSQLFunction("envelope",
+        registerFunction("envelope", new StandardSQLFunction("st_envelope",
                 geometryCustomType));
-        registerFunction("astext", new StandardSQLFunction("astext",
+        registerFunction("astext", new StandardSQLFunction("st_astext",
                 StandardBasicTypes.STRING));
-        registerFunction("asbinary", new StandardSQLFunction("asbinary",
+        registerFunction("asbinary", new StandardSQLFunction("st_asbinary",
                 StandardBasicTypes.BINARY));
-        registerFunction("isempty", new StandardSQLFunction("isempty",
+        registerFunction("isempty", new StandardSQLFunction("st_isempty",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("issimple", new StandardSQLFunction("issimple",
+        registerFunction("issimple", new StandardSQLFunction("st_issimple",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("boundary", new StandardSQLFunction("boundary",
+        registerFunction("boundary", new StandardSQLFunction("st_boundary",
                 geometryCustomType));
 
         // Register functions for spatial relation constructs
-        registerFunction("overlaps", new StandardSQLFunction("overlaps",
+        registerFunction("overlaps", new StandardSQLFunction("st_overlaps",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("intersects", new StandardSQLFunction("intersects",
+        registerFunction("intersects", new StandardSQLFunction("st_intersects",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("equals", new StandardSQLFunction("equals",
+        registerFunction("equals", new StandardSQLFunction("st_equals",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("contains", new StandardSQLFunction("contains",
+        registerFunction("contains", new StandardSQLFunction("st_contains",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("crosses", new StandardSQLFunction("crosses",
+        registerFunction("crosses", new StandardSQLFunction("st_crosses",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("disjoint", new StandardSQLFunction("disjoint",
+        registerFunction("disjoint", new StandardSQLFunction("st_disjoint",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("touches", new StandardSQLFunction("touches",
+        registerFunction("touches", new StandardSQLFunction("st_touches",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("within", new StandardSQLFunction("within",
+        registerFunction("within", new StandardSQLFunction("st_within",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("relate", new StandardSQLFunction("relate",
+        registerFunction("relate", new StandardSQLFunction("st_relate",
                 StandardBasicTypes.BOOLEAN));
 
         // register the spatial analysis functions
-        registerFunction("distance", new StandardSQLFunction("distance",
+        registerFunction("distance", new StandardSQLFunction("st_distance",
                 StandardBasicTypes.DOUBLE));
-        registerFunction("buffer", new StandardSQLFunction("buffer",
+        registerFunction("buffer", new StandardSQLFunction("st_buffer",
                 geometryCustomType));
-        registerFunction("convexhull", new StandardSQLFunction("convexhull",
+        registerFunction("convexhull", new StandardSQLFunction("st_convexhull",
                 geometryCustomType));
-        registerFunction("difference", new StandardSQLFunction("difference",
+        registerFunction("difference", new StandardSQLFunction("st_difference",
                 geometryCustomType));
         registerFunction("intersection", new StandardSQLFunction(
-                "intersection", geometryCustomType));
+                "st_intersection", geometryCustomType));
         registerFunction("symdifference",
-                new StandardSQLFunction("symdifference", geometryCustomType));
-        registerFunction("geomunion", new StandardSQLFunction("geomunion",
+                new StandardSQLFunction("st_symdifference", geometryCustomType));
+        registerFunction("geomunion", new StandardSQLFunction("st_union",
                 geometryCustomType));
 
         //register Spatial Aggregate funciton
         registerFunction("extent", new StandardSQLFunction("extent",
                 geometryCustomType));
-
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.walkonweb.spatial.dialect.SpatialEnabledDialect#getSpatialRelateExpression(java.lang.String,
-      *      int, boolean)
-      */
-
-    public String getSpatialRelateSQL(String columnName, int spatialRelation,
-                                      boolean hasFilter) {
+    public String getSpatialRelateSQL(String columnName, int spatialRelation, boolean hasFilter) {
         switch (spatialRelation) {
             case SpatialRelation.WITHIN:
-                return hasFilter ? "(" + columnName + " && ?  AND   within("
-                        + columnName + ", ?))" : " within(" + columnName + ",?)";
+                return " ST_within(" + columnName + ",?)";
             case SpatialRelation.CONTAINS:
-                return hasFilter ? "(" + columnName + " && ? AND contains("
-                        + columnName + ", ?))" : " contains(" + columnName + ", ?)";
+                return " ST_contains(" + columnName + ", ?)";
             case SpatialRelation.CROSSES:
-                return hasFilter ? "(" + columnName + " && ? AND crosses("
-                        + columnName + ", ?))" : " crosses(" + columnName + ", ?)";
+                return " ST_crosses(" + columnName + ", ?)";
             case SpatialRelation.OVERLAPS:
-                return hasFilter ? "(" + columnName + " && ? AND overlaps("
-                        + columnName + ", ?))" : " overlaps(" + columnName + ", ?)";
+                return " ST_overlaps(" + columnName + ", ?)";
             case SpatialRelation.DISJOINT:
-                return hasFilter ? "(" + columnName + " && ? AND disjoint("
-                        + columnName + ", ?))" : " disjoint(" + columnName + ", ?)";
+                return " ST_disjoint(" + columnName + ", ?)";
             case SpatialRelation.INTERSECTS:
-                return hasFilter ? "(" + columnName + " && ? AND intersects("
-                        + columnName + ", ?))" : " intersects(" + columnName
+                return " ST_intersects(" + columnName
                         + ", ?)";
             case SpatialRelation.TOUCHES:
-                return hasFilter ? "(" + columnName + " && ? AND touches("
-                        + columnName + ", ?))" : " touches(" + columnName + ", ?)";
+                return " ST_touches(" + columnName + ", ?)";
             case SpatialRelation.EQUALS:
-                return hasFilter ? "(" + columnName + " && ? AND equals("
-                        + columnName + ", ?))" : " equals(" + columnName + ", ?)";
+                return " ST_equals(" + columnName + ", ?)";
             default:
                 throw new IllegalArgumentException(
                         "Spatial relation is not known by this dialect");
@@ -164,32 +152,13 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
 
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.walkonweb.spatial.dialect.SpatialEnabledDialect#getSpatialFilterExpression(java.lang.String)
-      */
-
     public String getSpatialFilterExpression(String columnName) {
         return "(" + columnName + " && ? ) ";
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.hibernatespatial.SpatialDialect#getGeometryUserType()
-      */
-
     public UserType getGeometryUserType() {
         return new PGGeometryUserType();
     }
-
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.hibernatespatial.SpatialDialect#getSpatialAggregateSQL(java.lang.String,
-      *      int)
-      */
 
     public String getSpatialAggregateSQL(String columnName, int aggregation) {
         switch (aggregation) {
