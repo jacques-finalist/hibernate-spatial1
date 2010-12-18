@@ -33,7 +33,7 @@
         <type>POINT</type>
         <sdo>SDO_GEOMETRY(2001, 0, SDO_POINT_TYPE(10, 5, NULL), NULL, NULL)</sdo>
         <wkt>POINT(10 5)</wkt>
-        <srid>0</srid>
+        <srid>4326</srid>
     </Element>
     <Element>
         <id>2</id>
@@ -48,7 +48,7 @@
         <type>POINT</type>
         <sdo>SDO_GEOMETRY(3001, 31370, SDO_POINT_TYPE(150000, 200000, 500), NULL, NULL)</sdo>
         <wkt>POINT(150000 200000 500)</wkt>
-        <srid>31370</srid>
+        <srid>4326</srid>
     </Element>
     <Element>
         <id>4</id>

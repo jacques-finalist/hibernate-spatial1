@@ -12,11 +12,7 @@ public class OracleSDOTestSupport extends TestSupport {
 
     @Override
     public TestData createTestData(FunctionalTestCase testcase) {
-        if (testcase.getClass().getCanonicalName().contains("TestSpatialFunctions") ||
-                testcase.getClass().getCanonicalName().contains("TestSpatialRestrictions")) {
-            return TestData.fromFile("test-sdo-geometry-data-set-2D.xml", new SDOTestDataReader());
-        }
-        return TestData.fromFile("test-sdo-geometry-data-set.xml", new SDOTestDataReader());
+        return TestData.fromFile("test-sdo-geometry-data-set-2D.xml", new SDOTestDataReader());
     }
 
     @Override
