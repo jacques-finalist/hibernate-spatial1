@@ -1,0 +1,15 @@
+To build hibernate spatial with all modules:
+
+1. Install proprietary drivers for Microsoft SQL Server 2008 and Oracle 10g/11g
+
+mvn install:install-file -DgroupId=com.oracle.jdbc -DartifactId=ojdbc6 -Dversion=11.1.0.7.0 -Dfile=<path-to-jar>/ojdbc6-11.1.0.7.0.jar -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -DgroupId=com.microsoft -DartifactId=sqljdbc -Dversion=2.0 -Dfile=<path-to-jar>/sqljdbc-2.0.jar -Dpackaging=jar -DgeneratePom=true
+
+2. build with maven
+
+$ cd hibernate-spatial-maven
+$ mvn install
+
+
+
+You can also build the modules separately, if you don't need all database providers.
