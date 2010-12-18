@@ -32,12 +32,6 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.microsoft</groupId>
-            <artifactId>sqljdbc</artifactId>
-            <scope>provided</scope>
-            <version>[2.0,)</version>
-        </dependency>
     </dependencies>
 
     <build>
