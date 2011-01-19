@@ -1,5 +1,8 @@
 package org.hibernatespatial.pojo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class FeatureMapper {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(FeatureMapper.class);
 
     private final NamingStrategy naming;
     private final TypeMapper typeMapper;
@@ -39,10 +44,10 @@ public class FeatureMapper {
     }
 
     private String findUniqueIndex(String catalog, String schema, String tableName, DatabaseMetaData dmd) {
-        Map<String, String> indexes = new HashMap<String,String>();
+        Map<String, String> indexes = new HashMap<String, String>();
         Set<String> rejectedIndexes = new HashSet<String>();
         readUniqueIndexes(catalog, schema, tableName, dmd, indexes, rejectedIndexes);
-        for (String candidate : indexes.keySet()){
+        for (String candidate : indexes.keySet()) {
             if (!rejectedIndexes.contains(candidate)) return indexes.get(candidate);
         }
         return null;
@@ -52,13 +57,13 @@ public class FeatureMapper {
         ResultSet rs = null;
         try {
             rs = dmd.getIndexInfo(catalog, schema, tableName, true, false);
-            while(rs.next()){
+            while (rs.next()) {
                 String colName = rs.getString("COLUMN_NAME");
                 String indexName = rs.getString("INDEX_NAME");
-                if (indexName == null){
+                if (indexName == null) {
                     indexName = colName;
                 }
-                if (indexes.get(indexName) != null){
+                if (indexes.get(indexName) != null) {
                     rejectedIndexes.add(indexName);
                 } else {
                     indexes.put(indexName, colName);
@@ -80,7 +85,7 @@ public class FeatureMapper {
         ResultSet rs = null;
         try {
             rs = dmd.getPrimaryKeys(catalog, schema, tableName);
-            if(!rs.next()) return null;
+            if (!rs.next()) return null;
             pkn = rs.getString("COLUMN_NAME");
             //check whether the primary key is non-composite
             if (rs.next()) return null;
@@ -135,15 +140,15 @@ public class FeatureMapper {
         String hibernateType = null;
         try {
             hibernateType = typeMapper.getHibernateType(dbType, javaType);
+            AttributeInfo ai = new AttributeInfo();
+            ai.setColumnName(colName);
+            ai.setFieldName(naming.createPropertyName(colName));
+            ai.setHibernateType(hibernateType);
+            ai.setCtClass(typeMapper.getCtClass(dbType, javaType));
+            cInfo.addAttribute(ai);
         } catch (TypeNotFoundException e) {
-
+            LOGGER.warn("No property generated for attribute " + colName + ": " + e.getMessage());
         }
-        AttributeInfo ai = new AttributeInfo();
-        ai.setColumnName(colName);
-        ai.setFieldName(naming.createPropertyName(colName));
-        ai.setHibernateType(hibernateType);
-        ai.setCtClass(typeMapper.getCtClass(dbType, javaType));
-        cInfo.addAttribute(ai);
     }
 
 }
