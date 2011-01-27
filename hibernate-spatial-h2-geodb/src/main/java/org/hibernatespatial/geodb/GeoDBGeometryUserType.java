@@ -24,7 +24,10 @@
  */
 package org.hibernatespatial.geodb;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import geodb.GeoDB;
 import org.hibernatespatial.AbstractDBGeometryType;
 import org.slf4j.Logger;
@@ -47,6 +50,8 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeoDBGeometryUserType.class);
 
     private static final int[] geometryTypes = new int[]{Types.ARRAY};
+    
+    private GeometryFactory gf = new GeometryFactory();
 
     /*
       * (non-Javadoc)
@@ -72,13 +77,15 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
         try {
             if (object instanceof Blob) {
                 return GeoDB.gFromWKB(toByteArray((Blob) object));
-            } else {
+            } else if(object instanceof Envelope) {
+        		return gf.toGeometry((Envelope) object);
+        	} else {
                 throw new IllegalArgumentException(
                         "Can't convert database object of type "
                                 + object.getClass().getCanonicalName());
             }
         } catch (Exception e) {
-            LOGGER.warn("Could not convert databae object to a JTS Geometry.");
+            LOGGER.warn("Could not convert database object to a JTS Geometry.");
             e.printStackTrace();
             return null;
         }
@@ -97,7 +104,7 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
             return GeoDB.gToWKB(jtsGeom);
         }
         catch (Exception e) {
-            LOGGER.warn("Could not convert JTS Geometry to a databae object.");
+            LOGGER.warn("Could not convert JTS Geometry to a database object.");
             e.printStackTrace();
             return null;
         }
