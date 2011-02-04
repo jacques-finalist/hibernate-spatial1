@@ -69,6 +69,7 @@ public class DefaultConnectionFinder implements ConnectionFinder {
                     if (oc == null) {
                         throw new FinderException(String.format("Tried retrieving OracleConnection from %s using method %s, but received null.", con.getClass().getCanonicalName(), method.getName()));
                     }
+                    return oc;
                 } catch (IllegalAccessException e) {
                     throw new FinderException(String.format("Illegal access on executing method %s when finding OracleConnection", method.getName()));
                 } catch (InvocationTargetException e) {
