@@ -121,12 +121,18 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
         registerFunction("geomunion", new StandardSQLFunction("st_union",
                 geometryCustomType));
 
-        //register Spatial Aggregate funciton
+        //register Spatial Aggregate function
         registerFunction("extent", new StandardSQLFunction("extent",
+                geometryCustomType));
+
+        //other common functions
+        registerFunction("dwithin", new StandardSQLFunction("st_dwithin",
+                StandardBasicTypes.BOOLEAN));
+        registerFunction("transform", new StandardSQLFunction("st_transform",
                 geometryCustomType));
     }
 
-    public String getSpatialRelateSQL(String columnName, int spatialRelation, boolean hasFilter) {
+    public String getSpatialRelateSQL(String columnName, int spatialRelation) {
         switch (spatialRelation) {
             case SpatialRelation.WITHIN:
                 return " ST_within(" + columnName + ",?)";
@@ -150,6 +156,19 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
                         "Spatial relation is not known by this dialect");
         }
 
+    }
+
+    public String getDWithinSQL(String columnName) {
+        return "ST_DWithin(" + columnName + ",?,?)";
+    }
+
+    public String getHavingSridSQL(String columnName) {
+        return "( ST_srid(" + columnName + ") = ?)";
+    }
+
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        String emptyExpr = " ST_IsEmpty(" + columnName + ") ";
+        return isEmpty ? emptyExpr : "( NOT " + emptyExpr + ")";
     }
 
     public String getSpatialFilterExpression(String columnName) {
@@ -180,8 +199,11 @@ public class PostgisDialect extends PostgreSQLDialect implements SpatialDialect 
         return true;
     }
 
-    public boolean supports(SpatialFunction function) {
+    public boolean supportsFiltering() {
         return true;
     }
 
+    public boolean supports(SpatialFunction function) {
+        return (getFunctions().get(function.toString()) != null);
+    }
 }

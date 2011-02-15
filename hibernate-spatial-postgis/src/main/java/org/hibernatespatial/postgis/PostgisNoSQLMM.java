@@ -2,6 +2,7 @@ package org.hibernatespatial.postgis;
 
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
 /**
@@ -75,9 +76,29 @@ public class PostgisNoSQLMM extends PostgisDialect {
         registerFunction("geomunion", new StandardSQLFunction("geomunion",
                 geometryCustomType));
 
-        //register Spatial Aggregate funciton
+        //register Spatial Aggregate function
         registerFunction("extent", new StandardSQLFunction("extent",
                 geometryCustomType));
+
+        //other common spatial functions
+        registerFunction("transform", new StandardSQLFunction("transform",
+                geometryCustomType));
+    }
+
+    @Override
+    public String getDWithinSQL(String columnName) {
+        return "( dwithin(" + columnName + ",?,?) )";
+    }
+
+    @Override
+    public String getHavingSridSQL(String columnName) {
+        return "( srid(" + columnName + ") = ?)";
+    }
+
+    @Override
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        String emptyExpr = "( isempty(" + columnName + ")) ";
+        return isEmpty ? emptyExpr : "not " + emptyExpr;
     }
 
     public String getSpatialRelateSQL(String columnName, int spatialRelation,
@@ -113,5 +134,11 @@ public class PostgisNoSQLMM extends PostgisDialect {
                         "Spatial relation is not known by this dialect");
         }
 
+    }
+
+    @Override
+    public boolean supports(SpatialFunction function) {
+//        if (function == SpatialFunction.dwithin) return false;
+        return super.supports(function);
     }
 }

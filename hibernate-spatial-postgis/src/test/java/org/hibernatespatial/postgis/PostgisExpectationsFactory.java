@@ -26,6 +26,7 @@
 package org.hibernatespatial.postgis;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
@@ -53,13 +54,19 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     @Override
     protected NativeSQLStatement createNativeOverlapsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, overlaps(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_overlaps(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
+                "select t.id, st_overlaps(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where st_overlaps(t.geom, ST_GeomFromText(?, 4326)) = 'true' and ST_SRID(t.geom) = 4326",
                 geom.toText());
     }
 
     @Override
     protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
         String sql = "select t.id, st_relate(t.geom, ST_GeomFromText(?, 4326), '" + matrix + "' ) from GeomTest t where st_relate(t.geom, ST_GeomFromText(?, 4326), '" + matrix + "') = 'true' and ST_SRID(t.geom) = 4326";
+        return createNativeSQLStatementAllWKTParams(sql, geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        String sql = "select t.id, st_dwithin(t.geom, ST_GeomFromText(?, 4326), " + distance + " ) from GeomTest t where st_dwithin(t.geom, ST_GeomFromText(?, 4326), " + distance + ") = 'true' and ST_SRID(t.geom) = 4326";
         return createNativeSQLStatementAllWKTParams(sql, geom.toText());
     }
 
@@ -130,6 +137,18 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        return createNativeSQLStatement(
+                "select t.id, st_transform(t.geom," + epsg + ") from GeomTest t where ST_SRID(t.geom) = 4326"
+        );
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, (st_srid(t.geom) = " + srid + ") from GeomTest t where ST_SRID(t.geom) =  " + srid);
+    }
+
+    @Override
     protected NativeSQLStatement createNativeAsTextStatement() {
         return createNativeSQLStatement("select id, st_astext(geom) from geomtest");
     }
@@ -147,6 +166,11 @@ public class PostgisExpectationsFactory extends AbstractExpectationsFactory {
     @Override
     protected NativeSQLStatement createNativeIsEmptyStatement() {
         return createNativeSQLStatement("select id, st_isempty(geom) from geomtest");
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("select id, not st_isempty(geom) from geomtest");
     }
 
     @Override
