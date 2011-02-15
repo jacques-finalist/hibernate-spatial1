@@ -77,6 +77,10 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase {
         eq();
         intersects();
         overlaps();
+        dwithin();
+        havingSRID();
+        isEmpty();
+        isNotEmpty();
     }
 
     public void within() throws SQLException {
@@ -87,7 +91,7 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase {
     }
 
     public void filter() throws SQLException {
-        if (!isSupportedByDialect(SpatialFunction.filter)) return;
+        if (!dialectSupportsFiltering()) return;
         Map<Integer, Boolean> dbexpected = expectationsFactory.getFilter(expectationsFactory.getTestPolygon());
         Criterion spatialCriterion = SpatialRestrictions.filter("geom", expectationsFactory.getTestPolygon());
         retrieveAndCompare(dbexpected, spatialCriterion);
@@ -142,6 +146,38 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase {
         retrieveAndCompare(dbexpected, spatialCriterion);
     }
 
+    public void dwithin() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.dwithin)) return;
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getDwithin(expectationsFactory.getTestPoint(), 30.0);
+        Criterion spatialCriterion = SpatialRestrictions.distanceWithin("geom", expectationsFactory.getTestPoint(), 30.0);
+        retrieveAndCompare(dbexpected, spatialCriterion);
+    }
+
+    public void isEmpty() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.isempty)) return;
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getIsEmpty();
+        Criterion spatialCriterion = SpatialRestrictions.isEmpty("geom");
+        retrieveAndCompare(dbexpected, spatialCriterion);
+    }
+
+    public void isNotEmpty() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.isempty)) return;
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getIsNotEmpty();
+        Criterion spatialCriterion = SpatialRestrictions.isNotEmpty("geom");
+        retrieveAndCompare(dbexpected, spatialCriterion);
+    }
+
+
+    public void havingSRID() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.srid)) return;
+        Map<Integer, Boolean> dbexpected = expectationsFactory.havingSRID(4326);
+        Criterion spatialCriterion = SpatialRestrictions.havingSRID("geom", 4326);
+        retrieveAndCompare(dbexpected, spatialCriterion);
+        dbexpected = expectationsFactory.havingSRID(31370);
+        spatialCriterion = SpatialRestrictions.havingSRID("geom", 31370);
+        retrieveAndCompare(dbexpected, spatialCriterion);
+    }
+
     private void retrieveAndCompare(Map<Integer, Boolean> dbexpected, Criterion spatialCriterion) {
         Session session = null;
         Transaction tx = null;
@@ -151,11 +187,8 @@ public class TestSpatialRestrictions extends SpatialFunctionalTestCase {
             Criteria criteria = session.createCriteria(GeomEntity.class);
             criteria.add(spatialCriterion);
             compare(dbexpected, criteria.list());
-            tx.commit();
-        } catch (Exception e) {
-            tx.rollback();
-        }
-        finally {
+        } finally {
+            if (tx != null) tx.rollback();
             if (session != null) session.close();
         }
     }

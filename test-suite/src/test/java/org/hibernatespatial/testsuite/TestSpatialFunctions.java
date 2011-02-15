@@ -86,6 +86,8 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         difference();
         symdifference();
         geomunion();
+        dwithin();
+        transform();
     }
 
 
@@ -293,6 +295,26 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         String hql = "SELECT id, geomunion(geom, :polygon) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("polygon", expectationsFactory.getTestPolygon());
         retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+    public void dwithin() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.dwithin)) return;
+        double distance = 30.0;
+        Map<Integer, Boolean> dbexpected = expectationsFactory.getDwithin(expectationsFactory.getTestPoint(), distance);
+        String hql = "SELECT id, dwithin(geom, :filter, :distance) from GeomEntity where dwithin(geom, :filter, :distance) = true and srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("filter", expectationsFactory.getTestPoint());
+        params.put("distance", 30.0);
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+    }
+
+    public void transform() throws SQLException {
+        if (!isSupportedByDialect(SpatialFunction.transform)) return;
+        int epsg = 3395;
+        Map<Integer, Geometry> dbexpected = expectationsFactory.getTransform(epsg);
+        String hql = "SELECT id, transform(geom, :epsg) from GeomEntity where srid(geom) = 4326";
+        Map<String, Object> params = createQueryParams("epsg", Integer.valueOf(epsg));
+        retrieveHQLResultsAndCompare(dbexpected, hql, params);
+
     }
 
     public <T> void retrieveHQLResultsAndCompare(Map<Integer, T> dbexpected, String hql) {

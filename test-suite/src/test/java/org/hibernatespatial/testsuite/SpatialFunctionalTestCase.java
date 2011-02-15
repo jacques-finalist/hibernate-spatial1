@@ -90,9 +90,25 @@ public abstract class SpatialFunctionalTestCase extends FunctionalTestCase {
         return new String[]{"GeomEntity.hbm.xml"};
     }
 
+    /**
+     * Returns true if the spatial dialect supports the specified function
+     *
+     * @param spatialFunction
+     * @return
+     */
     public boolean isSupportedByDialect(SpatialFunction spatialFunction) {
         SpatialDialect dialect = (SpatialDialect) getDialect();
         return dialect.supports(spatialFunction);
+    }
+
+    /**
+     * Supports true if the spatial dialect supports filtering (e.g. ST_overlap, MBROverlap, SDO_FILTER)
+     *
+     * @return
+     */
+    public boolean dialectSupportsFiltering() {
+        SpatialDialect dialect = (SpatialDialect) getDialect();
+        return dialect.supportsFiltering();
     }
 
     abstract protected Logger getLogger();
