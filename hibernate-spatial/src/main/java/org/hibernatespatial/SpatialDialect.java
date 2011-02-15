@@ -38,22 +38,14 @@ public interface SpatialDialect {
      * <code>org.hibernatespatial.criterion.SpatialRelateExpression</code>s
      * into prepared statements.
      * <p/>
-     * If useFilter is specified, then a two-stage spatial query model is
-     * assumed (first stage using only spatial index; second stage performing
-     * exact comparisons between geometries). The returned SQL-fragement in that
-     * case should contains two input parameters. The first for setting the
-     * filter geometry, the second for the testsuite-suite geometry.
      *
      * @param columnName      The name of the geometry-typed column to which the relation is
      *                        applied
      * @param spatialRelation The type of spatial relation (as defined in
-     *                        <code>org.walkonweb.spatial.SpatialRelation</code>).
-     * @param useFilter       If true, the SpatialRelateExpression uses two-stage query
-     *                        model
-     * @return - SQL fragment for use in the SQL WHERE-clause.
+     *                        <code>SpatialRelation</code>).
+     * @return SQL fragment for use in the SQL WHERE-clause.
      */
-    public String getSpatialRelateSQL(String columnName, int spatialRelation,
-                                      boolean useFilter);
+    public String getSpatialRelateSQL(String columnName, int spatialRelation);
 
     /**
      * Returns the SQL fragment for the SQL WHERE-expression when parsing
@@ -79,6 +71,33 @@ public interface SpatialDialect {
     public String getSpatialAggregateSQL(String columnName, int aggregation);
 
     /**
+     * Returns the SQL fragment when parsing a <code>DWithinExpression</code>.
+     *
+     * @param columnName the geometry column to test against
+     * @return
+     */
+    public String getDWithinSQL(String columnName);
+
+    /**
+     * Returns the SQL fragment when parsing an <code>HavingSridExpression</code>.
+     *
+     * @param columnName the geometry column to test against
+     * @return
+     */
+    public String getHavingSridSQL(String columnName);
+
+
+    /**
+     * Returns the SQL fragment when parsing a <code>IsEmptyExpression</code> or
+     * <code>IsNotEmpty</code> expression.
+     *
+     * @param columnName the geometry column
+     * @param isEmpty    whether the geometry is tested for empty or non-empty
+     * @return
+     */
+    public String getIsEmptySQL(String columnName, boolean isEmpty);
+
+    /**
      * Returns the name of the native database type for storing geometries.
      *
      * @return type name
@@ -95,13 +114,16 @@ public interface SpatialDialect {
      * the precise spatial relation between the testsuite-suite object and the results of
      * the first phase.
      * <p/>
-     * Postgis (up to version ??) supports explicit filtering. Oracle and MySQL
-     * don't.
-     *
-     * @return *
      */
     @Deprecated
     public boolean isTwoPhaseFiltering();
+
+    /**
+     * Returns true if this <code>SpatialDialect</code> supports a specific filtering function.
+     * <p/>
+     * This is intended to signal DB-support for fast window queries, or MBR-overlap queries
+     */
+    public boolean supportsFiltering();
 
     /**
      * Does this dialect supports the specified <code>SpatialFunction</code>.

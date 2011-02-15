@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -31,27 +31,28 @@ package org.hibernatespatial;
 /**
  * These spatial relations are all defined in "OpenGIS Simple Feature
  * Specification for SQL, Rev. 1.1" of the Open Geospatial Consortium (OGC).
- * 
+ *
  * @author Karel Maesen
  */
 public interface SpatialRelation {
 
-	public static int EQUALS = 0;
+    public static int EQUALS = 0;
 
-	public static int DISJOINT = 1;
+    public static int DISJOINT = 1;
 
-	public static int TOUCHES = 2;
+    public static int TOUCHES = 2;
 
-	public static int CROSSES = 3;
+    public static int CROSSES = 3;
 
-	public static int WITHIN = 4;
+    public static int WITHIN = 4;
 
-	public static int OVERLAPS = 5;
+    public static int OVERLAPS = 5;
 
-	public static int CONTAINS = 6;
+    public static int CONTAINS = 6;
 
-	public static int INTERSECTS = 7;
+    public static int INTERSECTS = 7;
 
-	public static int FILTER = 8;
+    @Deprecated
+    public static int FILTER = 8;
 
 }

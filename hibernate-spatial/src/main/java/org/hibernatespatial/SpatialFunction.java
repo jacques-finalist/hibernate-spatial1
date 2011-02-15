@@ -33,8 +33,10 @@ public enum SpatialFunction {
     geomunion("SFS 1.1"), //is actually UNION but this conflicts with SQL UNION construct
     difference("SFS 1.1"),
     symdifference("SFS 1.1"),
-    filter("Min. boundingbox overlap") //Minimum Bounding Rectangle overlaps
-    ;
+    //the distance within function - dwithin(geom, geom, distance) : boolean)
+    dwithin("common"),
+    //the transform function - transform(geom, epsg-code): geometry
+    transform("common");
 
     private final String description;
 

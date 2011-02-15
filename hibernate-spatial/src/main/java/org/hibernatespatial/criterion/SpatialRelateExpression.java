@@ -41,7 +41,7 @@ import org.hibernatespatial.SpatialDialect;
 /**
  * An implementation of the <code>Criterion</code> interface that implements
  * spatial queries: queries to the effect that a geometry property has a
- * specific spatial relation to a testsuite-suite geometry
+ * specific spatial relation to a test geometry
  *
  * @author Karel Maesen
  */
@@ -53,14 +53,9 @@ public class SpatialRelateExpression implements Criterion {
     private String propertyName = null;
 
     /**
-     * The testsuite-suite geometry
+     * The test geometry
      */
     private Geometry value = null;
-
-    /**
-     * An optional (bounding box) filter geometry.
-     */
-    private Geometry filter = null;
 
     /**
      * The spatial relation that is queried for.
@@ -69,11 +64,10 @@ public class SpatialRelateExpression implements Criterion {
 
     private static final long serialVersionUID = 1L;
 
-    public SpatialRelateExpression(String propertyName, Geometry filter,
+    public SpatialRelateExpression(String propertyName,
                                    Geometry value, int spatialRelation) {
         this.propertyName = propertyName;
         this.spatialRelation = spatialRelation;
-        this.filter = filter;
         this.value = value;
     }
 
@@ -86,20 +80,9 @@ public class SpatialRelateExpression implements Criterion {
 
     public TypedValue[] getTypedValues(Criteria criteria,
                                        CriteriaQuery criteriaQuery) throws HibernateException {
-        Dialect dialect = criteriaQuery.getFactory().getDialect();
-        boolean twoPhaseFiltering = false;
-        if (dialect instanceof SpatialDialect) {
-            SpatialDialect sDialect = (SpatialDialect) dialect;
-            twoPhaseFiltering = sDialect.isTwoPhaseFiltering();
-        }
-        if (filter != null && twoPhaseFiltering)
-            return new TypedValue[]{
-                    criteriaQuery.getTypedValue(criteria, propertyName, filter),
-                    criteriaQuery.getTypedValue(criteria, propertyName, value)};
-        else {
-            return new TypedValue[]{criteriaQuery.getTypedValue(criteria,
-                    propertyName, value)};
-        }
+        return new TypedValue[]{criteriaQuery.getTypedValue(criteria,
+                propertyName, value)};
+
     }
 
     /*
@@ -117,14 +100,8 @@ public class SpatialRelateExpression implements Criterion {
         Dialect dialect = factory.getDialect();
         if (dialect instanceof SpatialDialect) {
             SpatialDialect seDialect = (SpatialDialect) dialect;
-            if (filter != null && seDialect.isTwoPhaseFiltering()) {
-                return seDialect.getSpatialRelateSQL(columns[0],
-                        spatialRelation, true);
-            } else {
-                return seDialect.getSpatialRelateSQL(columns[0],
-                        spatialRelation, false);
-            }
-
+            return seDialect.getSpatialRelateSQL(columns[0],
+                    spatialRelation);
         } else {
             throw new IllegalStateException(
                     "Dialect must be spatially enabled dialect");

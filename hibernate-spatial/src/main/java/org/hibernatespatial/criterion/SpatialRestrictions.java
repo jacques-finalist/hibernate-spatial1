@@ -54,43 +54,43 @@ public class SpatialRestrictions {
     }
 
     public static SpatialRelateExpression eq(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.EQUALS);
     }
 
 
     public static SpatialRelateExpression within(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.WITHIN);
     }
 
     public static SpatialRelateExpression contains(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.CONTAINS);
     }
 
     public static SpatialRelateExpression crosses(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.CROSSES);
     }
 
     public static SpatialRelateExpression disjoint(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, null, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.DISJOINT);
     }
 
     public static SpatialRelateExpression intersects(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.INTERSECTS);
     }
 
     public static SpatialRelateExpression overlaps(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.OVERLAPS);
     }
 
     public static SpatialRelateExpression touches(String propertyName, Geometry value) {
-        return new SpatialRelateExpression(propertyName, value, value,
+        return new SpatialRelateExpression(propertyName, value,
                 SpatialRelation.TOUCHES);
     }
 
@@ -101,6 +101,23 @@ public class SpatialRestrictions {
     public static SpatialFilter filter(String propertyName, Envelope envelope,
                                        int SRID) {
         return new SpatialFilter(propertyName, envelope, SRID);
+    }
+
+    public static Criterion distanceWithin(String propertyName, Geometry geometry, double distance) {
+        return new DWithinExpression(propertyName, geometry, distance);
+    }
+
+
+    public static Criterion havingSRID(String propertyName, int srid) {
+        return new HavingSridExpression(propertyName, srid);
+    }
+
+    public static Criterion isEmpty(String propertyName) {
+        return new IsEmptyExpression(propertyName, true);
+    }
+
+    public static Criterion isNotEmpty(String propertyName) {
+        return new IsEmptyExpression(propertyName, false);
     }
 
     public static Criterion spatialRestriction(int relation,

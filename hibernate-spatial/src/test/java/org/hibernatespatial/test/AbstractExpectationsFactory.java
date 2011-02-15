@@ -26,6 +26,7 @@
 package org.hibernatespatial.test;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
@@ -48,6 +49,9 @@ import java.util.Map;
 public abstract class AbstractExpectationsFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractExpectationsFactory.class);
+
+    public final static String TEST_POLYGON_WKT = "POLYGON((0 0, 50 0, 100 100, 0 100, 0 0))";
+    public final static String TEST_POINT_WKT = "POINT(0 0)";
 
     public final static int INTEGER = 1;
     public final static int DOUBLE = 2;
@@ -150,6 +154,17 @@ public abstract class AbstractExpectationsFactory {
     public Map<Integer, Boolean> getIsEmpty() throws SQLException {
         return retrieveExpected(createNativeIsEmptyStatement(), BOOLEAN);
     }
+
+    /**
+     * Returns whether the testsuite-suite geometries are empty
+     *
+     * @return map of identifier and whether testsuite-suite geometry is empty
+     * @throws SQLException
+     */
+    public Map<Integer, Boolean> getIsNotEmpty() throws SQLException {
+        return retrieveExpected(createNativeIsNotEmptyStatement(), BOOLEAN);
+    }
+
 
     /**
      * Returns the expected boundaries of all testsuite-suite geometries
@@ -256,6 +271,28 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
+     * Returns the expected results of the DWithin operator
+     *
+     * @param geom
+     * @param distance
+     * @return
+     */
+    public Map<Integer, Boolean> getDwithin(Point geom, double distance) throws SQLException {
+        return retrieveExpected(createNativeDwithinStatement(geom, distance), BOOLEAN);
+    }
+
+    /**
+     * Returns the expected result of the havingSRID operator
+     *
+     * @param srid the SRID (EPSG code)
+     * @return
+     */
+    public Map<Integer, Boolean> havingSRID(int srid) throws SQLException {
+        return retrieveExpected(createNativeHavingSRIDStatement(srid), BOOLEAN);
+    }
+
+
+    /**
      * Returns the expected results of the relate operator
      *
      * @param geom
@@ -356,6 +393,17 @@ public abstract class AbstractExpectationsFactory {
     }
 
     /**
+     * Returns the expected result of the transform function
+     *
+     * @param epsg
+     * @return
+     * @throws SQLException
+     */
+    public Map<Integer, Geometry> getTransform(int epsg) throws SQLException {
+        return retrieveExpected(createNativeTransformStatement(epsg), GEOMETRY);
+    }
+
+    /**
      * Returns a statement corresponding to the HQL statement:
      * "SELECT id, touches(geom, :filter) from GeomEntity where touches(geom, :filter) = true and srid(geom) = 4326"
      *
@@ -382,6 +430,16 @@ public abstract class AbstractExpectationsFactory {
      * @return
      */
     protected abstract NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix);
+
+    /**
+     * Returns a statement corresponding to the HQL statement:
+     * "SELECT id, dwithin(geom, :filter, :distance) from GeomEntity where dwithin(geom, :filter, :distance) = true and srid(geom) = 4326"
+     *
+     * @param geom     the geometry corresponding to the ':filter' query parameter
+     * @param distance the string corresponding to the ':distance' query parameter
+     * @return
+     */
+    protected abstract NativeSQLStatement createNativeDwithinStatement(Point geom, double distance);
 
     /**
      * Returns a statement corresponding to the HQL statement:
@@ -503,6 +561,15 @@ public abstract class AbstractExpectationsFactory {
      */
     protected abstract NativeSQLStatement createNativeIsEmptyStatement();
 
+
+    /**
+     * Returns a statement corresponding to the HQL statement:
+     * "select id,not isempty(geom) from GeomEntity".
+     *
+     * @return
+     */
+    protected abstract NativeSQLStatement createNativeIsNotEmptyStatement();
+
     /**
      * Returns a statement corresponding to the HQL statement:
      * "select id, boundary(geom) from GeomEntity".
@@ -580,6 +647,25 @@ public abstract class AbstractExpectationsFactory {
      */
     protected abstract NativeSQLStatement createNativeDisjointStatement(Geometry geom);
 
+
+    /**
+     * Returns a statement corresponding to the HQL statement
+     * "SELECT id, transform(geom, :epsg) from GeomEntity where srid(geom) = 4326"
+     *
+     * @param epsg - the EPSG code of the target projection system.
+     * @return
+     */
+    protected abstract NativeSQLStatement createNativeTransformStatement(int epsg);
+
+    /**
+     * Returns the statement corresponding to the HQL statement
+     * "select id, (srid(geom) = :epsg) from GeomEntity where srid(geom) = :epsg ";
+     *
+     * @param srid
+     * @return
+     */
+    protected abstract NativeSQLStatement createNativeHavingSRIDStatement(int srid);
+
     /**
      * Creates a connection to the database
      *
@@ -606,9 +692,25 @@ public abstract class AbstractExpectationsFactory {
     public Polygon getTestPolygon() {
         WKTReader reader = new WKTReader();
         try {
-            Polygon polygon = (Polygon) reader.read(dataSourceUtils.TEST_POLYGON_WKT);
+            Polygon polygon = (Polygon) reader.read(TEST_POLYGON_WKT);
             polygon.setSRID(getTestSrid());
             return polygon;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Return a testsuite-suite point (filter, ...)
+     *
+     * @return a testsuite-suite point
+     */
+    public Point getTestPoint() {
+        WKTReader reader = new WKTReader();
+        try {
+            Point point = (Point) reader.read(TEST_POINT_WKT);
+            point.setSRID(getTestSrid());
+            return point;
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

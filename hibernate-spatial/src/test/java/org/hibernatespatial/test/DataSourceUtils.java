@@ -45,7 +45,6 @@ import java.util.Properties;
  */
 public class DataSourceUtils {
 
-    public final static String TEST_POLYGON_WKT = "POLYGON((0 0, 50 0, 100 100, 0 100, 0 0))";
 
     private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtils.class);
 
