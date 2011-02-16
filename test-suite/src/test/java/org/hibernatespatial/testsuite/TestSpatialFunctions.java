@@ -309,7 +309,7 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
 
     public void transform() throws SQLException {
         if (!isSupportedByDialect(SpatialFunction.transform)) return;
-        int epsg = 3395;
+        int epsg = 4324;
         Map<Integer, Geometry> dbexpected = expectationsFactory.getTransform(epsg);
         String hql = "SELECT id, transform(geom, :epsg) from GeomEntity where srid(geom) = 4326";
         Map<String, Object> params = createQueryParams("epsg", Integer.valueOf(epsg));
