@@ -26,6 +26,7 @@
 package org.hibernatespatial.oracle;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
@@ -56,6 +57,11 @@ public class SDOGeometryExpectationsFactory extends AbstractExpectationsFactory 
     @Override
     protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
         return createNativeSQLStatementAllWKTParams("select t.id, MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM).ST_Relate(MDSYS.ST_GEOMETRY.FROM_WKT(?, 4326), '" + matrix + "') from GEOMTEST T where MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM).ST_Relate(MDSYS.ST_GEOMETRY.FROM_WKT(?, 4326), '" + matrix + "') = 1 and t.GEOM.SDO_SRID = 4326", geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -130,6 +136,11 @@ public class SDOGeometryExpectationsFactory extends AbstractExpectationsFactory 
     }
 
     @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("SELECT t.ID, CASE MDSYS.OGC_ISEMPTY(MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM)) WHEN 0 THEN 1 ELSE 0 END FROM GEOMTEST t");
+    }
+
+    @Override
     protected NativeSQLStatement createNativeBoundaryStatement() {
         return createNativeSQLStatement("SELECT t.ID, MDSYS.OGC_BOUNDARY(MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM)).GEOM FROM GEOMTEST t");
     }
@@ -172,6 +183,18 @@ public class SDOGeometryExpectationsFactory extends AbstractExpectationsFactory 
     @Override
     protected NativeSQLStatement createNativeDisjointStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM).ST_Disjoint(MDSYS.ST_GEOMETRY.FROM_WKT(?, 4326)) from GEOMTEST T where MDSYS.ST_GEOMETRY.FROM_SDO_GEOM(t.GEOM).ST_Disjoint(MDSYS.ST_GEOMETRY.FROM_WKT(?, 4326)) = 1 and t.GEOM.SDO_SRID = 4326", geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        return createNativeSQLStatement(
+                "select t.id, MDSYS.SDO_CS.transform(t.geom," + epsg + ") from GeomTest t where t.geom.SDO_SRID = 4326"
+        );
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, 1 from GeomTest t where t.geom.SDO_SRID =  " + srid);
     }
 
     @Override

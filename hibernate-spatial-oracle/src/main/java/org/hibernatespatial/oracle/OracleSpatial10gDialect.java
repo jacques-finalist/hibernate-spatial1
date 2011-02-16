@@ -246,6 +246,10 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
                 geometryCustomType, false,
                 OracleSpatialAggregate.EXTENT));
 
+        //other common functions
+        registerFunction("transform", new StandardSQLFunction("SDO_CS.TRANSFORM",
+                geometryCustomType));
+
         // Oracle specific Aggregate functions
         registerFunction("centroid", new SpatialAggregationFunction("extent",
                 geometryCustomType, false,
@@ -406,8 +410,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         return buffer.toString();
     }
 
-    public String getSpatialRelateSQL(String columnName, int spatialRelation,
-                                      boolean useFilter) {
+    public String getSpatialRelateSQL(String columnName, int spatialRelation) {
 
         String sql = (isOGCStrict() ? (getOGCSpatialRelateSQL(columnName, "?",
                 spatialRelation) + " = 1") : (getNativeSpatialRelateSQL(
@@ -427,6 +430,20 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
                                          int spatialAggregateFunction) {
         return getNativeSpatialAggregateSQL(columnName,
                 spatialAggregateFunction);
+    }
+
+    public String getDWithinSQL(String columnName) {
+        throw new UnsupportedOperationException("No DWithin in this dialect");
+    }
+
+    public String getHavingSridSQL(String columnName) {
+        return String.format(" (MDSYS.ST_GEOMETRY(%s).ST_SRID() = ?)", columnName);
+    }
+
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        return String.format("( MDSYS.ST_GEOMETRY(%s).ST_ISEMPTY() = %d )",
+                columnName,
+                isEmpty ? 1 : 0);
     }
 
     private String getOGCSpatialAnalysisSQL(List args,
@@ -502,15 +519,22 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
      * Returns the features supported by this Dialect.
      *
      * @return Array of Feature names.
+     * @deprecated
      */
     public String[] getFeatures() {
         return this.features.keySet().toArray(new String[this.features.size()]);
     }
 
+    /**
+     * @deprecated
+     */
     public boolean getFeature(String name) {
         return this.features.get(name).booleanValue();
     }
 
+    /**
+     * @deprecated
+     */
     public void setFeature(String name, boolean value) {
         log.info("Setting feature: " + name + " to " + value);
         this.features.put(name, value);
@@ -580,8 +604,12 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         return false;
     }
 
-    public boolean supports(SpatialFunction function) {
+    public boolean supportsFiltering() {
         return true;
+    }
+
+    public boolean supports(SpatialFunction function) {
+        return (getFunctions().get(function.toString()) != null);
     }
 
 
