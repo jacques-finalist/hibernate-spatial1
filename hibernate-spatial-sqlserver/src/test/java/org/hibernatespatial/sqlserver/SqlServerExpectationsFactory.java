@@ -26,6 +26,7 @@
 package org.hibernatespatial.sqlserver;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.sqlserver.convertors.Decoders;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.DataSourceUtils;
@@ -99,6 +100,11 @@ public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("select t.id, ~t.geom.STIsEmpty() from GeomTest t");
+    }
+
+    @Override
     protected NativeSQLStatement createNativeBoundaryStatement() {
         return createNativeSQLStatement("select t.id, t.geom.STBoundary() from GeomTest t");
     }
@@ -155,6 +161,16 @@ public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, 1 from GeomTest t where t.geom.STSrid =  " + srid);
+    }
+
+    @Override
     protected NativeSQLStatement createNativeIntersectsStatement(Geometry geom) {
         return createNativeSQLStatementAllWKTParams("select t.id, t.geom.STIntersects(geometry::STGeomFromText(?, 4326)) from GeomTest t where t.geom.STIntersects(geometry::STGeomFromText(?, 4326)) = 'true' and t.geom.STSrid = 4326",
                 geom.toText());
@@ -181,6 +197,11 @@ public class SqlServerExpectationsFactory extends AbstractExpectationsFactory {
     protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
         String sql = "select t.id, t.geom.STRelate(geometry::STGeomFromText(?, 4326), '" + matrix + "' ) from GeomTest t where t.geom.STRelate(geometry::STGeomFromText(?, 4326), '" + matrix + "') = 'true' and t.geom.STSrid = 4326";
         return createNativeSQLStatementAllWKTParams(sql, geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

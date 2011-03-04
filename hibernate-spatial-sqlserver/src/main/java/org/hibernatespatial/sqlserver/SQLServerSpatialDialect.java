@@ -108,7 +108,7 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
     * @see org.hibernatespatial.SpatialDialect#getSpatialRelateSQL(java.lang.String, int, boolean)
     */
 
-    public String getSpatialRelateSQL(String columnName, int spatialRelation, boolean useFilter) {
+    public String getSpatialRelateSQL(String columnName, int spatialRelation) {
         final String stfunction;
         switch (spatialRelation) {
             case SpatialRelation.WITHIN:
@@ -143,10 +143,6 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
         return columnName + "." + stfunction + "(?) = 1";
     }
 
-    /* (non-Javadoc)
-    * @see org.hibernatespatial.SpatialDialect#getSpatialFilterExpression(java.lang.String)
-    */
-
     public String getSpatialFilterExpression(String columnName) {
         return columnName + ".Filter(?) = 1";
     }
@@ -154,7 +150,6 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
     /* (non-Javadoc)
      * @see org.hibernatespatial.SpatialDialect#getGeometryUserType()
      */
-
     public UserType getGeometryUserType() {
         return new SQLServerGeometryUserType();
     }
@@ -167,28 +162,33 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
         throw new UnsupportedOperationException("No spatial aggregate SQL functions.");
     }
 
+    public String getDWithinSQL(String columnName) {
+        throw new UnsupportedOperationException("SQL Server has no DWithin function.");
+    }
+
 
     public String getHavingSridSQL(String columnName) {
         return columnName + ".STSrid = (?)";
     }
 
-    /* (non-Javadoc)
-     * @see org.hibernatespatial.SpatialDialect#getDbGeometryTypeName()
-     */
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        String base = "(" + columnName + ".STIsEmpty() ";
+        return isEmpty ? base + " = 1 )" : base + " = 0 )";
+    }
 
     public String getDbGeometryTypeName() {
         return COLUMN_TYPE;
     }
 
-    /* (non-Javadoc)
-     * @see org.hibernatespatial.SpatialDialect#isTwoPhaseFiltering()
-     */
-
     public boolean isTwoPhaseFiltering() {
         return false;
     }
 
-    public boolean supports(SpatialFunction function) {
+    public boolean supportsFiltering() {
         return true;
+    }
+
+    public boolean supports(SpatialFunction function) {
+        return (getFunctions().get(function.toString()) != null);
     }
 }
