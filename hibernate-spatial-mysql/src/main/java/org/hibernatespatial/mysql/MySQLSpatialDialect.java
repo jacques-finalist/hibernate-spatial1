@@ -32,6 +32,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
@@ -65,43 +66,43 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         registerFunction("geometrytype", new StandardSQLFunction(
                 "geometrytype", Hibernate.STRING));
         registerFunction("srid", new StandardSQLFunction("srid",
-                Hibernate.INTEGER));
+                StandardBasicTypes.INTEGER));
         registerFunction("envelope", new StandardSQLFunction("envelope",
                 new CustomType(new MySQLGeometryUserType(), null)));
         registerFunction("astext", new StandardSQLFunction("astext",
-                Hibernate.STRING));
+                StandardBasicTypes.STRING));
         registerFunction("asbinary", new StandardSQLFunction("asbinary",
-                Hibernate.BINARY));
+                StandardBasicTypes.BINARY));
         registerFunction("isempty", new StandardSQLFunction("isempty",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("issimple", new StandardSQLFunction("issimple",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("boundary", new StandardSQLFunction("boundary",
                 geometryCustomType));
 
         // Register functions for spatial relation constructs
         registerFunction("overlaps", new StandardSQLFunction("overlaps",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("intersects", new StandardSQLFunction("intersects",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("equals", new StandardSQLFunction("equals",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("contains", new StandardSQLFunction("contains",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("crosses", new StandardSQLFunction("crosses",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("disjoint", new StandardSQLFunction("disjoint",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("touches", new StandardSQLFunction("touches",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("within", new StandardSQLFunction("within",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
         registerFunction("relate", new StandardSQLFunction("relate",
-                Hibernate.BOOLEAN));
+                StandardBasicTypes.BOOLEAN));
 
         // register the spatial analysis functions
         registerFunction("distance", new StandardSQLFunction("distance",
-                Hibernate.DOUBLE));
+                StandardBasicTypes.DOUBLE));
         registerFunction("buffer", new StandardSQLFunction("buffer",
                 geometryCustomType));
         registerFunction("convexhull", new StandardSQLFunction("convexhull",
@@ -117,15 +118,14 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.walkonweb.spatial.dialect.SpatialEnabledDialect#getSpatialRelateExpression(java.lang.String,
-      *      int, boolean)
-      */
-
-    public String getSpatialRelateSQL(String columnName, int spatialRelation,
-                                      boolean hasFilter) {
+    /**
+     * @param columnName      The name of the geometry-typed column to which the relation is
+     *                        applied
+     * @param spatialRelation The type of spatial relation (as defined in
+     *                        <code>SpatialRelation</code>).
+     * @return
+     */
+    public String getSpatialRelateSQL(String columnName, int spatialRelation) {
         switch (spatialRelation) {
             case SpatialRelation.WITHIN:
                 return " within(" + columnName + ",?)";
@@ -150,12 +150,6 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see org.walkonweb.spatial.dialect.SpatialEnabledDialect#getSpatialFilterExpression(java.lang.String)
-      */
-
     public String getSpatialFilterExpression(String columnName) {
         return "MBRIntersects(" + columnName + ", ? ) ";
     }
@@ -174,6 +168,19 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         throw new UnsupportedOperationException("Mysql has no spatial aggregate SQL functions.");
     }
 
+    public String getDWithinSQL(String columnName) {
+        throw new UnsupportedOperationException(String.format("Mysql doesn't support the Dwithin function"));
+    }
+
+    public String getHavingSridSQL(String columnName) {
+        return " (srid(" + columnName + ") = ?) ";
+    }
+
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        String emptyExpr = " IsEmpty(" + columnName + ") ";
+        return isEmpty ? emptyExpr : "( NOT " + emptyExpr + ")";
+    }
+
     public String getDbGeometryTypeName() {
         return "GEOMETRY";
     }
@@ -181,6 +188,10 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
 
     public boolean isTwoPhaseFiltering() {
         return false;
+    }
+
+    public boolean supportsFiltering() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean supports(SpatialFunction function) {
@@ -194,6 +205,8 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
             case symdifference:
             case intersection:
             case geomunion:
+            case dwithin:
+            case transform:
                 return false;
         }
         return true;

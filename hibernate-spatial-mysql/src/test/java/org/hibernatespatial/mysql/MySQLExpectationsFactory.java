@@ -26,6 +26,7 @@
 package org.hibernatespatial.mysql;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.DataSourceUtils;
 import org.hibernatespatial.test.NativeSQLStatement;
@@ -62,6 +63,11 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
     protected NativeSQLStatement createNativeRelateStatement(Geometry geom, String matrix) {
         String sql = "select t.id, relate(t.geom, GeomFromText(?, 4326), '" + matrix + "' ) from GEOMTEST t where relate(t.geom, GeomFromText(?, 4326), '" + matrix + "') = 1 and srid(t.geom) = 4326";
         return createNativeSQLStatementAllWKTParams(sql, geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -151,6 +157,11 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
     }
 
     @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("select id, not isempty(geom) from GEOMTEST");
+    }
+
+    @Override
     protected NativeSQLStatement createNativeBoundaryStatement() {
         return createNativeSQLStatement("select id, boundary(geom) from GEOMTEST");
     }
@@ -203,6 +214,16 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
         return createNativeSQLStatementAllWKTParams(
                 "select t.id, disjoint(t.geom, GeomFromText(?, 4326)) from GEOMTEST t where disjoint(t.geom, geomFromText(?, 4326)) = 1 and srid(t.geom) = 4326",
                 geom.toText());
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, (srid(t.geom) = " + srid + ") from GeomTest t where SRID(t.geom) =  " + srid);
     }
 
     @Override
