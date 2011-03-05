@@ -24,9 +24,6 @@
   ~ For more information, visit: http://www.hibernatespatial.org/
   -->
 
-<!DOCTYPE hibernate-configuration PUBLIC
-        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-spatial>
     <default_dialect>org.hibernatespatial.geodb.GeoDBDialect</default_dialect>
     <precision_model>FIXED</precision_model>

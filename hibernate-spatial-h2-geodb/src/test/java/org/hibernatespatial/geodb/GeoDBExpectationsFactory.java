@@ -4,6 +4,7 @@
 package org.hibernatespatial.geodb;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.NativeSQLStatement;
 
@@ -153,6 +154,16 @@ public class GeoDBExpectationsFactory extends AbstractExpectationsFactory {
                 geom.toText());
     }
 
+    @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, (ST_SRID(t.geom) = " + srid + ") from GeomTest t where ST_SRID(t.geom) =  " + srid);
+    }
+
     /*
       * (non-Javadoc)
       *
@@ -270,6 +281,11 @@ public class GeoDBExpectationsFactory extends AbstractExpectationsFactory {
         return createNativeSQLStatement("select id, ST_IsEmpty(geom) from GEOMTEST");
     }
 
+    @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("select id, not ST_IsEmpty(geom) from geomtest");
+    }
+
     /*
       * (non-Javadoc)
       *
@@ -309,6 +325,11 @@ public class GeoDBExpectationsFactory extends AbstractExpectationsFactory {
                                                              String matrix) {
         throw new UnsupportedOperationException(
                 "Method ST_Relate() is not implemented in the current version of GeoDB.");
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /*

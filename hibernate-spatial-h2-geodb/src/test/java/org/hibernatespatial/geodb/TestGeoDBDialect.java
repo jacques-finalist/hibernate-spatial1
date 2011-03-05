@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Tests basic settings of the {@link GeoDBDialect}.
- * 
+ *
  * @Author Jan Boonen, Geodan IT b.v.
  */
 public class TestGeoDBDialect {
@@ -46,29 +46,29 @@ public class TestGeoDBDialect {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetSpatialAggregateSQL() {
-    	geoDBDialect.getSpatialAggregateSQL("geom", 1);
+        geoDBDialect.getSpatialAggregateSQL("geom", 1);
     }
 
     @Test
     public void testGetSpatialFilterExpression() {
-    	assertEquals("(geom && ? ) ", geoDBDialect.getSpatialFilterExpression("geom"));
+        assertEquals("(geom && ? ) ", geoDBDialect.getSpatialFilterExpression("geom"));
     }
 
     @Test
     public void testGetSpatialRelateSQL() {
-    	assertEquals(" ST_Contains(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.CONTAINS, false));
-    	assertEquals(" ST_Crosses(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.CROSSES, false));
-    	assertEquals(" ST_Disjoint(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.DISJOINT, false));
-    	assertEquals(" ST_Equals(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.EQUALS, false));
-    	assertEquals(" ST_Intersects(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.INTERSECTS, false));
-    	assertEquals(" ST_Overlaps(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.OVERLAPS, false));
-    	assertEquals(" ST_Touches(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.TOUCHES, false));
-    	assertEquals(" ST_Within(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.WITHIN, false));
+        assertEquals(" ST_Contains(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.CONTAINS));
+        assertEquals(" ST_Crosses(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.CROSSES));
+        assertEquals(" ST_Disjoint(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.DISJOINT));
+        assertEquals(" ST_Equals(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.EQUALS));
+        assertEquals(" ST_Intersects(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.INTERSECTS));
+        assertEquals(" ST_Overlaps(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.OVERLAPS));
+        assertEquals(" ST_Touches(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.TOUCHES));
+        assertEquals(" ST_Within(geom, ?)", geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.WITHIN));
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testGetSpatialRelateSQLUnsupported() {
-    	geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.FILTER, false);
+        geoDBDialect.getSpatialRelateSQL("geom", SpatialRelation.FILTER);
     }
-    
+
 }

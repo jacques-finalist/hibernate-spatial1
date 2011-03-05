@@ -4,6 +4,7 @@
 package org.hibernatespatial.geodb;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.hibernatespatial.test.AbstractExpectationsFactory;
 import org.hibernatespatial.test.NativeSQLStatement;
 
@@ -154,6 +155,16 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
                 geom.toText());
     }
 
+    @Override
+    protected NativeSQLStatement createNativeTransformStatement(int epsg) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
+        return createNativeSQLStatement("select t.id, (st_srid(t.geom) = " + srid + ") from GeomTest t where ST_SRID(t.geom) =  " + srid);
+    }
+
     /*
       * (non-Javadoc)
       *
@@ -271,6 +282,11 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
         return createNativeSQLStatement("select id, ST_IsEmpty(geom) from GEOMTEST");
     }
 
+    @Override
+    protected NativeSQLStatement createNativeIsNotEmptyStatement() {
+        return createNativeSQLStatement("select id, not ST_IsEmpty(geom) from GEOMTEST");
+    }
+
     /*
       * (non-Javadoc)
       *
@@ -310,6 +326,12 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
                                                              String matrix) {
         throw new UnsupportedOperationException(
                 "Method ST_Relate() is not implemented in the current version of GeoDB.");
+    }
+
+    @Override
+    protected NativeSQLStatement createNativeDwithinStatement(Point geom, double distance) {
+        String sql = "select t.id, st_dwithin(t.geom, ST_GeomFromText(?, 4326), " + distance + " ) from GeomTest t where st_dwithin(t.geom, ST_GeomFromText(?, 4326), " + distance + ") = 'true' and ST_SRID(t.geom) = 4326";
+        return createNativeSQLStatementAllWKTParams(sql, geom.toText());
     }
 
     /*

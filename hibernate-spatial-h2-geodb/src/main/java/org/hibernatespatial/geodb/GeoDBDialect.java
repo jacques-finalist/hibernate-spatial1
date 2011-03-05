@@ -28,6 +28,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.SpatialFunction;
@@ -160,6 +161,10 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
 // NOT YET AVAILABLE IN GEODB			
 //		registerFunction("extent", new StandardSQLFunction("extent", 
 //				new CustomType(GeoDBGeometryUserType.class, null)));
+
+        registerFunction("dwithin", new StandardSQLFunction("ST_DWithin",
+                StandardBasicTypes.BOOLEAN));
+
     }
 
     /* (non-Javadoc)
@@ -187,10 +192,22 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
         }
     }
 
+    public String getDWithinSQL(String columnName) {
+        return "ST_DWithin(" + columnName + ",?,?)";
+    }
+
+    public String getHavingSridSQL(String columnName) {
+        return "( ST_srid(" + columnName + ") = ?)";
+    }
+
+    public String getIsEmptySQL(String columnName, boolean isEmpty) {
+        String emptyExpr = " ST_IsEmpty(" + columnName + ") ";
+        return isEmpty ? emptyExpr : "( NOT " + emptyExpr + ")";
+    }
+
     /* (non-Javadoc)
       * @see org.hibernatespatial.SpatialDialect#getSpatialFilterExpression(java.lang.String)
       */
-
     public String getSpatialFilterExpression(String columnName) {
         return "(" + columnName + " && ? ) ";
     }
@@ -199,8 +216,7 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
       * @see org.hibernatespatial.SpatialDialect#getSpatialRelateSQL(java.lang.String, int, boolean)
       */
 
-    public String getSpatialRelateSQL(String columnName, int spatialRelation,
-                                      boolean hasFilter) {
+    public String getSpatialRelateSQL(String columnName, int spatialRelation) {
         switch (spatialRelation) {
             case SpatialRelation.WITHIN:
                 return " ST_Within(" + columnName + ", ?)";
@@ -240,16 +256,12 @@ public class GeoDBDialect extends H2Dialect implements SpatialDialect {
         return false;
     }
 
-    public boolean supports(SpatialFunction function) {
-        switch (function) {
-            case filter:
-            case dimension:
-            case geometrytype:
-            case boundary:
-                return false;
-        }
+    public boolean supportsFiltering() {
+        return true;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-        return true;
+    public boolean supports(SpatialFunction function) {
+        return (getFunctions().get(function.toString()) != null);
     }
 
 }
