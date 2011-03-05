@@ -273,9 +273,9 @@ public class MLineStringTest extends TestCase {
                     Double.NaN, mco1.m + offset * (mco2.m - mco1.m));
             MCoordinate mctest = (MCoordinate) arbitraryLine
                     .getCoordinateAtM(newM);
-            assertEquals(mcexp.x, mctest.x, Math.ulp(100 * mcexp.x));
-            assertEquals(mcexp.y, mctest.y, Math.ulp(100 * mcexp.y));
-            assertEquals(mcexp.m, mctest.m, Math.ulp(100 * mcexp.m));
+            assertEquals(mcexp.x, mctest.x, 0.0001);
+            assertEquals(mcexp.y, mctest.y, 0.0001);
+            assertEquals(mcexp.m, mctest.m, 0.0001);
 
         } catch (Exception e) {
             System.err.println(e);
