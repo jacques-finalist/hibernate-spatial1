@@ -201,17 +201,17 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
                 SpatialRelation.OVERLAPS));
         registerFunction("intersects", new SpatialRelateFunction("intersects",
                 SpatialRelation.INTERSECTS));
-        registerFunction("contains", new SpatialRelateFunction("intersects",
+        registerFunction("contains", new SpatialRelateFunction("contains",
                 SpatialRelation.CONTAINS));
-        registerFunction("crosses", new SpatialRelateFunction("intersects",
+        registerFunction("crosses", new SpatialRelateFunction("crosses",
                 SpatialRelation.CROSSES));
-        registerFunction("disjoint", new SpatialRelateFunction("intersects",
+        registerFunction("disjoint", new SpatialRelateFunction("disjoint",
                 SpatialRelation.DISJOINT));
-        registerFunction("equals", new SpatialRelateFunction("intersects",
+        registerFunction("equals", new SpatialRelateFunction("equals",
                 SpatialRelation.EQUALS));
-        registerFunction("touches", new SpatialRelateFunction("intersects",
+        registerFunction("touches", new SpatialRelateFunction("touches",
                 SpatialRelation.TOUCHES));
-        registerFunction("within", new SpatialRelateFunction("intersects",
+        registerFunction("within", new SpatialRelateFunction("within",
                 SpatialRelation.WITHIN));
         registerFunction("relate", new WrappedOGCFunction("OGC_RELATE",
                 Hibernate.BOOLEAN, new boolean[]{true, true, false}));
