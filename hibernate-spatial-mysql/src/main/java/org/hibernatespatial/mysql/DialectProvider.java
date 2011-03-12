@@ -3,7 +3,7 @@
  *
  * This file is part of Hibernate Spatial, an extension to the 
  * hibernate ORM solution for geographic data. 
- *  
+ *
  * Copyright © 2007 Geovise BVBA
  * Copyright © 2007 K.U. Leuven LRD, Spatial Applications Division, Belgium
  *
@@ -33,42 +33,46 @@ import org.hibernatespatial.spi.SpatialDialectProvider;
 
 /**
  * MySQL DialectProvider
- * 
+ *
  * @author Karel Maesen
  */
 public class DialectProvider implements SpatialDialectProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
-	 *      java.util.Map)
-	 */
-	public SpatialDialect createSpatialDialect(String dialect) {
-		if (dialect.equals(MySQLSpatialDialect.class.getCanonicalName())
-				|| dialect.equals("org.hibernate.dialect.MySQLSQLDialect")
-				|| dialect.equals("mysql"))
-			return new MySQLSpatialDialect();
-		else
-			return null;
-	}
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#createSpatialDialect(java.lang.String,
+      *      java.util.Map)
+      */
+    public SpatialDialect createSpatialDialect(String dialect) {
+        if (dialect.equals(MySQLSpatialDialect.class.getCanonicalName())
+                || dialect.equals("org.hibernate.dialect.MySQLDialect")
+                || dialect.equals("mysql"))
+            return new MySQLSpatialDialect();
+        if (dialect.equals(MySQLSpatialInnoDBDialect.class.getCanonicalName())
+                || dialect.equals("org.hibernate.dialect.MySQLInnoDBDialect")
+                || dialect.equals("org.hibernate.dialect.MySQL5InnoDBDialect"))
+            return new MySQLSpatialInnoDBDialect();
+        else
+            return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#getDefaultDialect()
-	 */
-	public SpatialDialect getDefaultDialect() {
-		return new MySQLSpatialDialect();
-	}
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#getDefaultDialect()
+      */
+    public SpatialDialect getDefaultDialect() {
+        return new MySQLSpatialDialect();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.hibernatespatial.spi.SpatialDialectProvider#getSupportedDialects()
-	 */
-	public String[] getSupportedDialects() {
-		return new String[] { MySQLSpatialDialect.class.getCanonicalName() };
-	}
+    /*
+      * (non-Javadoc)
+      *
+      * @see org.hibernatespatial.spi.SpatialDialectProvider#getSupportedDialects()
+      */
+    public String[] getSupportedDialects() {
+        return new String[]{MySQLSpatialDialect.class.getCanonicalName()};
+    }
 
 }

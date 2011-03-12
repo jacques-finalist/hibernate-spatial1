@@ -39,20 +39,30 @@ import org.hibernatespatial.SpatialDialect;
 import org.hibernatespatial.SpatialFunction;
 import org.hibernatespatial.SpatialRelation;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Extends the MySQLDialect by also including information on spatial operators,
  * constructors and processing functions.
  *
  * @author Karel Maesen
+ * @author Boni Gopalan [3/11/2011:Refactored the code to introduce MySQLSpatialInnoDBDialect without much code duplication]
  */
 public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect {
 
 
     private static final Type geometryCustomType = new CustomType(new MySQLGeometryUserType(), new String[]{"mysql_geometry"});
 
-    public MySQLSpatialDialect() {
-        super();
-        registerColumnType(java.sql.Types.ARRAY, "GEOMETRY");
+    protected Map<String, Integer> getColumnTypesToRegister() {
+        Map<String, Integer> columnTypes = new HashMap<String, Integer>();
+        columnTypes.put("GEOMETRY", java.sql.Types.ARRAY);
+        return columnTypes;
+    }
+
+    protected Map<String, StandardSQLFunction> getFunctionsToRegister() {
+        Map<String, StandardSQLFunction> functionsToRegister = new HashMap<String, StandardSQLFunction>();
 
         // registering OGC functions
         // (spec_simplefeatures_sql_99-04.pdf)
@@ -61,61 +71,84 @@ public class MySQLSpatialDialect extends MySQLDialect implements SpatialDialect 
         // Registerfunction calls for registering geometry functions:
         // first argument is the OGC standard functionname, second the name as
         // it occurs in the spatial dialect
-        registerFunction("dimension", new StandardSQLFunction("dimension",
+
+        functionsToRegister.put("dimension", new StandardSQLFunction("dimension",
                 Hibernate.INTEGER));
-        registerFunction("geometrytype", new StandardSQLFunction(
+        functionsToRegister.put("geometrytype", new StandardSQLFunction(
                 "geometrytype", Hibernate.STRING));
-        registerFunction("srid", new StandardSQLFunction("srid",
+        functionsToRegister.put("srid", new StandardSQLFunction("srid",
                 StandardBasicTypes.INTEGER));
-        registerFunction("envelope", new StandardSQLFunction("envelope",
+        functionsToRegister.put("envelope", new StandardSQLFunction("envelope",
                 new CustomType(new MySQLGeometryUserType(), null)));
-        registerFunction("astext", new StandardSQLFunction("astext",
+        functionsToRegister.put("astext", new StandardSQLFunction("astext",
                 StandardBasicTypes.STRING));
-        registerFunction("asbinary", new StandardSQLFunction("asbinary",
+        functionsToRegister.put("asbinary", new StandardSQLFunction("asbinary",
                 StandardBasicTypes.BINARY));
-        registerFunction("isempty", new StandardSQLFunction("isempty",
+        functionsToRegister.put("isempty", new StandardSQLFunction("isempty",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("issimple", new StandardSQLFunction("issimple",
+        functionsToRegister.put("issimple", new StandardSQLFunction("issimple",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("boundary", new StandardSQLFunction("boundary",
+        functionsToRegister.put("boundary", new StandardSQLFunction("boundary",
                 geometryCustomType));
 
         // Register functions for spatial relation constructs
-        registerFunction("overlaps", new StandardSQLFunction("overlaps",
+        functionsToRegister.put("overlaps", new StandardSQLFunction("overlaps",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("intersects", new StandardSQLFunction("intersects",
+        functionsToRegister.put("intersects", new StandardSQLFunction("intersects",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("equals", new StandardSQLFunction("equals",
+        functionsToRegister.put("equals", new StandardSQLFunction("equals",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("contains", new StandardSQLFunction("contains",
+        functionsToRegister.put("contains", new StandardSQLFunction("contains",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("crosses", new StandardSQLFunction("crosses",
+        functionsToRegister.put("crosses", new StandardSQLFunction("crosses",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("disjoint", new StandardSQLFunction("disjoint",
+        functionsToRegister.put("disjoint", new StandardSQLFunction("disjoint",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("touches", new StandardSQLFunction("touches",
+        functionsToRegister.put("touches", new StandardSQLFunction("touches",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("within", new StandardSQLFunction("within",
+        functionsToRegister.put("within", new StandardSQLFunction("within",
                 StandardBasicTypes.BOOLEAN));
-        registerFunction("relate", new StandardSQLFunction("relate",
+        functionsToRegister.put("relate", new StandardSQLFunction("relate",
                 StandardBasicTypes.BOOLEAN));
 
         // register the spatial analysis functions
-        registerFunction("distance", new StandardSQLFunction("distance",
+        functionsToRegister.put("distance", new StandardSQLFunction("distance",
                 StandardBasicTypes.DOUBLE));
-        registerFunction("buffer", new StandardSQLFunction("buffer",
+        functionsToRegister.put("buffer", new StandardSQLFunction("buffer",
                 geometryCustomType));
-        registerFunction("convexhull", new StandardSQLFunction("convexhull",
+        functionsToRegister.put("convexhull", new StandardSQLFunction("convexhull",
                 geometryCustomType));
-        registerFunction("difference", new StandardSQLFunction("difference",
+        functionsToRegister.put("difference", new StandardSQLFunction("difference",
                 geometryCustomType));
-        registerFunction("intersection", new StandardSQLFunction(
+        functionsToRegister.put("intersection", new StandardSQLFunction(
                 "intersection", geometryCustomType));
-        registerFunction("symdifference", new StandardSQLFunction(
+        functionsToRegister.put("symdifference", new StandardSQLFunction(
                 "symdifference", geometryCustomType));
-        registerFunction("geomunion", new StandardSQLFunction("union",
+        functionsToRegister.put("geomunion", new StandardSQLFunction("union",
                 geometryCustomType));
+        return functionsToRegister;
+    }
 
+    public MySQLSpatialDialect() {
+        super();
+        Map<String, StandardSQLFunction> functionsToRegister = getFunctionsToRegister();
+        Map<String, Integer> columnTypes = getColumnTypesToRegister();
+        if (null != columnTypes) {
+            Iterator<String> keys = columnTypes.keySet().iterator();
+            while (keys.hasNext()) {
+                String aKey = keys.next();
+                registerColumnType(columnTypes.get(aKey), aKey);
+            }
+        }
+
+        if (null != functionsToRegister) {
+            Iterator<String> keys = functionsToRegister.keySet().iterator();
+            while (keys.hasNext()) {
+                String aKey = keys.next();
+                registerFunction(aKey, functionsToRegister.get(aKey));
+
+            }
+        }
     }
 
     /**

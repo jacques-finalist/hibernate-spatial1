@@ -223,7 +223,7 @@ public class MySQLExpectationsFactory extends AbstractExpectationsFactory {
 
     @Override
     protected NativeSQLStatement createNativeHavingSRIDStatement(int srid) {
-        return createNativeSQLStatement("select t.id, (srid(t.geom) = " + srid + ") from GeomTest t where SRID(t.geom) =  " + srid);
+        return createNativeSQLStatement("select t.id, (srid(t.geom) = " + srid + ") from GEOMTEST t where SRID(t.geom) =  " + srid);
     }
 
     @Override
