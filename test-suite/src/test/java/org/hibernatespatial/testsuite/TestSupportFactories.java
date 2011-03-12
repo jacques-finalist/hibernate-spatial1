@@ -48,7 +48,8 @@ public class TestSupportFactories {
         if ("org.hibernatespatial.sqlserver.SQLServerSpatialDialect".equals(canonicalName)) {
             return "org.hibernatespatial.sqlserver.SQLServerTestSupport";
         }
-        if ("org.hibernatespatial.mysql.MySQLSpatialDialect".equals(canonicalName)) {
+        if ("org.hibernatespatial.mysql.MySQLSpatialDialect".equals(canonicalName) ||
+                "org.hibernatespatial.mysql.MySQLSpatialInnoDBDialect".equals(canonicalName)) {
             return "org.hibernatespatial.mysql.MySQLTestSupport";
         }
         if ("org.hibernatespatial.oracle.OracleSpatial10gDialect".equals(canonicalName)) {
