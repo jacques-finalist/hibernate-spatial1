@@ -369,6 +369,36 @@
             </properties>
         </profile>
 
+        <profile>
+            <id>mysqlinnodb</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-mysql</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-spatial-mysql</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>tests</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <scope>provided</scope>
+                    <version>[5.0.5,)</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <db.dialect>org.hibernatespatial.mysql.MySQLSpatialInnoDBDialect</db.dialect>
+                <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+                <jdbc.url>jdbc:mysql://localhost/testhbs</jdbc.url>
+                <jdbc.user>hibernate</jdbc.user>
+                <jdbc.pass>hibernate</jdbc.pass>
+            </properties>
+        </profile>
+
         <!-- Oracle -->
         <profile>
             <id>oracle10g</id>
