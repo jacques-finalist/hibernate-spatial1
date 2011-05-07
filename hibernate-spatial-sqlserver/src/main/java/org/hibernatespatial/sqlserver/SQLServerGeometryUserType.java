@@ -30,7 +30,9 @@ import org.hibernatespatial.AbstractDBGeometryType;
 import org.hibernatespatial.sqlserver.convertors.Decoders;
 import org.hibernatespatial.sqlserver.convertors.Encoders;
 
+import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Types;
 
 /**
@@ -41,13 +43,25 @@ import java.sql.Types;
 public class SQLServerGeometryUserType extends AbstractDBGeometryType {
 
     public Geometry convert2JTS(Object obj) {
+        byte[] raw = null;
         if (obj == null)
             return null;
-        if (!(obj instanceof byte[])) {
+        if ((obj instanceof byte[])) {
+            raw = (byte[]) obj;
+        } else if (obj instanceof Blob){
+            raw = toByteArray((Blob)obj);
+        } else {
             throw new IllegalArgumentException("Expected byte array.");
         }
-        byte[] raw = (byte[]) obj;
         return Decoders.decode(raw);
+    }
+
+    private byte[] toByteArray(Blob blob){
+        try {
+            return blob.getBytes(1,(int)blob.length());
+        } catch (SQLException e) {
+            throw new RuntimeException("Error on transforming blob into array.", e);
+        }
     }
 
     public Object conv2DBGeometry(Geometry geom, Connection connection) {

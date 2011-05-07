@@ -45,15 +45,14 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
 
     public final static String COLUMN_TYPE = "GEOMETRY";
 
+    protected static CustomType geomType = new CustomType(new SQLServerGeometryUserType(), new String[]{"sqlserver_geometry"});
+
     public SQLServerSpatialDialect() {
         super();
         registerColumnType(java.sql.Types.ARRAY, COLUMN_TYPE);
 
         // registering OGC functions
         // (spec_simplefeatures_sql_99-04.pdf)
-
-        // CustomType for GeometryUserType
-        CustomType geomType = new CustomType(new SQLServerGeometryUserType(), new String[]{"sqlserver_geometry"});
 
         // section 2.1.1.1
         // Registerfunction calls for registering geometry functions:
