@@ -26,12 +26,14 @@ package org.hibernatespatial;
 
 import org.hibernate.usertype.UserType;
 
+import java.io.Serializable;
+
 /**
  * Describes the features of a spatially enabled dialect.
  *
  * @author Karel Maesen
  */
-public interface SpatialDialect {
+public interface SpatialDialect extends Serializable {
 
     /**
      * Returns the SQL fragment for the SQL WHERE-clause when parsing
