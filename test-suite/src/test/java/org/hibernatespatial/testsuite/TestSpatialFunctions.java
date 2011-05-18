@@ -354,7 +354,7 @@ public class TestSpatialFunctions extends SpatialFunctionalTestCase {
         for (String param : params.keySet()) {
             Object value = params.get(param);
             if (value instanceof Geometry) {
-                query.setParameter(param, value, new CustomType(new GeometryUserType()));
+                query.setParameter(param, value, GeometryUserType.TYPE);
             } else {
                 query.setParameter(param, value);
             }
