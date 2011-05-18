@@ -58,7 +58,7 @@ import java.util.Properties;
 public class OracleSpatial10gDialect extends Oracle10gDialect implements
         SpatialDialect, Serializable {
 
-    private static final Type geometryCustomType = new CustomType(new SDOGeometryType(), new String[]{"sdo_geometry"});
+    protected static final Type geometryCustomType = new CustomType(new SDOGeometryType(), new String[]{"sdo_geometry"});
 
     /**
      * Implementation of the OGC astext function for HQL.
