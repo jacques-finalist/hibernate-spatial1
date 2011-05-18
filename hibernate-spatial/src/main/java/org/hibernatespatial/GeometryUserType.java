@@ -29,6 +29,7 @@
 package org.hibernatespatial;
 
 import org.hibernate.HibernateException;
+import org.hibernate.type.CustomType;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -56,6 +57,8 @@ public class GeometryUserType implements UserType, ParameterizedType, Serializab
     private UserType delegate = null;
 
     public static String DIALECT_PARAM_NAME = "dialect";
+
+    public final static CustomType TYPE = new CustomType(new GeometryUserType());
 
     private void configure(Properties properties) {
         if (properties == null || properties.getProperty(DIALECT_PARAM_NAME) == null) {
