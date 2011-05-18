@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 	<properties>
-		<author>Karel Maesen</author>
 		<title>Road Map</title>
+        <author>Karel Maesen</author>
 	</properties>
 
 	<body>
-	<iframe
-		style="width: 100%; height: 800px" 
-		src="http://www.hibernatespatial.org/jira/browse/HIBSPA?report=com.atlassian.jira.plugin.system.project:roadmap-panel">
-	</iframe>
+    <section name="Roadmap">
+    <iframe
+		style="width: 100%; height: 800px"
+        src="http://www.hibernatespatial.org/jira/browse/HIBSPA?selectedTab=com.atlassian.jira.plugin.system.project%3Aroadmap-panel">
+    </iframe>
+    </section>
 	</body>
 </document>

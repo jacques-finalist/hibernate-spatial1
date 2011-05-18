@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<document>
-    <header>
-    </header>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+
     <body>
         <section name="Installing Hibernate Spatial">
             <p>
                 You will need to have the following libraries in your classpath:
                 hibernate (plus its dependencies), a JDBC driver for you database,
                 hibernate-spatial.jar and the appropriate spatial dialect provider for your database, and finally
-                the java topology suit (jts.jar) from vividsolutions.
+                the <a href="http://tsusiatsoftware.net/jts/main.html">Java Topology Suite</a> (jts.jar).
                 Depending on the database that you use, you might also need some helper libraries for
                 that provide geographic data support for the JDBC driver. Consult the dialect provider
                 documentation for more information about this.
@@ -23,7 +25,7 @@
                 describes the
                 location and geometry of the object by means of a set of coordinates. Hibernate Spatial
                 uses the Geometry package of the
-                <a href="http://www.vividsolutions.com/jts/jtshome.htm">Java Topology Suite</a>
+                <a href="http://tsusiatsoftware.net/jts/main.html">Java Topology Suite</a>
                 to represent the geometries in Java.
             </p>
         </section>

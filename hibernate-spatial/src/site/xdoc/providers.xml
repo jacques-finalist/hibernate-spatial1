@@ -25,16 +25,17 @@
   ~ For more information, visit: http://www.hibernatespatial.org/
   -->
 
-<document>
-    <header>
-    </header>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
     <body>
         <section name="Spatial Dialect Providers">
             <p>
                 Hibernate Spatial requires Spatial Dialect Providers to supply the database specific support for
                 geographic data.
-                Currently providers exist for Postgresql (PostGis spatial Extension), MySQL, Microsoft SQL Server (2008)
-                and for Oracle 10g (Standard Locator).
+                Currently providers exist for Postgresql (PostGis spatial Extension), MySQL, Microsoft SQL Server (2008), H2 (GeoDB)
+                and for Oracle 10g/11g (Standard Locator).
             </p>
             <p>
                 If you use only one database in you application, you just need to put the appropriate spatial dialect
@@ -42,6 +43,24 @@
                 in your classpath. The Hibernate Spatial Extension will pick it up, and since it is the only provider in
                 the classpath, use
                 the dialect it provides as the spatial dialect
+            </p>
+            <p>In case you have more than one dialect provider, you can configure which one should be used by placing a
+            file <code>hibernate-spatial.cfg.xml</code> on the classpath. Below is an example.
+            </p>
+            <source>
+                <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-spatial>
+    <default_dialect>org.hibernatespatial.postgis.PostgisDialect</default_dialect>
+    <precision_model>FIXED</precision_model>
+    <precision_model_scale>5</precision_model_scale>
+</hibernate-spatial>
+                ]]>
+            </source>
+            <p>
+            The <code>default_dialect</code> element determines which Dialect will be used. The <code>precision_model_*</code>
+            elements determine with which precision model <code>Geometry</code>s will be created.
+
             </p>
         </section>
     </body>

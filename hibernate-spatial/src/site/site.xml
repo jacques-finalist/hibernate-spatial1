@@ -47,6 +47,7 @@
         </menu>
         <menu name="Getting Hibernate Spatial" inherit="top">
             <item name="Releases" href="download.html"/>
+            <item name="Release Notes" href="release_notes.html"/>
             <item name="Sources" href="source-repository.html"/>
             <item name="License" href="license.html"/>
             <item name="Source code insight"

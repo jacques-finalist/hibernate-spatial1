@@ -25,9 +25,10 @@
   ~ For more information, visit: http://www.hibernatespatial.org/
   -->
 
-<document>
-    <header>
-    </header>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
     <body>
         <section name="Welcome to Hibernate Spatial">
             <p>Hibernate Spatial is a generic extension to Hibernate for handling geographic data. Hibernate Spatial is
@@ -39,11 +40,139 @@
                 a standardized, cross-database interface to geographic data storage and query functions.
             </p>
             <p>Hibernate Spatial supports most of the functions of the OGC Simple Feature Specification. Supported
-                databases are: Oracle 10g/11g, Postgresql/Postgis, Microsoft SQL Server and MySQL.
+                databases are: Oracle 10g/11g, Postgresql/Postgis, MySQL, Microsoft SQL Server and H2/GeoDB.
             </p>
-            <p>There is a similar project for NHibernate:<a href="http://www.codeplex.com/NHibernateSpatial">
+            <p>There is a similar project for NHibernate:<a href="http://nhforge.org/wikis/spatial/default.aspx">
                 NHibernate.Spatial</a>.
             </p>
         </section>
+        <section name="Compatibility with Hibernate">
+            <ul>
+              <li>
+                Hibernate Spatial version 1.0 is compatible with Hibernate 3.2.x - 3.5.x
+              </li>
+              <li>
+                Hibernate Spatial version 1.1 is compatible with Hibernate 3.6.x
+              </li>
+            </ul>
+        </section>
+        <section name="Features">
+            <p>Hibernate Spatial uses the Java Topology Suite (JTS) as its geometry model. JTS is an implementation of
+            the <a href="http://portal.opengeospatial.org/files/?artifact_id=829">OpenGIS Simple Features Implementation Specification for SQLv. 1.1 (SFS)</a>.
+            This specification is implemented in most RDBMS with spatial data support. It is also a direct precursor to a precursor to SQL/MM Part 3: Spatial (ISO/IEC 13249-3).
+            </p>
+            <p>The SFS specification defines a set of functions on geometries. Hibernate Spatial makes a subset of these functions available in HQL and
+                in the criteria query API (see the <code>SpatialRestrictions</code> class in the <code>org.hibernatespatial.criterion</code> package).
+            </p>
+
+            <p>Not all databases support all the functions defined by Hibernate Spatial. The table below provides an overview of the functions provided by each database</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th><th>Description</th><th>Postgresql</th><th>Oracle 10g/11g</th><th>MySQL</th><th>SQLServer</th><th>GeoDB (H2)</th>
+                    </tr>
+                    <tr>
+                        <th colspan="7">Basic functions on Geometry</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>int dimension(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                    <td>String geometrytype(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>int srid(Geometry) </td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry envelope(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>String astext(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>byte[] asbinary(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean isempty(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean issimple(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry boundary(Geometry)</td><td>SFS §2.1.1.1 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                        <th colspan="7">Functions for testing Spatial Relations between geometric objects</th>
+                </tr>
+                <tr>
+                    <td>boolean equals(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean disjoint(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean intersects(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean touches(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean crosses(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean within(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean contains(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean overlaps(Geometry, Geometry)</td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>boolean relate(Geometry, Geometry, String) </td><td>SFS §2.1.1.2 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                        <th colspan="7">Functions that support Spatial Analysis</th>
+                </tr>
+                <tr>
+                    <td>double distance(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td  align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry buffer(Geometry, double)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry convexhull(Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry intersection(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry geomunion(Geometry, Geometry)</td><td>SFS §2.1.1.3 (renamed from union)</td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td  align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry difference(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry symdifference(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                </tr>
+                <tr>
+                        <th colspan="7">Common non-SFS functions</th>
+                </tr>
+                <tr>
+                    <td>boolean dwithin(Geometry, Geometry, double)</td><td>Returns true if the geometries are within the specified distance of one another</td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                </tr>
+                <tr>
+                    <td>Geometry transform(Geometry, int)</td><td>Returns a new geometry with its coordinates transformed to the SRID referenced by the integer parameter</td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                 </tr>
+                <tr>
+                        <th colspan="7">Spatial aggregate Functions</th>
+                </tr>
+                <tr>
+                    <td>Geometry extent(Geometry)</td><td>Returns a bounding box that bounds the set of returned geometries</td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
+                 </tr>
+            </table>
+        </section>
+
     </body>
 </document>

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
     <properties>
-        <author>Karel Maesen</author>
         <title>Getting Help</title>
+        <author>Karel Maesen</author>
     </properties>
 
     <body>
@@ -18,7 +21,7 @@
                     href="http://n2.nabble.com/Hibernate-Spatial-Users-f1140994.html">goto forum</a>). The archive is
                 read-only, so posting messages there won't work.
             </p>
-            <p>To submit bug reports, request new features, or suggest improvements you should use<a
+            <p>To submit bug reports, request new features, or suggest improvements you should use <a
                     href="http://www.hibernatespatial.org/jira/browse/HIBSPA">the issue management system</a>.
             </p>
 

@@ -24,203 +24,234 @@
   ~
   ~ For more information, visit: http://www.hibernatespatial.org/
   -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
-<document>
     <properties>
         <title>Releases</title>
     </properties>
     <body>
-        <section name="Hibernate Spatial Releases">
-            <subsection name="Release 1.0 (2010-04-05)">
 
-                <h4>Bug
-                </h4>
-                <ul>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-25'>HIBSPA-25</a>] - Storing valid
-                        MultiPolygon with holes leads to invalid Geometry in Database
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-26'>HIBSPA-26</a>] - Change warning
-                        message to info when no configuration file is found.
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-29'>HIBSPA-29</a>] - Invalid
-                        connection exceptions in SDO_GEOMETRY class when using OCI driver
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-31'>HIBSPA-31</a>] - String
-                        Geometry collection fails with ORA-29875: failed in the execution of the ODCIINDEXINSERT
-                        routine; ORA-13365: layer SRID does not match geometry SRID
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-33'>HIBSPA-33</a>] -
-                        GeometryUserType implement Serializable
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-34'>HIBSPA-34</a>] -
-                        SDOGeometryType and OracleSpatial10gDialect implement Serializable
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-35'>HIBSPA-35</a>] - Nullpointer
-                        exception thrown by EventLocator
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-36'>HIBSPA-36</a>] - EventLocator
-                        doesn't set SRID on result
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-37'>HIBSPA-37</a>] - Parse
-                        Exception when trying to store empty geometries
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-38'>HIBSPA-38</a>] - Thread-safety
-                        issue in WKBReader
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-40'>HIBSPA-40</a>] - Change scope
-                        of database drives to provided in hibernate-spatial-* modules
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-42'>HIBSPA-42</a>] - getMaxM()
-                        returns -Infinity on a valid MultiMLineString object
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-43'>HIBSPA-43</a>] - documentation
-                        on parametrized type is incorrect
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-45'>HIBSPA-45</a>] - NPE in
-                        GeometryUserType.java ; dialect not picked up
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-51'>HIBSPA-51</a>] - Typo in
-                        GeometryType function
-                    </li>
-                </ul>
+        <section name="For Maven users">
+            <p>Maven users can use the Hibernate Spatial maven repository. See <a href="mavenquick.html">the Maven Quick Start</a>.
+            </p>
 
-                <h4>Improvement
-                </h4>
-                <ul>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-5'>HIBSPA-5</a>] - Oracle provider
-                        generates slow SQL queries.
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-17'>HIBSPA-17</a>] - Restructure
-                        unit testing framework
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-20'>HIBSPA-20</a>] - Create source
-                        code artifacts for easy reference from IDEs
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-27'>HIBSPA-27</a>] - Do not assume
-                        the JDBC Resultset contains oracle STRUCTS for geometry objects
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-28'>HIBSPA-28</a>] - Switch to
-                        slf4j so HS uses same logging approach as Hibernate
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-30'>HIBSPA-30</a>] - Dialect
-                        extends depracated dialect
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-41'>HIBSPA-41</a>] - The
-                        repositories tag structure given at the link http://www.hibernatespatial.org/mavenquick.html has
-                        a bug.
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-48'>HIBSPA-48</a>] - Better
-                        dependency management
-                    </li>
-                </ul>
+        </section>
 
-                <h4>New Feature
-                </h4>
-                <ul>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-22'>HIBSPA-22</a>] - Hibernate
-                        Spatial needs to provide a Type object for the GeometryUserType class.
-                    </li>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-44'>HIBSPA-44</a>] - Create
-                        provider for Sqlserver 2008 geometry type
-                    </li>
-                </ul>
+        <section name="Releases">
+            
+            <subsection name="Release 1.1">
 
-                <h4>Task
-                </h4>
-                <ul>
-                    <li>[<a href='http://www.hibernatespatial.org/jira/browse/HIBSPA-47'>HIBSPA-47</a>] - update all
-                        dependencies to latest stable version
-                    </li>
-                </ul>
+                <table>
+                    <tr>
+                        <th>Module</th>
+                        <th>File</th>
+                        <th>MD5 checksum</th>
+                    </tr>
+                    <tr>
+                        <td>Hibernate Spatial</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.1/hibernate-spatial-1.1.jar">
+                                hibernate-spatial-1.1.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.1/hibernate-spatial-1.1.jar.md5">
+                                hibernate-spatial-1.1.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Oracle Spatial Provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.1/hibernate-spatial-oracle-1.1.jar">
+                                hibernate-spatial-oracle-1.1.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.1/hibernate-spatial-oracle-1.1.jar.md5">
+                                hibernate-spatial-oracle-1.1.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Postgis provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.1/hibernate-spatial-postgis-1.1.jar">
+                                hibernate-spatial-postgis-1.1.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.1/hibernate-spatial-postgis-1.1.jar.md5">
+                                hibernate-spatial-postgis-1.1.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Microsoft SQL Server provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.1/hibernate-spatial-sqlserver-1.1.jar">
+                                hibernate-spatial-sqlserver-1.1.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.1/hibernate-spatial-sqlserver-1.1.jar.md5">
+                                hibernate-spatial-sqlserver-1.1.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td>MySQL Provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.1/hibernate-spatial-mysql-1.1.jar">
+                                hibernate-spatial-mysql-1.1.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.1/hibernate-spatial-mysql-1.1.jar.md5">
+                                hibernate-spatial-mysql-1.1.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+
+                        <td>H2/GeoDB Provider</td>
+                        <!--<td>-->
+                            <!--<a-->
+                                <!--href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-h2-geodb/1.1/hibernate-spatial-h2-geodb-1.1.jar">-->
+                                <!--hibernate-spatial-geodb-1.1.jar-->
+                            <!--</a>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<a-->
+                                <!--href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-h2-geodb/1.1/hibernate-spatial-h2-geodb-1.1.jar.md5">-->
+                                <!--hibernate-spatial-geodb-1.1.jar.md5-->
+                            <!--</a>-->
+                        <!--</td>-->
+                    </tr>
+
+                </table>
             </subsection>
+            
+            
+            <subsection name="Release 1.0">
 
+                <table>
+                    <tr>
+                        <th>Module</th>
+                        <th>File</th>
+                        <th>MD5 checksum</th>
+                    </tr>
+                    <tr>
+                        <td>Hibernate Spatial</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0/hibernate-spatial-1.0.jar">
+                                hibernate-spatial-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0/hibernate-spatial-1.0.jar.md5">
+                                hibernate-spatial-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Oracle Spatial Provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0/hibernate-spatial-oracle-1.0.jar">
+                                hibernate-spatial-oracle-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0/hibernate-spatial-oracle-1.0.jar.md5">
+                                hibernate-spatial-oracle-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Postgis provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0/hibernate-spatial-postgis-1.0.jar">
+                                hibernate-spatial-postgis-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0/hibernate-spatial-postgis-1.0.jar.md5">
+                                hibernate-spatial-postgis-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Microsoft SQL Server provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.0/hibernate-spatial-sqlserver-1.0.jar">
+                                hibernate-spatial-sqlserver-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.0/hibernate-spatial-sqlserver-1.0.jar.md5">
+                                hibernate-spatial-sqlserver-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
 
-            <h4>Binaries</h4>
+                        <td>MySQL Provider</td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0/hibernate-spatial-mysql-1.0.jar">
+                                hibernate-spatial-mysql-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                    href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0/hibernate-spatial-mysql-1.0.jar.md5">
+                                hibernate-spatial-mysql-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
 
-            <table>
-                <tr>
-                    <th>Module</th>
-                    <th>File</th>
-                    <th>MD5 checksum</th>
-                </tr>
-                <tr>
-                    <td>Hibernate Spatial</td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0/hibernate-spatial-1.0.jar">
-                            hibernate-spatial-1.0.jar
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial/1.0/hibernate-spatial-1.0.jar.md5">
-                            hibernate-spatial-1.0.jar.md5
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Oracle Spatial Provider</td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0/hibernate-spatial-oracle-1.0.jar">
-                            hibernate-spatial-oracle-1.0.jar
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-oracle/1.0/hibernate-spatial-oracle-1.0.jar.md5">
-                            hibernate-spatial-oracle-1.0.jar.md5
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Postgis provider</td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0/hibernate-spatial-postgis-1.0.jar">
-                            hibernate-spatial-postgis-1.0.jar
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-postgis/1.0/hibernate-spatial-postgis-1.0.jar.md5">
-                            hibernate-spatial-postgis-1.0.jar.md5
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Microsoft SQL Server provider</td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.0/hibernate-spatial-sqlserver-1.0.jar">
-                            hibernate-spatial-sqlserver-1.0.jar
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-sqlserver/1.0/hibernate-spatial-sqlserver-1.0.jar.md5">
-                            hibernate-spatial-sqlserver-1.0.jar.md5
-                        </a>
-                    </td>
-                </tr>
-                <tr>
+                    <tr>
 
-                    <td>MySQL Provider</td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0/hibernate-spatial-mysql-1.0.jar">
-                            hibernate-spatial-mysql-1.0.jar
-                        </a>
-                    </td>
-                    <td>
-                        <a
-                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-mysql/1.0/hibernate-spatial-mysql-1.0.jar.md5">
-                            hibernate-spatial-mysql-1.0.jar.md5
-                        </a>
-                    </td>
-                </tr>
-            </table>
+                        <td>H2/GeoDB Provider</td>
+                        <td>
+                            <a
+                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-h2-geodb/1.0/hibernate-spatial-h2-geodb-1.0.jar">
+                                hibernate-spatial-geodb-1.0.jar
+                            </a>
+                        </td>
+                        <td>
+                            <a
+                                href="http://www.hibernatespatial.org/repository/org/hibernatespatial/hibernate-spatial-h2-geodb/1.0/hibernate-spatial-h2-geodb-1.0.jar.md5">
+                                hibernate-spatial-geodb-1.0.jar.md5
+                            </a>
+                        </td>
+                    </tr>
 
+                </table>
+            </subsection>
             <subsection name="Release 1.0-M2 (2008-08-15)">
                 <table>
                     <tr>
