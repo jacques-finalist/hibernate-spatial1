@@ -10,10 +10,18 @@
 				Hibernate Spatial. It has been tested with MySQL 5.0
 				and should work with any version later than that.
 			</p>
+
+            <p>This provider provides two dialects for MySQL. The <code>MySQLSpatialDialect</code> and the
+                <code>MySQLSpatialInnoDBDialect</code>. They extend their respective non-spatial Hibernate
+            dialects
+            </p>
+
 			<p>
 				Note that MySQL does not completely implement the OGC Simple Feature Specification. 
 				Some functions that work for PostGIS or Oracle may fail to work for MySQL.
 			</p>
+
+
 		</section>
 	</body>
 </document>

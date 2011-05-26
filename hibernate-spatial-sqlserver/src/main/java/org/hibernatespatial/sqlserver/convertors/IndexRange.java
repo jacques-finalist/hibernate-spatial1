@@ -26,11 +26,8 @@
 package org.hibernatespatial.sqlserver.convertors;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maesenka
- * Date: Mar 6, 2010
- * Time: 6:38:14 PM
- * To change this template use File | Settings | File Templates.
+ * A Range of indices.
+ *
  */
 class IndexRange {
 

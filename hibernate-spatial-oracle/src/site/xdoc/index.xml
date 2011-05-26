@@ -12,7 +12,7 @@
 				Oracle 11g.
 			</p>
 			<p>
-				The Provider makes use of the proprietary Oracle SDO
+				The Provider does not require the proprietary Oracle SDO
 				Java API.
 			</p>
 		</section>

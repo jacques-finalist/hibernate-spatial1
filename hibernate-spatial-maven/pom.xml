@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.hibernatespatial</groupId>
     <artifactId>hibernate-spatial-maven</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>Hibernate Spatial</name>
     <description>
         This is the Maven parent project for all Hibernate Spatial
@@ -149,7 +149,7 @@
     <licenses>
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
-            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -266,7 +266,6 @@
             <properties>
                 <db.dialect>org.hibernatespatial.postgis.PostgisDialect</db.dialect>
                 <jdbc.driver>org.postgresql.Driver</jdbc.driver>
-                <!--<jdbc.url>jdbc:postgresql://vmg03.mw.lab.eng.bos.redhat.com:5432:hibbrtru</jdbc.url>-->
                 <jdbc.url>jdbc:postgresql://localhost:5432:hibbrtru</jdbc.url>
                 <jdbc.user>hibbrtru</jdbc.user>
                 <jdbc.pass>hibbrtru</jdbc.pass>
@@ -281,12 +280,16 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-h2-geodb</artifactId>
-                    <version>${project.version}</version>
+                    <!-- WARNING the GeoDB provider is not yet updated -->
+                    <!--<version>${project.version}</version>-->
+                    <version>1.1-SNAPSHOT</version>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-spatial-h2-geodb</artifactId>
-                    <version>${project.version}</version>
+                    <!-- WARNING the GeoDB provider is not yet updated -->
+                    <!--<version>${project.version}</version>-->
+                    <version>1.1-SNAPSHOT</version>
                     <classifier>tests</classifier>
                 </dependency>
                 <dependency>

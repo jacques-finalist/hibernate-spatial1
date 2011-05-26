@@ -27,6 +27,15 @@
 ...
 			</source>
 
+            <p>or</p>
+            <source>
+...
+	&lt;property name="hibernate.dialect"&gt;
+		org.hibernatespatial.mysql.MySQLSpatialInnoDBDialect
+	&lt;/property&gt;
+...
+			</source>
+
 			<p>
 				When there is more than one Hibernate Spatial provider
 				on the Class-Path, you should explicitly label the
@@ -38,7 +47,7 @@
 			&lt;column name="geom" sql-type="GEOMETRY"&gt;
 			&lt;type name="org.hibernatespatial.GeometryUserType"&gt;
 				&lt;param name="dialect"&gt;
-					org.hibernatespatial.oracle.OracleSpatial10gDialect
+					org.hibernatespatial.mysql.MySQLSpatialDialect
 				&lt;/param&gt;
 			&lt;/type&gt;
 		&lt;/property&gt; 
