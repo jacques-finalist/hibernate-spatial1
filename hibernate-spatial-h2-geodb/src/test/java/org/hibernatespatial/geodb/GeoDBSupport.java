@@ -34,7 +34,7 @@ public class GeoDBSupport extends TestSupport {
     }
 
     public AbstractExpectationsFactory createExpectationsFactory(DataSourceUtils dataSourceUtils) {
-        return new GeoDBNoSRIDExpectationsFactory((GeoDBDataSourceUtils) dataSourceUtils);
+        return new GeoDBExpectationsFactory((GeoDBDataSourceUtils) dataSourceUtils);
     }
 
     public SQLExpressionTemplate getSQLExpressionTemplate() {
