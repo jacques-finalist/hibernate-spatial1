@@ -48,7 +48,7 @@ public class OracleJDBCTypeFactory implements SQLTypeFactory {
         }
         attributes[3] = createElemInfoArray(geom.getInfo(), oracleConnection);
         attributes[4] = createOrdinatesArray(geom.getOrdinates(), oracleConnection);
-        return new STRUCT(structDescriptor, conn, attributes);
+        return new STRUCT(structDescriptor, oracleConnection, attributes);
     }
 
     public Array createElemInfoArray(ElemInfo elemInfo, Connection conn) throws SQLException {

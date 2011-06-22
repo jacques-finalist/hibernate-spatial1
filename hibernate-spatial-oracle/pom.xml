@@ -10,6 +10,7 @@
     </parent>
     <artifactId>hibernate-spatial-oracle</artifactId>
     <packaging>jar</packaging>
+    <version>1.1.1</version>
     <name>Oracle DialectProvider</name>
     <url>http://www.hibernatespatial.org/hibernate-spatial-oracle</url>
     <description>
@@ -20,12 +21,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>${project.version}</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>${project.version}</version>
+            <version>1.1</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
