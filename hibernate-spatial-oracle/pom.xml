@@ -5,12 +5,11 @@
     <parent>
         <groupId>org.hibernatespatial</groupId>
         <artifactId>hibernate-spatial-maven</artifactId>
-        <version>1.1</version>
+        <version>1.1.1-SNAPSHOT</version>
         <relativePath>../hibernate-spatial-maven</relativePath>
     </parent>
     <artifactId>hibernate-spatial-oracle</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1</version>
     <name>Oracle DialectProvider</name>
     <url>http://www.hibernatespatial.org/hibernate-spatial-oracle</url>
     <description>
@@ -21,12 +20,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>1.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>1.1</version>
+            <version>${project.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>

@@ -151,7 +151,7 @@
                     <td>Geometry geomunion(Geometry, Geometry)</td><td>SFS §2.1.1.3 (renamed from union)</td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td  align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
                 </tr>
                 <tr>
-                    <td>Geometry difference(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td>
+                    <td>Geometry difference(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
                 </tr>
                 <tr>
                     <td>Geometry symdifference(Geometry, Geometry)</td><td>SFS §2.1.1.3 </td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td><td align="center"><img src="./img/ok.png" alt="OK"/></td><td align="center"><img src="./img/nok.png" alt="NOK"/></td>
