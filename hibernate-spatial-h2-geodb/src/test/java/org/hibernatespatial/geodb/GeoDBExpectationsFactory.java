@@ -174,8 +174,9 @@ public class GeoDBExpectationsFactory extends AbstractExpectationsFactory {
 
 	@Override
 	protected NativeSQLStatement createNativeDistanceStatement(Geometry geom) {
-		throw new UnsupportedOperationException(
-				"Method ST_Distance() is not implemented in the current version of GeoDB.");
+        return createNativeSQLStatementAllWKTParams(
+                "select t.id, st_distance(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
+                geom.toText());
 	}
 
 	/*
