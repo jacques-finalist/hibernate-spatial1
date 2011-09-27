@@ -38,14 +38,6 @@
         <spring.version>3.0.2.RELEASE</spring.version>
     </properties>
 
-    <!--additional repository needed for H2-geodb-->
-    <repositories>
-        <repository>
-            <id>opengeo</id>
-            <url>http://repo.opengeo.org</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -62,8 +54,8 @@
         <dependency>
             <groupId>org.opengeo</groupId>
             <artifactId>geodb</artifactId>
-            <version>0.6-SNAPSHOT</version>
-        </dependency>     
+            <version>0.6</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -174,8 +174,9 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
 
     @Override
     protected NativeSQLStatement createNativeDistanceStatement(Geometry geom) {
-        throw new UnsupportedOperationException(
-                "Method ST_Distance() is not implemented in the current version of GeoDB.");
+        return createNativeSQLStatementAllWKTParams(
+                "select t.id, st_distance(t.geom, ST_GeomFromText(?, 4326)) from GeomTest t where ST_SRID(t.geom) = 4326",
+                geom.toText());
     }
 
     /*
@@ -239,8 +240,7 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
 
     @Override
     protected NativeSQLStatement createNativeGeometryTypeStatement() {
-        throw new UnsupportedOperationException(
-                "Method ST_GeometryType() is not implemented in the current version of GeoDB.");
+        return createNativeSQLStatement("select id, GeometryType(geom) from GEOMTEST");
     }
 
     /*
@@ -385,7 +385,7 @@ public class GeoDBNoSRIDExpectationsFactory extends AbstractExpectationsFactory 
     protected NativeSQLStatement createNativeWithinStatement(
             Geometry testPolygon) {
         return createNativeSQLStatementAllWKTParams(
-                "select t.id, ST_Within(t.geom, ST_GeomFromText(?, 4326)) from GEOMTEST t where ST_Within(t.geom, ST_GeomFromText(?, 4326)) = 1",
+                "select t.id, ST_Within(t.geom, ST_GeomFromText(?, 4326)) from GEOMTEST t where ST_Within(t.geom, ST_GeomFromText(?, 4326)) = 1 and ST_SRID(t.geom) = 4326",
                 testPolygon.toText());
     }
 

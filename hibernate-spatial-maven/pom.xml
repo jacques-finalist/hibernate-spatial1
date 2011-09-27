@@ -26,6 +26,7 @@
         <module>../hibernate-spatial-mysql</module>
         <module>../hibernate-spatial-sqlserver</module>
         <module>../hibernate-spatial-h2-geodb</module>
+
     </modules>
 
     <properties>
@@ -40,6 +41,10 @@
         <repository>
             <id>JBoss repo</id>
             <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+        <repository>
+            <id>opengeo</id>
+            <url>http://repo.opengeo.org</url>
         </repository>
     </repositories>
     <build>
@@ -172,7 +177,7 @@
         <dependency>
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
-            <version>1.11</version>
+            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -291,13 +296,7 @@
                 <dependency>
                     <groupId>org.opengeo</groupId>
                     <artifactId>geodb</artifactId>
-                    <version>0.6-SNAPSHOT</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.vividsolutions</groupId>
-                    <artifactId>jts</artifactId>
-                    <version>1.12-SNAPSHOT</version>
+                    <version>0.6</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

@@ -27,8 +27,8 @@ package org.hibernatespatial.geodb;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import geodb.GeoDB;
+import org.hibernate.HibernateException;
 import org.hibernatespatial.AbstractDBGeometryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +77,8 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
         try {
             if (object instanceof Blob) {
                 return GeoDB.gFromWKB(toByteArray((Blob) object));
+            } else if (object instanceof byte[]) {
+                return GeoDB.gFromEWKB((byte[]) object);
             } else if(object instanceof Envelope) {
         		return gf.toGeometry((Envelope) object);
         	} else {
@@ -86,8 +88,7 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
             }
         } catch (Exception e) {
             LOGGER.warn("Could not convert database object to a JTS Geometry.");
-            e.printStackTrace();
-            return null;
+            throw new HibernateException(e);
         }
     }
 
