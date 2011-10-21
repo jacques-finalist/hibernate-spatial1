@@ -37,9 +37,12 @@ import org.hibernatespatial.mgeom.MCoordinate;
 import org.hibernatespatial.mgeom.MGeometry;
 import org.hibernatespatial.mgeom.MLineString;
 import org.postgis.*;
+import org.postgresql.util.PGobject;
 
 import java.sql.Connection;
 import java.sql.Types;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Specific <code>GeometryType</code> for Postgis geometry type
@@ -49,6 +52,8 @@ import java.sql.Types;
 public class PGGeometryUserType extends AbstractDBGeometryType {
 
     private static final int[] geometryTypes = new int[]{Types.STRUCT};
+
+    private static Pattern boxPattern = Pattern.compile(".*box.*\\((.*)\\)", Pattern.CASE_INSENSITIVE);
 
     public int[] sqlTypes() {
         return geometryTypes;
@@ -110,6 +115,15 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
             return out;
         } else if (object instanceof org.postgis.PGboxbase) {
             return convertBox((org.postgis.PGboxbase) object);
+        } else if (object instanceof PGobject && ((PGobject)object).getType().contains("box")) {
+            PGobject pgo = (PGobject)object;
+            //try to extract the box object (if available)
+            String boxStr = extractBoxString(pgo);
+            if (boxStr == null) throw new IllegalArgumentException("Can't convert object: " + pgo.getType() + " : " + pgo.getValue());
+            String[] pointsStr = boxStr.split(",");
+            Point ll = toPoint(pointsStr[0]);
+            Point ur = toPoint(pointsStr[1]);
+            return cornerPointsToPolygon(ll, ur, false);
         } else {
             throw new IllegalArgumentException("Can't convert object of type "
                     + object.getClass().getCanonicalName());
@@ -118,27 +132,48 @@ public class PGGeometryUserType extends AbstractDBGeometryType {
 
     }
 
+    private Point toPoint(String s) {
+        String[] coords = s.split("\\s");
+        double x = Double.parseDouble(coords[0]);
+        double y = Double.parseDouble(coords[1]);
+        return new Point(x,y);
+    }
+
+    private String extractBoxString(PGobject pgo) {
+        String boxStr = null;
+        Matcher m = boxPattern.matcher(pgo.getValue());
+        if (m.matches() && m.groupCount() >= 1){
+            boxStr = m.group(1);
+        }
+        return boxStr;
+
+    }
+
+
     private Geometry convertBox(PGboxbase box) {
         Point ll = box.getLLB();
         Point ur = box.getURT();
         Coordinate[] ringCoords = new Coordinate[5];
+        boolean is3D = true;
         if (box instanceof org.postgis.PGbox2d) {
-            ringCoords[0] = new Coordinate(ll.x, ll.y);
-            ringCoords[1] = new Coordinate(ur.x, ll.y);
-            ringCoords[2] = new Coordinate(ur.x, ur.y);
-            ringCoords[3] = new Coordinate(ll.x, ur.y);
-            ringCoords[4] = new Coordinate(ll.x, ll.y);
-        } else {
-            ringCoords[0] = new Coordinate(ll.x, ll.y, ll.z);
-            ringCoords[1] = new Coordinate(ur.x, ll.y, ll.z);
-            ringCoords[2] = new Coordinate(ur.x, ur.y, ur.z);
-            ringCoords[3] = new Coordinate(ll.x, ur.y, ur.z);
-            ringCoords[4] = new Coordinate(ll.x, ll.y, ll.z);
+            is3D = false;
         }
+        return cornerPointsToPolygon(ll, ur, is3D);
+    }
+
+    private Geometry cornerPointsToPolygon(Point ll, Point ur, boolean is3D) {
+        Coordinate[] ringCoords = new Coordinate[5];
+        ringCoords[0] = is3D ? new Coordinate(ll.x, ll.y, ll.z) : new Coordinate(ll.x, ll.y);
+        ringCoords[1] = is3D ? new Coordinate(ur.x, ll.y, ll.z) : new Coordinate(ur.x, ll.y);
+        ringCoords[2] = is3D ? new Coordinate(ur.x, ur.y, ur.z) : new Coordinate(ur.x, ur.y);
+        ringCoords[3] = is3D ? new Coordinate(ll.x, ur.y, ur.z) : new Coordinate(ll.x, ur.y);
+        ringCoords[4] = is3D ? new Coordinate(ll.x, ll.y, ll.z) : new Coordinate(ll.x, ll.y);
         com.vividsolutions.jts.geom.LinearRing shell = getGeometryFactory()
                 .createLinearRing(ringCoords);
         return getGeometryFactory().createPolygon(shell, null);
     }
+
+
 
     private Geometry convertGeometryCollection(GeometryCollection collection) {
         org.postgis.Geometry[] geometries = collection.getGeometries();
