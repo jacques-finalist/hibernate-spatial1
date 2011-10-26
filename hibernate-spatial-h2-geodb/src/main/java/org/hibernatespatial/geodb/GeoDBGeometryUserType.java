@@ -27,6 +27,9 @@ package org.hibernatespatial.geodb;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKBConstants;
+
 import geodb.GeoDB;
 import org.hibernate.HibernateException;
 import org.hibernatespatial.AbstractDBGeometryType;
@@ -78,7 +81,7 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
             if (object instanceof Blob) {
                 return GeoDB.gFromWKB(toByteArray((Blob) object));
             } else if (object instanceof byte[]) {
-                return GeoDB.gFromEWKB((byte[]) object);
+                return geometryFromByteArray((byte[]) object);//GeoDB.gFromWKB((byte[])object);/
             } else if(object instanceof Envelope) {
         		return gf.toGeometry((Envelope) object);
         	} else {
@@ -91,6 +94,53 @@ public class GeoDBGeometryUserType extends AbstractDBGeometryType {
             throw new HibernateException(e);
         }
     }
+
+	/**
+	 * Convert a WKB or EWKB byte array to a {@link Geometry}. To figure out
+	 * whether the byte array is either a WKB or EWK the following checks are
+	 * performed: <br/>
+	 * <ol>
+	 * <li>If the first byte is not 0 or 1, the geometry must be an EWKB (with
+	 * the first 32 bytes as a bounding box)</li>
+	 * <li>Otherwise, the the byte array is parsed as a WKB</li>
+	 * <li>When a parse error occurs it is assumed that the byte array is a EWKB
+	 * (with the first byte accidentally a 0 or 1), and parsed as EWKB</li>
+	 * </ol>
+	 * 
+	 * @param object
+	 * @return
+	 */
+	private Geometry geometryFromByteArray(byte[] bytes) {
+		/*
+		 * wkbXDR = 0, // Big Endian 
+		 * wkbNDR = 1 // Little Endian
+		 */
+		if (bytes[0] != WKBConstants.wkbNDR && bytes[0] != WKBConstants.wkbXDR) {
+			// process as EWKB
+			return GeoDB.gFromEWKB(bytes);
+		} else {
+			// process as WKB
+			try {
+				return GeoDB.gFromWKB(bytes);
+			} catch (RuntimeException e) {
+				// note: ParseException is wrapped in a RuntimeException in
+				// geodb.GeoDB
+				if (e.getCause() != null
+						&& e.getCause() instanceof ParseException) {
+					// retry as EWKB, this should rarely happen, but may occur
+					// when the first byte of the EWKB bounding-box is '0'.
+					// this should not be considered as a error
+					LOGGER.debug(
+							"Caught parse exception while parsing byte array as WKB. Retrying as EWKB.",
+							e);
+					return GeoDB.gFromEWKB(bytes);
+				} else {
+					// this is an other exception, simply re-throw
+					throw e;
+				}
+			}
+		}
+	}
 
     /*
       * (non-Javadoc)
