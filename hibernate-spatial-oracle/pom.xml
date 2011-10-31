@@ -30,16 +30,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Oracle dependency is no longer necessary to compile, but is
-            necessary for runtime -->
-        <!--<dependency>-->
-            <!--<groupId>com.oracle.jdbc</groupId>-->
-            <!--&lt;!&ndash;<artifactId>ojdbc14</artifactId>&ndash;&gt;-->
-            <!--<artifactId>ojdbc6</artifactId>-->
-            <!--<scope>runtime</scope>-->
-            <!--&lt;!&ndash;<version>10.2.0.1.0</version>&ndash;&gt;-->
-            <!--<version>[11.1.0.6.0,)</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <!--<artifactId>ojdbc14</artifactId>-->
+            <artifactId>ojdbc6</artifactId>
+            <scope>provided</scope>
+            <!--<version>10.2.0.1.0</version>-->
+            <version>[11.1.0.6.0,)</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
