@@ -172,14 +172,18 @@ public class MLineString extends LineString implements MGeometry {
                         MCoordinate p0 = (MCoordinate) this
                                 .getCoordinateN(i - 1);
                         MCoordinate p1 = (MCoordinate) this.getCoordinateN(i);
-                        // r indicates how far in this segment the M-values lies
-                        double r = (m - mval[i - 1]) / (mval[i] - mval[i - 1]);
-                        double dx = r * (p1.x - p0.x);
-                        double dy = r * (p1.y - p0.y);
-                        double dz = r * (p1.z - p0.z);
-                        MCoordinate nc = new MCoordinate(p0.x + dx, p0.y + dy,
-                                p0.z + dz, m);
-                        return nc;
+                        if (mval[i] != mval[i - 1]) {
+                            // r indicates how far in this segment the M-values lies
+                            double r = (m - mval[i - 1]) / (mval[i] - mval[i - 1]);
+                            double dx = r * (p1.x - p0.x);
+                            double dy = r * (p1.y - p0.y);
+                            double dz = r * (p1.z - p0.z);
+                            MCoordinate nc = new MCoordinate(p0.x + dx, p0.y + dy,
+                                    p0.z + dz, m);
+                            return nc;
+                        } else {
+                            return new MCoordinate(p0.x, p0.y, p0.z, m);
+                        }
                     }
                 }
             }
