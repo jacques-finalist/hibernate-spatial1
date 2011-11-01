@@ -164,7 +164,7 @@ public class Circle {
         a23 = 2 * (p2.x - p3.x);
         b23 = 2 * (p2.y - p3.y);
         c23 = (p2.y * p2.y - p3.y * p3.y) + (p2.x * p2.x - p3.x * p3.x);
-        // testsuite-suite to be certain we have three distinct points passed
+        // test to be certain we have three distinct points passed
         double smallNumber = 0.01;
         if ((Math.abs(a13) < smallNumber && Math.abs(b13) < smallNumber)
                 || (Math.abs(a13) < smallNumber && Math.abs(b13) < smallNumber)) {
@@ -217,10 +217,10 @@ public class Circle {
      */
     public static Coordinate[] linearizeArc(double x1, double y1, double x2,
                                             double y2, double x3, double y3, double tolerence) {
-        Coordinate p1 = new Coordinate(x1, y1);
-        Coordinate p2 = new Coordinate(x2, y2);
-        Coordinate p3 = new Coordinate(x3, y3);
-        return new Circle(p1, p2, p3).linearizeArc(p1, p2, p3, tolerence);
+        Coordinate p1 = new Coordinate(x1-x3, y1-y3);
+        Coordinate p2 = new Coordinate(x2-x3, y2-y3);
+        Coordinate p3 = new Coordinate(0, 0);
+        return shiftAll(new Circle(p1, p2, p3).linearizeArc(p1, p2, p3, tolerence), x3,y3);
     }
 
     /**
@@ -240,12 +240,12 @@ public class Circle {
      */
     public static Coordinate[] linearizeArc(double x1, double y1, double x2,
                                             double y2, double x3, double y3) {
-        Coordinate p1 = new Coordinate(x1, y1);
-        Coordinate p2 = new Coordinate(x2, y2);
-        Coordinate p3 = new Coordinate(x3, y3);
+        Coordinate p1 = new Coordinate(x1-x3, y1-y3);
+        Coordinate p2 = new Coordinate(x2-x3, y2-y3);
+        Coordinate p3 = new Coordinate(0, 0);
         Circle c = new Circle(p1, p2, p3);
         double tolerence = 0.01 * c.getRadius();
-        return c.linearizeArc(p1, p2, p3, tolerence);
+        return shiftAll(c.linearizeArc(p1, p2, p3, tolerence),x3,y3);
     }
 
     /**
@@ -264,12 +264,12 @@ public class Circle {
      */
     public static Coordinate[] linearizeCircle(double x1, double y1, double x2,
                                                double y2, double x3, double y3) {
-        Coordinate p1 = new Coordinate(x1, y1);
-        Coordinate p2 = new Coordinate(x2, y2);
-        Coordinate p3 = new Coordinate(x3, y3);
+        Coordinate p1 = new Coordinate(x1-x3, y1-y3);
+        Coordinate p2 = new Coordinate(x2-x3, y2-y3);
+        Coordinate p3 = new Coordinate(0, 0);
         Circle c = new Circle(p1, p2, p3);
         double tolerence = 0.01 * c.getRadius();
-        return c.linearizeArc(p1, p2, p1, tolerence);
+        return shiftAll(c.linearizeArc(p1, p2, p1, tolerence), x3, y3);
     }
 
     /**
@@ -292,6 +292,15 @@ public class Circle {
         List<Coordinate> result = linearizeInternal(null, arc, tolerence);
         return result.toArray(new Coordinate[result.size()]);
     }
+
+    private static Coordinate[] shiftAll(Coordinate[] coords, double x, double y) {
+            for (Coordinate coord : coords) {
+                    coord.x += x;
+                    coord.y += y;
+            }
+            return coords;
+    }
+
 
     private List<Coordinate> linearizeInternal(List<Coordinate> coordinates,
                                                Arc arc, double tolerence) {

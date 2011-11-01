@@ -34,6 +34,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+//TODO The circle construction method is not numerically stable.
+//
+// This is now fixed by translating near to the origin, and then
+// translating the results back. Refactor this code to a more numerically stable
+// and more transparent implementation.
+
 /**
  * Test functionality of Circle class Date: Oct 15, 2007
  *
@@ -191,6 +197,19 @@ public class TestCircle {
             assertTrue(Double.compare(error, 0.0001) < 0);
         }
 
+    }
+
+    @Test
+    public void testVerySmallArc() {
+        double x1 = 454033778;
+        double y1 = 601560635;
+        double x2 = 454033765;
+        double y2 = 601560632;
+        double x3 = 454033761;
+        double y3 = 601560638;
+        Coordinate[] results = org.hibernatespatial.Circle.linearizeArc(x1, y1, x2, y2, x3, y3);
+        assertEquals(new Coordinate(x1, y1), results[0]);
+        assertEquals(new Coordinate(x3, y3), results[results.length - 1]);
     }
 
 }
