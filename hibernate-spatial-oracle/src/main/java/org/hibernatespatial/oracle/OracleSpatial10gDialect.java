@@ -24,12 +24,12 @@
  */
 package org.hibernatespatial.oracle;
 
-import org.hibernate.Hibernate;
 import org.hibernate.QueryException;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 import org.hibernate.usertype.UserType;
 import org.hibernatespatial.SpatialAnalysis;
@@ -66,7 +66,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
     private class AsTextFunction extends StandardSQLFunction {
 
         private AsTextFunction() {
-            super("astext", Hibernate.STRING);
+            super("astext", StandardBasicTypes.STRING);
         }
 
         public String render(Type firstArgumentType, final List args,
@@ -93,7 +93,7 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         private final int relation;
 
         private SpatialRelateFunction(final String name, final int relation) {
-            super(name, isOGCStrict() ? Hibernate.BOOLEAN
+            super(name, isOGCStrict() ? StandardBasicTypes.BOOLEAN
                     : new SDOBooleanType());
             this.relation = relation;
         }
@@ -178,17 +178,17 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         registerFunction("dimension", new GetDimensionFunction());
         registerFunction("geometrytype", new GetGeometryTypeFunction());
         registerFunction("srid", new SDOObjectProperty("SDO_SRID",
-                Hibernate.INTEGER));
+                StandardBasicTypes.INTEGER));
         registerFunction("envelope",
                 new StandardSQLFunction("SDO_GEOM.SDO_MBR", geometryCustomType));
         registerFunction("astext", new AsTextFunction());
 
         registerFunction("asbinary", new StandardSQLFunction(
-                "SDO_UTIL.TO_WKBGEOMETRY", Hibernate.BINARY));
+                "SDO_UTIL.TO_WKBGEOMETRY", StandardBasicTypes.BINARY));
         registerFunction("isempty", new WrappedOGCFunction("OGC_ISEMPTY",
-                Hibernate.BOOLEAN, new boolean[]{true}));
+                StandardBasicTypes.BOOLEAN, new boolean[]{true}));
         registerFunction("issimple", new WrappedOGCFunction("OGC_ISSIMPLE",
-                Hibernate.BOOLEAN, new boolean[]{true}));
+                StandardBasicTypes.BOOLEAN, new boolean[]{true}));
         registerFunction("boundary", new WrappedOGCFunction("OGC_BOUNDARY",
                 geometryCustomType,
                 new boolean[]{true}));
@@ -214,12 +214,12 @@ public class OracleSpatial10gDialect extends Oracle10gDialect implements
         registerFunction("within", new SpatialRelateFunction("within",
                 SpatialRelation.WITHIN));
         registerFunction("relate", new WrappedOGCFunction("OGC_RELATE",
-                Hibernate.BOOLEAN, new boolean[]{true, true, false}));
+                StandardBasicTypes.BOOLEAN, new boolean[]{true, true, false}));
 
         // Register spatial analysis functions.
         // Section 2.1.1.3
         registerFunction("distance", new SpatialAnalysisFunction("distance",
-                Hibernate.DOUBLE, SpatialAnalysis.DISTANCE));
+                StandardBasicTypes.DOUBLE, SpatialAnalysis.DISTANCE));
         registerFunction("buffer", new SpatialAnalysisFunction("buffer",
                 geometryCustomType,
                 SpatialAnalysis.BUFFER));
