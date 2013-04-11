@@ -19,13 +19,13 @@
     <url>http://www.hibernatespatial.org/maven</url>
     <packaging>pom</packaging>
     <modules>
-        <module>../hibernate-spatial</module>
-        <module>../test-suite</module>
-        <module>../hibernate-spatial-postgis</module>
-        <module>../hibernate-spatial-oracle</module>
-        <module>../hibernate-spatial-mysql</module>
-        <module>../hibernate-spatial-sqlserver</module>
-        <module>../hibernate-spatial-h2-geodb</module>
+        <module>hibernate-spatial</module>
+        <module>test-suite</module>
+        <module>hibernate-spatial-postgis</module>
+        <module>hibernate-spatial-oracle</module>
+        <module>hibernate-spatial-mysql</module>
+        <module>hibernate-spatial-sqlserver</module>
+        <module>hibernate-spatial-h2-geodb</module>
 
     </modules>
 
@@ -92,18 +92,6 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>perform</goal>
-                        </goals>
-                        <configuration>
-                            <pomFileName>hibernate-spatial-maven/pom.xml</pomFileName>
-                        </configuration>
-                    </execution>
-                </executions>
-
             </plugin>
         </plugins>
 
