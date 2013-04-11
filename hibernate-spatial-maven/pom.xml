@@ -122,12 +122,7 @@
     </build>
   
     <scm>
-        <connection>
-            scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git
-        </connection>
-        <developerConnection>
-            scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git
-        </developerConnection>
+        <developerConnection>scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git</developerConnection>
     </scm>
 
     <issueManagement>
