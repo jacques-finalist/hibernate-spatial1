@@ -91,8 +91,19 @@
                 <version>2.4.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>perform</goal>
+                        </goals>
+                        <configuration>
+                            <pomFileName>hibernate-spatial-maven/pom.xml</pomFileName>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
         </plugins>
 
