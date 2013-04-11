@@ -88,7 +88,9 @@
                 <version>2.4.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
+
             </plugin>
         </plugins>
 
@@ -490,12 +492,12 @@
 
         <!-- use the following if you're not using a snapshot version. -->
         <repository>
-            <id>releases</id>
+            <id>finalist-nexus</id>
             <url>https://www.intranet.finalist.com/nexus/content/repositories/releases</url>
         </repository>
         <!-- use the following if you are using a snapshot version. -->
         <snapshotRepository>
-            <id>snapshots</id>
+            <id>finalist-nexus</id>
             <url>https://www.intranet.finalist.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
 
