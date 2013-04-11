@@ -44,15 +44,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <site>
-            <id>Hibernate Spatial site</id>
-            <name>Hibernate Spatial</name>
-            <url>
-                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial
-            </url>
-        </site>
-    </distributionManagement>
-
 </project>

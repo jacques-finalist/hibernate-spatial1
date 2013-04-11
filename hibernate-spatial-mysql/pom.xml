@@ -30,15 +30,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <site>
-            <id>Hibernate Spatial site</id>
-            <name>Hibernate Spatial</name>
-            <url>
-                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-mysql
-            </url>
-        </site>
-    </distributionManagement>
-
 </project>

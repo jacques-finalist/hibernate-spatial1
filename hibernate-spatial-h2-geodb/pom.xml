@@ -91,16 +91,6 @@
         </plugins>
     </reporting>
 
-    <distributionManagement>
-        <site>
-            <id>Hibernate Spatial</id>
-            <name>Hibernate Spatial</name>
-            <url>
-                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-h2-geodb
-            </url>
-        </site>
-    </distributionManagement>
-
     <organization>
         <name>Geodan IT b.v.</name>
         <url>http://www.geodan.nl</url>

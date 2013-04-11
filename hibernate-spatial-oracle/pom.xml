@@ -44,16 +44,4 @@
             <version>[11.1.0.6.0,)</version>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <site>
-            <id>Hibernate Spatial site</id>
-            <name>Hibernate Spatial</name>
-            <url>
-                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/hibernate-spatial-oracle
-            </url>
-        </site>
-    </distributionManagement>
-
-
 </project>

@@ -51,8 +51,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
             </plugin>
-
             <!--generate source artefacts -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -66,8 +70,8 @@
                         </goals>
                     </execution>
                 </executions>
+                <version>2.2.1</version>
             </plugin>
-
             <!--  this ensures that the common testsuite-suite cases are available for providers -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -79,8 +83,8 @@
                         </goals>
                     </execution>
                 </executions>
+                <version>2.4</version>
             </plugin>
-
             <!-- Release plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -90,35 +94,10 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
-
             </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                    </configuration>
-                    <version>3.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.14</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
-  
+
     <scm>
         <developerConnection>scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git</developerConnection>
     </scm>
@@ -252,6 +231,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.14</version>
                         <configuration>
                             <skip>true</skip>
                         </configuration>
@@ -455,9 +435,7 @@
                 <jdbc.pass>hbs</jdbc.pass>
             </properties>
         </profile>
-
     </profiles>
-
 
     <reporting>
         <plugins>
@@ -465,31 +443,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.6.1</version>
-                <configuration>
-                    <!--<aggregate>true</aggregate>-->
-                </configuration>
-
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-idea-plugin</artifactId>
-                <configuration>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
-                </configuration>
             </plugin>
         </plugins>
     </reporting>
 
     <distributionManagement>
-        <site>
-            <id>Hibernate Spatial site</id>
-            <name>Hibernate Spatial</name>
-            <url>
-                scp://www.hibernatespatial.org/var/www/www2.hibernatespatial.org/
-            </url>
-        </site>
-
         <!-- use the following if you're not using a snapshot version. -->
         <repository>
             <id>finalist-nexus</id>
@@ -500,8 +458,8 @@
             <id>finalist-nexus</id>
             <url>https://www.intranet.finalist.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-
     </distributionManagement>
+    
     <developers>
         <developer>
             <id>maesenka</id>
