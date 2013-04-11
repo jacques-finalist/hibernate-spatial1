@@ -16,6 +16,14 @@
         Oracle 10g dialect provider for Hibernate Spatial
     </description>
 
+    <repositories>
+        <repository>
+            <id>finalist 3rd party</id>
+            <name>Finalist 3rd party</name>
+            <url>https://www.intranet.finalist.com/nexus/content/repositories/thirdparty/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
