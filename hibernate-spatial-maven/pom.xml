@@ -30,7 +30,7 @@
     </modules>
 
     <properties>
-        <hibernate.version>3.6.0.Final</hibernate.version>
+        <hibernate.version>3.6.9.Final</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -53,8 +53,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
 
@@ -104,14 +104,11 @@
 
     <scm>
         <connection>
-            scm:svn:http://www.hibernatespatial.org/svn/hibernate-spatial/trunk/hibernate-spatial-maven
+            scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git
         </connection>
         <developerConnection>
-            scm:svn:https://intra.geovise.com/svn/hibernate-spatial/trunk/hibernate-spatial-maven
+            scm:git:git@github.com:jacques-finalist/hibernate-spatial1.git
         </developerConnection>
-        <url>
-            <![CDATA[ http://www.hibernatespatial.org/websvn/listing.php?repname=hibernate-spatial&path=/trunk/${project.artifactId}/rev=0&sc=0]]>
-        </url>
     </scm>
 
     <issueManagement>
@@ -193,8 +190,8 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <artifactId>junit-dep</artifactId>
+            <version>4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -265,7 +262,7 @@
                 <dependency>
                     <groupId>org.postgis</groupId>
                     <artifactId>postgis-jdbc</artifactId>
-                    <version>[1.1.6,)</version>
+                    <version>[1.5.2,)</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -308,7 +305,7 @@
                 <dependency>
                     <groupId>org.opengeo</groupId>
                     <artifactId>geodb</artifactId>
-                    <version>0.6</version>
+                    <version>0.7</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -484,19 +481,13 @@
 
         <!-- use the following if you're not using a snapshot version. -->
         <repository>
-            <id>hibernatespatial</id>
-            <name>Hibernate Spatial Maven Repo</name>
-            <url>
-                scp://www.hibernatespatial.org/var/maven/repository/
-            </url>
+            <id>releases</id>
+            <url>https://www.intranet.finalist.com/nexus/content/repositories/releases</url>
         </repository>
         <!-- use the following if you are using a snapshot version. -->
         <snapshotRepository>
-            <id>hibernatespatial</id>
-            <name>Hibernate Spatial Maven Repo</name>
-            <url>
-                scp://www.hibernatespatial.org/var/maven/repository/
-            </url>
+            <id>snapshots</id>
+            <url>https://www.intranet.finalist.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
 
     </distributionManagement>

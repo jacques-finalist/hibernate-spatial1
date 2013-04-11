@@ -1,14 +1,28 @@
 package org.hibernatespatial.oracle;
 
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 /**
  * This class hides the actual Connection implementation class.
- *
- * @author Karel Maesen, Geovise BVBA
- *         creation-date: Jun 30, 2010
+ * 
+ * @author Karel Maesen, Geovise BVBA creation-date: Jun 30, 2010
  */
 public class JDBCConnectionProxy implements Connection {
 
@@ -106,7 +120,8 @@ public class JDBCConnectionProxy implements Connection {
         return delegate.createStatement(resultSetType, resultSetConcurrency);
     }
 
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+            throws SQLException {
         return delegate.prepareStatement(sql, resultSetType, resultSetConcurrency);
     }
 
@@ -146,15 +161,18 @@ public class JDBCConnectionProxy implements Connection {
         delegate.releaseSavepoint(savepoint);
     }
 
-    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
         return delegate.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
+            int resultSetHoldability) throws SQLException {
         return delegate.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
+            int resultSetHoldability) throws SQLException {
         return delegate.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
@@ -212,5 +230,39 @@ public class JDBCConnectionProxy implements Connection {
 
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         return delegate.createStruct(typeName, attributes);
+    }
+
+    // --------------------------------------------------------------------
+    // The following methods are here so that this compiles under
+    // Java 7 (JDBC 4.0) as well as Java 6 (JDBC 3.0). Note that
+    // we cannot make them use @Override nor delegate to the
+    // respective connection method, as that would break
+    // building this under Java 6 (JDBC 3.0).
+    //
+    // TODO But is this class really needed?!
+
+    // DON'T use @Override (see above)
+    public void setSchema(String schema) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    // DON'T use @Override (see above)
+    public String getSchema() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    // DON'T use @Override (see above)
+    public void abort(Executor executor) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    // DON'T use @Override (see above)
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    // DON'T use @Override (see above)
+    public int getNetworkTimeout() throws SQLException {
+        throw new UnsupportedOperationException();
     }
 }

@@ -25,7 +25,7 @@
 
 package org.hibernatespatial.sqlserver;
 
-import org.hibernate.Hibernate;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.type.CustomType;
@@ -58,32 +58,32 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
         // Registerfunction calls for registering geometry functions:
         // first argument is the OGC standard functionname, 
         // second the Function as it occurs in the spatial dialect
-        registerFunction("dimension", new SQLFunctionTemplate(Hibernate.INTEGER, "?1.STDimension()"));
-        registerFunction("geometrytype", new SQLFunctionTemplate(Hibernate.STRING, "?1.STGeometryType()"));
-        registerFunction("srid", new SQLFunctionTemplate(Hibernate.INTEGER, "?1.STSrid"));
+        registerFunction("dimension", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1.STDimension()"));
+        registerFunction("geometrytype", new SQLFunctionTemplate(StandardBasicTypes.STRING, "?1.STGeometryType()"));
+        registerFunction("srid", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1.STSrid"));
         registerFunction("envelope", new SQLFunctionTemplate(geomType, "?1.STEnvelope()"));
-        registerFunction("astext", new SQLFunctionTemplate(Hibernate.STRING, "?1.STAsText()"));
-        registerFunction("asbinary", new SQLFunctionTemplate(Hibernate.BINARY, "?1.STAsBinary()"));
+        registerFunction("astext", new SQLFunctionTemplate(StandardBasicTypes.STRING, "?1.STAsText()"));
+        registerFunction("asbinary", new SQLFunctionTemplate(StandardBasicTypes.BINARY, "?1.STAsBinary()"));
 
-        registerFunction("isempty", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STIsEmpty()"));
-        registerFunction("issimple", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STIsSimple()"));
+        registerFunction("isempty", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STIsEmpty()"));
+        registerFunction("issimple", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STIsSimple()"));
         registerFunction("boundary", new SQLFunctionTemplate(geomType, "?1.STBoundary()"));
 
         // section 2.1.1.2
         // Register functions for spatial relation constructs
-        registerFunction("contains", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STContains(?2)"));
-        registerFunction("crosses", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STCrosses(?2)"));
-        registerFunction("disjoint", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STDisjoint(?2)"));
-        registerFunction("equals", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STEquals(?2)"));
-        registerFunction("intersects", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STIntersects(?2)"));
-        registerFunction("overlaps", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STOverlaps(?2)"));
-        registerFunction("touches", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STTouches(?2)"));
-        registerFunction("within", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STWithin(?2)"));
-        registerFunction("relate", new SQLFunctionTemplate(Hibernate.BOOLEAN, "?1.STRelate(?2,?3)"));
+        registerFunction("contains", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STContains(?2)"));
+        registerFunction("crosses", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STCrosses(?2)"));
+        registerFunction("disjoint", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STDisjoint(?2)"));
+        registerFunction("equals", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STEquals(?2)"));
+        registerFunction("intersects", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STIntersects(?2)"));
+        registerFunction("overlaps", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STOverlaps(?2)"));
+        registerFunction("touches", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STTouches(?2)"));
+        registerFunction("within", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STWithin(?2)"));
+        registerFunction("relate", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1.STRelate(?2,?3)"));
 
         // section 2.1.1.3
         // Register spatial analysis functions.
-        registerFunction("distance", new SQLFunctionTemplate(Hibernate.DOUBLE, "?1.STDistance(?2)"));
+        registerFunction("distance", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "?1.STDistance(?2)"));
         registerFunction("buffer", new SQLFunctionTemplate(geomType, "?1.STBuffer(?2)"));
         registerFunction("convexhull", new SQLFunctionTemplate(geomType, "?1.STConvexHull()"));
         registerFunction("difference", new SQLFunctionTemplate(geomType, "?1.STDifference(?2)"));
@@ -98,7 +98,7 @@ public class SQLServerSpatialDialect extends SQLServerDialect implements Spatial
         //registerFunction("extent", new SQLFunctionTemplate(geomType, "?1.STExtent()"));
 
         // section 2.1.9.1 methods on surfaces
-        registerFunction("area", new SQLFunctionTemplate(Hibernate.DOUBLE, "?1.STArea()"));
+        registerFunction("area", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "?1.STArea()"));
         registerFunction("centroid", new SQLFunctionTemplate(geomType, "?1.STCentroid()"));
         registerFunction("pointonsurface", new SQLFunctionTemplate(geomType, "?1.STPointOnSurface()"));
     }

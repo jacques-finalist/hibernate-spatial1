@@ -28,7 +28,9 @@ package org.hibernatespatial.geodb;
 import org.hibernatespatial.SpatialRelation;
 import org.junit.Test;
 
+import static org.hibernate.criterion.Restrictions.isEmpty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests basic settings of the {@link GeoDBDialect}.
@@ -44,9 +46,10 @@ public class TestGeoDBDialect {
         assertEquals("GEOM", geoDBDialect.getDbGeometryTypeName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetSpatialAggregateSQL() {
-        geoDBDialect.getSpatialAggregateSQL("geom", 1);
+        String sql = geoDBDialect.getSpatialAggregateSQL("geom", 1);
+        assertEquals(sql, "extent(geom)");
     }
 
     @Test

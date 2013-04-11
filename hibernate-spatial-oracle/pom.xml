@@ -32,10 +32,8 @@
 
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
-            <!--<artifactId>ojdbc14</artifactId>-->
             <artifactId>ojdbc6</artifactId>
             <scope>provided</scope>
-            <!--<version>10.2.0.1.0</version>-->
             <version>[11.1.0.6.0,)</version>
         </dependency>
     </dependencies>
