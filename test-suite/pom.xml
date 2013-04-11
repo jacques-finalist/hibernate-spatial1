@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.hibernatespatial</groupId>
 		<artifactId>hibernate-spatial-maven</artifactId>
-		<version>1.1.3-SNAPSHOT</version>
+		<version>1.1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>test-suite</artifactId>
